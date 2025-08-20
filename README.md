@@ -1,18 +1,8 @@
 # EasyClinic Frontend
 
-A modern, responsive healthcare clinic management system built with Next.js 15, React 19, and Tailwind CSS. This application provides an intuitive interface for managing patient appointments, consultations, and clinic operations.
 
-## 🚀 Features
 
-- **Modern UI/UX**: Built with Radix UI components and Tailwind CSS for a professional, accessible interface
-- **Responsive Design**: Mobile-first approach with responsive layouts for all devices
-- **Type Safety**: Full TypeScript support for better development experience
-- **Theme Support**: Dark/light mode with next-themes
-- **Form Handling**: Advanced form management with React Hook Form and Zod validation
-- **Component Library**: Comprehensive set of reusable UI components
-- **Performance**: Optimized with Next.js 15 features and modern React patterns
-
-## 🛠️ Tech Stack
+##  Tech 
 
 ### Core Technologies
 - **Next.js 15** - React framework with App Router
@@ -22,16 +12,13 @@ A modern, responsive healthcare clinic management system built with Next.js 15, 
 
 ### UI Components & Libraries
 - **Radix UI** - Accessible, unstyled UI primitives
-- **Lucide React** - Beautiful, customizable icons
-- **React Hook Form** - Performant forms with easy validation
+- **Lucide React** - Customizable icons
+- **React Hook Form** - Performant forms with validation
 - **Zod** - TypeScript-first schema validation
 - **Sonner** - Toast notifications
 - **Recharts** - Composable charting library
 
-### Development Tools
-- **PostCSS** - CSS processing
-- **Autoprefixer** - CSS vendor prefixing
-- **ESLint** - Code linting and formatting
+
 
 ## 📋 Prerequisites
 
@@ -113,7 +100,7 @@ easyclinic-frontend/
 - **`npm run start`** - Start production server
 - **`npm run lint`** - Run ESLint
 
-## 🔧 Development
+## Development
 
 ### Code Style
 - Follow TypeScript best practices
@@ -127,60 +114,12 @@ easyclinic-frontend/
 - Implement proper TypeScript interfaces
 - Add JSDoc comments for complex components
 
-### Styling
-- Use Tailwind CSS utility classes
-- Follow mobile-first responsive design
-- Implement dark/light theme support
-- Use CSS custom properties for theming
-
-## 🚀 Deployment
 
 ### Build for Production
 
 ```bash
 npm run build
 ```
-
-### Deploy to Vercel (Recommended)
-
-1. Push your code to GitHub
-2. Connect your repository to [Vercel](https://vercel.com)
-3. Deploy automatically on every push
-
-### Deploy to Other Platforms
-
-The application can be deployed to any platform that supports Node.js:
-- Netlify
-- Railway
-- Heroku
-- AWS Amplify
-
-## 📱 Browser Support
-
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🆘 Support
-
-If you encounter any issues or have questions:
-
-1. Check the [Issues](https://github.com/Dantez77/easyclinic-frontend/issues) page
-2. Create a new issue with detailed information
-3. Contact the development team
 
 ## 🔮 Roadmap
 
@@ -193,5 +132,3 @@ If you encounter any issues or have questions:
 - [ ] Mobile app (React Native)
 
 ---
-
-**Built with ❤️ for better healthcare management**
