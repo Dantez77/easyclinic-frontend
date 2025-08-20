@@ -155,7 +155,10 @@ export function AppSidebar() {
                   Tools
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem className="flex items-center gap-2 text-red-600 dark:text-red-400">
+              <DropdownMenuItem 
+                onClick={() => window.location.href = '/login'}
+                className="flex items-center gap-2 text-red-600 dark:text-red-400 cursor-pointer"
+              >
                 <LogOut className="h-4 w-4" />
                 Logout
               </DropdownMenuItem>

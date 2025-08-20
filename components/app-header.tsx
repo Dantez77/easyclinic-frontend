@@ -84,6 +84,16 @@ export function AppHeader({ searchQuery, onSearchChange }: AppHeaderProps) {
 
           {/* Theme Toggle */}
           <ThemeToggle />
+
+          {/* Login Button */}
+          <Button
+            onClick={() => window.location.href = '/login'}
+            className="bg-primary hover:bg-main-800 text-white"
+          >
+            Login
+          </Button>
+
+
         </div>
       </div>
     </header>

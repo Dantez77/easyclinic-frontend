@@ -257,14 +257,14 @@ export default function HomePage() {
           {/* Contact Section */}
           <section id="contact" className="py-16 bg-main-50 dark:bg-main-950/20 relative">
             {/* Dark mode background enhancement - matching Contact Us section */}
-            <div className="absolute inset-0 hidden dark:block">
+            <div className="absolute inset-0 hidden dark:block -z-10">
               <div className="absolute inset-0 bg-gradient-to-br from-main-900/30 via-main-950/20 to-main-900/30"></div>
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(215,52%,37%,0.08),transparent_50%)]"></div>
             </div>
-            <div className="container px-4">
+            <div className="container px-4 relative z-10">
               <div className="text-center mb-12">
                 <h2 className="text-3xl font-bold text-primary dark:text-main-400 mb-4">{t('contact.title')}</h2>
-                <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                <p className="text-xl text-muted-foreground dark:text-muted-foreground max-w-2xl mx-auto">
                   {t('contact.subtitle')}
                 </p>
               </div>
@@ -272,10 +272,10 @@ export default function HomePage() {
               <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
                 <div className="space-y-8">
                   <div className="flex items-start gap-4">
-                    <MapPin className="h-6 w-6 text-primary dark:text-main-400 mt-1" />
+                    <MapPin className="h-6 w-6 text-primary dark:text-main-400 mt-1 flex-shrink-0" />
                     <div>
                       <h3 className="font-semibold text-primary dark:text-main-400 mb-2">{t('contact.address.title')}</h3>
-                      <p className="text-muted-foreground">
+                      <p className="text-muted-foreground dark:text-muted-foreground">
                         {t('contact.address.value').split('\n').map((line, i) => (
                           <React.Fragment key={i}>
                             {line}
@@ -287,10 +287,10 @@ export default function HomePage() {
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <Phone className="h-6 w-6 text-primary dark:text-main-400 mt-1" />
+                    <Phone className="h-6 w-6 text-primary dark:text-main-400 mt-1 flex-shrink-0" />
                     <div>
                       <h3 className="font-semibold text-primary dark:text-main-400 mb-2">{t('contact.phone.title')}</h3>
-                      <p className="text-muted-foreground">
+                      <p className="text-muted-foreground dark:text-muted-foreground">
                         {t('contact.phone.main')}
                         <br />
                         {t('contact.phone.emergency')}
@@ -299,10 +299,10 @@ export default function HomePage() {
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <Mail className="h-6 w-6 text-primary dark:text-main-400 mt-1" />
+                    <Mail className="h-6 w-6 text-primary dark:text-main-400 mt-1 flex-shrink-0" />
                     <div>
                       <h3 className="font-semibold text-primary dark:text-main-400 mb-2">{t('contact.email.title')}</h3>
-                      <p className="text-muted-foreground">
+                      <p className="text-muted-foreground dark:text-muted-foreground">
                         {t('contact.email.general')}
                         <br />
                         {t('contact.email.appointments')}
@@ -311,10 +311,10 @@ export default function HomePage() {
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <Clock className="h-6 w-6 text-primary dark:text-main-400 mt-1" />
+                    <Clock className="h-6 w-6 text-primary dark:text-main-400 mt-1 flex-shrink-0" />
                     <div>
                       <h3 className="font-semibold text-primary dark:text-main-400 mb-2">{t('contact.hours.title')}</h3>
-                      <p className="text-muted-foreground">
+                      <p className="text-muted-foreground dark:text-muted-foreground">
                         {t('contact.hours.weekdays')}
                         <br />
                         {t('contact.hours.saturday')}
@@ -325,21 +325,21 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <Card className="border-main-200 dark:border-main-800">
+                <Card className="border-main-200 dark:border-main-800 relative z-10 bg-card dark:bg-card">
                   <CardHeader>
                     <CardTitle className="text-primary dark:text-main-400">{t('contact.form.title')}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
-                      <Input placeholder={t('contact.form.firstName')} className="border-main-200 dark:border-main-800" />
-                      <Input placeholder={t('contact.form.lastName')} className="border-main-200 dark:border-main-800" />
+                      <Input placeholder={t('contact.form.firstName')} className="border-main-200 dark:border-main-800 bg-background dark:bg-background" />
+                      <Input placeholder={t('contact.form.lastName')} className="border-main-200 dark:border-main-800 bg-background dark:bg-background" />
                     </div>
-                    <Input placeholder={t('contact.form.email')} type="email" className="border-main-200 dark:border-main-800" />
-                    <Input placeholder={t('contact.form.phone')} type="tel" className="border-main-200 dark:border-main-800" />
+                    <Input placeholder={t('contact.form.email')} type="email" className="border-main-200 dark:border-main-800 bg-background dark:bg-background" />
+                    <Input placeholder={t('contact.form.phone')} type="tel" className="border-main-200 dark:border-main-800 bg-background dark:bg-background" />
                     <textarea
                       placeholder={t('contact.form.message')}
                       rows={4}
-                      className="w-full px-3 py-2 border border-main-200 dark:border-main-800 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-main-400"
+                      className="w-full px-3 py-2 border border-main-200 dark:border-main-800 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-main-400 bg-background dark:bg-background text-foreground dark:text-foreground"
                     />
                     <Button className="w-full bg-primary hover:bg-main-800 text-white">{t('contact.form.send')}</Button>
                   </CardContent>

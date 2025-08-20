@@ -198,6 +198,47 @@
     border: 1px solid hsl(0 0% 30%);
   }
   
+  /* Contact section dark mode fixes */
+  .dark #contact {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .dark #contact .container {
+    position: relative;
+    z-index: 10;
+  }
+  
+  .dark #contact .card {
+    background: hsl(var(--card));
+    border-color: hsl(var(--border));
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  }
+  
+  .dark #contact input,
+  .dark #contact textarea {
+    background: hsl(var(--input));
+    border-color: hsl(var(--border));
+    color: hsl(var(--foreground));
+    position: relative;
+    z-index: 10;
+  }
+  
+  .dark #contact input:focus,
+  .dark #contact textarea:focus {
+    border-color: hsl(var(--ring));
+    box-shadow: 0 0 0 3px rgba(215, 52%, 37%, 0.1);
+    outline: none;
+  }
+  
+  .dark #contact .text-muted-foreground {
+    color: hsl(var(--muted-foreground));
+  }
+  
+  .dark #contact .text-primary {
+    color: hsl(var(--primary));
+  }
+  
   /* Enhanced section backgrounds for dark mode */
   .dark .bg-main-950\/20 {
     background: linear-gradient(135deg, 
