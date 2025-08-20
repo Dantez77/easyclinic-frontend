@@ -39,15 +39,20 @@ cd easyclinic-frontend
 ### 2. Install Dependencies
 
 ```bash
-# Using npm
-npm install
+# Using npm (if regular install fails, use --legacy-peer-deps)
+npm install --legacy-peer-deps
 
 # Using pnpm (recommended)
 pnpm install
 
 # Using yarn
 yarn install
+
 ```
+
+> ⚠️ **Note:** If you are using **npm**, some peer dependency conflicts may occur.  
+> Use `npm install --legacy-peer-deps` instead of plain `npm install`.
+
 
 ### 3. Environment Setup
 
