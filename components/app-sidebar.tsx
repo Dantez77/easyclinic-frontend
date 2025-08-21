@@ -18,7 +18,7 @@ import {
   Settings,
   Wrench,
   LogOut,
-  MoreVertical,
+  MoreVertical, Receipt,
 } from "lucide-react"
 import {
   Sidebar,
@@ -46,6 +46,7 @@ const navigationItems = [
   { key: "nav.messages", icon: MessageSquare, href: "/messages" },
   { key: "nav.inventory", icon: Package, href: "/inventory" },
   { key: "nav.patients", icon: UserCheck, href: "/patients" },
+  { key: "nav.billing", icon: Receipt, href: "/billing" },
 ]
 
 export function AppSidebar() {
@@ -131,7 +132,7 @@ export function AppSidebar() {
               <User className="h-4 w-4" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">Dr. Smith</p>
+              <p className="text-sm font-medium truncate">Dr. Quesada</p>
               <p className="text-xs text-muted-foreground truncate">Administrator</p>
             </div>
           </div>

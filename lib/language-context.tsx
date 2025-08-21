@@ -25,6 +25,7 @@ const translations = {
     "nav.messages": "Messages",
     "nav.inventory": "Inventory",
     "nav.patients": "Patients",
+    "nav.billing": "Billing",
     
     // Header
     'header.title': 'Intergastro',
@@ -66,13 +67,13 @@ const translations = {
     'contact.title': 'Contact Us',
     'contact.subtitle': 'Get in touch with us for appointments, inquiries, or emergency care.',
     'contact.address.title': 'Address',
-    'contact.address.value': '123 Medical Center Drive\nHealthcare City, HC 12345',
+    'contact.address.value': 'Plaza Intermédica 3er Nivel,\n #309-C 3a Calle Poniente y 25 Avenida Norte,\n San Salvador',
     'contact.phone.title': 'Phone',
-    'contact.phone.main': 'Main: (555) 123-4567',
-    'contact.phone.emergency': 'Emergency: (555) 911-HELP',
+    'contact.phone.main': 'Main: (035) 7123-4567',
+    'contact.phone.emergency': 'Emergency: 911',
     'contact.email.title': 'Email',
-    'contact.email.general': 'General: info@medicare.com',
-    'contact.email.appointments': 'Appointments: appointments@medicare.com',
+    'contact.email.general': 'General: info@intergastro.com',
+    'contact.email.appointments': 'Appointments: appointments@intergastro.com',
     'contact.hours.title': 'Hours',
     'contact.hours.weekdays': 'Monday - Friday: 8:00 AM - 6:00 PM',
     'contact.hours.saturday': 'Saturday: 9:00 AM - 4:00 PM',
@@ -89,8 +90,8 @@ const translations = {
     'footer.copyright': '© 2024 Intergastro. All rights reserved. | Licensed Healthcare Provider',
     
     // Quick Contact
-    'quick.contact.phone': '(555) 123-4567',
-    'quick.contact.email': 'info@medicare.com',
+    'quick.contact.phone': '(503) 7123-4567',
+    'quick.contact.email': 'info@intergastro.com',
     'quick.contact.hours': 'Mon-Fri: 8AM-6PM',
   },
   es: {
@@ -104,6 +105,7 @@ const translations = {
     "nav.messages": "Mensajes",
     "nav.inventory": "Inventario",
     "nav.patients": "Pacientes",
+    "nav.billing": "Facturación",
     
     // Header
     'header.title': 'Intergastro',
@@ -145,13 +147,13 @@ const translations = {
     'contact.title': 'Contáctanos',
     'contact.subtitle': 'Ponte en contacto con nosotros para citas, consultas o atención de emergencia.',
     'contact.address.title': 'Dirección',
-    'contact.address.value': '123 Medical Center Drive\nHealthcare City, HC 12345',
+    'contact.address.value': 'Plaza Intermédica 3er Nivel,\n #309-C 3a Calle Poniente y 25 Avenida Norte, \n San Salvador',
     'contact.phone.title': 'Teléfono',
-    'contact.phone.main': 'Principal: (555) 123-4567',
-    'contact.phone.emergency': 'Emergencia: (555) 911-HELP',
+    'contact.phone.main': 'Principal: (503) 7123-4567',
+    'contact.phone.emergency': 'Emergencia: 911',
     'contact.email.title': 'Correo Electrónico',
-    'contact.email.general': 'General: info@medicare.com',
-    'contact.email.appointments': 'Citas: appointments@medicare.com',
+    'contact.email.general': 'General: info@intergastro.com',
+    'contact.email.appointments': 'Citas: appointments@intergastro.com',
     'contact.hours.title': 'Horarios',
     'contact.hours.weekdays': 'Lunes - Viernes: 8:00 AM - 6:00 PM',
     'contact.hours.saturday': 'Sábado: 9:00 AM - 4:00 PM',
@@ -168,8 +170,8 @@ const translations = {
     'footer.copyright': '© 2024 Intergastro. Todos los derechos reservados. | Proveedor de Salud Licenciado',
     
     // Quick Contact
-    'quick.contact.phone': '(555) 123-4567',
-    'quick.contact.email': 'info@medicare.com',
+    'quick.contact.phone': '(555) 7123-4567',
+    'quick.contact.email': 'info@intergastro.com',
     'quick.contact.hours': 'Lun-Vie: 8AM-6PM',
   }
 }
