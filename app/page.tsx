@@ -353,7 +353,7 @@ export default function HomePage() {
             <div className="container px-4">
               <div className="text-center">
                 <div className="flex items-center justify-center gap-2 mb-4">
-                  <Heart className="h-6 w-6 dark:text-main-400" />
+                  <img src="/logo2.png" alt="InterGastro Logo" className="h-8 w-auto" />
                   <div className="flex items-center">
                     <span className="font-bold text-[#1E5A96] text-xl">
                       Inter

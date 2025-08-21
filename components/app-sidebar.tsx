@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Image from "next/image"
 import {
   Heart,
   Users,
@@ -60,9 +61,13 @@ export function AppSidebar() {
     >
       <SidebarHeader className="border-b border-main-200 dark:border-main-800 p-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-white">
-            <Heart className="h-6 w-6" />
-          </div>
+          <Image 
+            src="/logo2.png" 
+            alt="InterGastro Logo" 
+            width={40} 
+            height={40}
+            className="h-10 w-10"
+          />
           <div>
             <h2 className="text-lg font-semibold">
               <div className="flex items-center">
@@ -78,6 +83,7 @@ export function AppSidebar() {
           </div>
         </div>
       </SidebarHeader>
+
 
       <SidebarContent>
         <SidebarGroup>
