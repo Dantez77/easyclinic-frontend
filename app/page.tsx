@@ -24,9 +24,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/app-sidebar"
-import { AppHeader } from "@/components/app-header"
+
 
 const doctors = [
   {
@@ -104,13 +102,8 @@ export default function HomePage() {
   ]
 
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <AppHeader searchQuery={searchQuery} onSearchChange={setSearchQuery} />
-
-        {/* Main Content */}
-        <main className="flex-1">
+    <>
+      {/* Main Content */}
           {/* Hero Section */}
           <section
             id="home"
@@ -369,8 +362,6 @@ export default function HomePage() {
               </div>
             </div>
           </footer>
-        </main>
-      </SidebarInset>
-    </SidebarProvider>
+    </>
   )
 }

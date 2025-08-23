@@ -41,13 +41,7 @@ import {
 } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useLanguage } from "@/lib/language-context"
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/app-sidebar"
-import { AppHeader } from "@/components/app-header"
+
 
 
 
@@ -180,38 +174,34 @@ export default function PatientConsultationPage() {
   }
 
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        {/* Header */}
-        <header className="sticky top-0 z-50 w-full border-b border-main-200 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:border-main-800">
-          <div className="container flex h-16 items-center justify-between px-4">
-            <div className="flex items-center gap-2 lg:gap-4">
-              <SidebarTrigger className="text-primary dark:text-main-400" />
-              <Separator orientation="vertical" className="h-6" />
-              <Button
-                variant="ghost"
-                onClick={() => window.history.back()}
-                className="text-primary dark:text-main-400 text-sm lg:text-base"
-              >
-                <ArrowLeft className="h-4 w-4 mr-1 lg:mr-2" />
-                <span className="hidden sm:inline">Back to Appointments</span>
-                <span className="sm:hidden">Back</span>
-              </Button>
-              <h1 className="text-lg lg:text-xl font-semibold text-primary dark:text-main-400 hidden md:block">
-                Patient Consultation
-              </h1>
-            </div>
-
-            <div className="flex items-center gap-2 lg:gap-4">
-              <div className="flex items-center gap-2 text-xs lg:text-sm text-muted-foreground">
-                <Calendar className="w-3 h-3 lg:w-4 lg:h-4" />
-                <span className="hidden sm:inline">{new Date().toLocaleDateString()}</span>
-              </div>
-              <ThemeToggle />
-            </div>
+    <>
+      {/* Header */}
+      <header className="sticky top-0 z-50 w-full border-b border-main-200 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:border-main-800">
+        <div className="container flex h-16 items-center justify-between px-4">
+          <div className="flex items-center gap-2 lg:gap-4">
+            <Button
+              variant="ghost"
+              onClick={() => window.history.back()}
+              className="text-primary dark:text-main-400 text-sm lg:text-base"
+            >
+              <ArrowLeft className="h-4 w-4 mr-1 lg:mr-2" />
+              <span className="hidden sm:inline">Back to Appointments</span>
+              <span className="sm:hidden">Back</span>
+            </Button>
+            <h1 className="text-lg lg:text-xl font-semibold text-primary dark:text-main-400 hidden md:block">
+              Patient Consultation
+            </h1>
           </div>
-        </header>
+
+          <div className="flex items-center gap-2 lg:gap-4">
+            <div className="flex items-center gap-2 text-xs lg:text-sm text-muted-foreground">
+              <Calendar className="w-3 h-3 lg:w-4 lg:h-4" />
+              <span className="hidden sm:inline">{new Date().toLocaleDateString()}</span>
+            </div>
+            <ThemeToggle />
+          </div>
+        </div>
+      </header>
 
         <div className="flex flex-col lg:flex-row h-[calc(100vh-4rem)] bg-background">
           {/* Patient Summary Sidebar */}
@@ -804,7 +794,6 @@ export default function PatientConsultationPage() {
             </div>
           </div>
         </div>
-      </SidebarInset>
-    </SidebarProvider>
+    </>
   )
 }

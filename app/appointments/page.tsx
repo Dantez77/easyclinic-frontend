@@ -61,12 +61,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Separator } from "@/components/ui/separator"
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/app-sidebar"
-import { AppHeader } from "@/components/app-header"
+
 
 
 
@@ -303,12 +298,8 @@ export default function AppointmentsPage() {
   }
 
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <AppHeader searchQuery={searchQuery} onSearchChange={setSearchQuery} />
-        
-        {/* Appointment Management Title */}
+    <>
+      {/* Appointment Management Title */}
         <div className="container mx-auto px-4 py-4">
           <h1 className="text-2xl font-bold text-primary dark:text-main-400 mb-2">
             Appointment Management
@@ -1019,7 +1010,6 @@ export default function AppointmentsPage() {
             )}
           </DialogContent>
         </Dialog>
-      </SidebarInset>
-    </SidebarProvider>
+    </>
   )
 }
