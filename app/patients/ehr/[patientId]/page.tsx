@@ -1,6 +1,8 @@
 "use client"
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Button } from "@/components/ui/button"
+import { Users } from "lucide-react"
 import { usePatientEHR } from "../hooks/use-patient-ehr"
 import { PatientHeader } from "../components/patient-header"
 import { OverviewTab } from "../components/overview-tab"
@@ -22,6 +24,24 @@ export default function PatientEHRPage({ params }: { params: { patientId: string
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Back Navigation */}
+      <div className="bg-card border-b border-main-200 dark:border-main-800 p-4 lg:p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Button 
+                onClick={() => (window.location.href = "/patients")} 
+                variant="outline" 
+                className="bg-transparent"
+              >
+                <Users className="w-4 h-4 mr-2" />
+                Volver a Pacientes
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <PatientHeader
         patientName={`${patientData.firstName} ${patientData.lastName}`}
         patientId={patientData.id}

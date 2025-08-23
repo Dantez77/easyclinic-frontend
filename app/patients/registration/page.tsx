@@ -31,6 +31,7 @@ import {
   AlertTriangle,
   User,
   Home,
+  Users,
 } from "lucide-react"
 
 const bloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]
@@ -168,13 +169,25 @@ export default function PatientRegistrationPage() {
       {/* Page Header */}
       <div className="bg-card border-b border-main-200 dark:border-main-800 p-4 lg:p-6">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-              <UserPlus className="w-5 h-5 text-primary" />
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                <UserPlus className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h1 className="text-xl lg:text-2xl font-bold text-foreground">Registro de Paciente</h1>
+                <p className="text-sm lg:text-base text-muted-foreground">Ingrese la información del nuevo paciente</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-xl lg:text-2xl font-bold text-foreground">Registro de Paciente</h1>
-              <p className="text-sm lg:text-base text-muted-foreground">Ingrese la información del nuevo paciente</p>
+            <div className="flex gap-2">
+              <Button 
+                onClick={() => (window.location.href = "/patients")} 
+                variant="outline" 
+                className="bg-transparent"
+              >
+                <Users className="w-4 h-4 mr-2" />
+                Volver a Pacientes
+              </Button>
             </div>
           </div>
         </div>
