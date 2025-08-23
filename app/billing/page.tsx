@@ -15,6 +15,9 @@ import {
 // Import custom hook
 import { useBilling } from "./hooks/use-billing"
 
+// Import printer utilities
+import { printReceipt } from "./utils/printer-utils"
+
 // Import components
 import { BillingHeader } from "./components/billing-header"
 import { DashboardMetrics } from "./components/dashboard-metrics"
@@ -204,8 +207,17 @@ export default function BillingPage() {
         stripeReceiptUrl: "https://stripe.com/receipt/mock_123456",
       })
 
-      // BACKEND PROCESS: Generate DTE after successful payment
+      // Print receipt for Stripe payments
       const updatedInvoice = invoices.find((inv) => inv.id === invoice.id)
+      if (updatedInvoice) {
+        try {
+          await printReceipt(updatedInvoice, "Tarjeta NFC")
+        } catch (error) {
+          console.error("Error printing receipt:", error)
+        }
+      }
+
+      // BACKEND PROCESS: Generate DTE after successful payment
       if (updatedInvoice && (invoice.documentType === "dteFactura" || invoice.documentType === "dteComprobante")) {
         await handleGenerateDTE(updatedInvoice)
       }
@@ -261,7 +273,17 @@ export default function BillingPage() {
         paymentDate: new Date().toISOString().split('T')[0],
       })
 
-      alert("Pago procesado exitosamente")
+      // Print receipt for non-card payments
+      const updatedInvoice = invoices.find((inv) => inv.id === processingPayment.id)
+      if (updatedInvoice) {
+        try {
+          await printReceipt(updatedInvoice, paymentMethod)
+          alert("Pago procesado y recibo impreso exitosamente")
+        } catch (error) {
+          alert("Pago procesado. Error al imprimir recibo, pero se puede reimprimir desde la factura.")
+        }
+      }
+
       setIsPaymentDialogOpen(false)
       setProcessingPayment(null)
     }
@@ -303,7 +325,7 @@ export default function BillingPage() {
   const handleReprintReceipt = async (invoice: Invoice) => {
     if (invoice.status === "Pagada") {
       try {
-        // Mock receipt printing
+        await printReceipt(invoice, invoice.paymentMethod)
         alert("Recibo reimpreso exitosamente")
       } catch (error) {
         alert("Error al reimprimir recibo")
@@ -311,10 +333,15 @@ export default function BillingPage() {
     }
   }
 
-  const handleTestPrinter = () => {
+  const handleTestPrinter = async () => {
     // Test printer connection
     const testInvoice = mockInvoices[0]
-    alert("Probando impresora térmica...")
+    try {
+      await printReceipt(testInvoice, "Efectivo")
+      alert("Prueba de impresora exitosa")
+    } catch (error) {
+      alert("Error al probar la impresora. Verifique la conexión.")
+    }
   }
 
   const handlePatientSelect = (patient: any) => {
