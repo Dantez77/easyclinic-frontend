@@ -40,13 +40,13 @@ const navigationItems = [
   { key: "nav.home", icon: Heart, href: "/" },
   { key: "nav.doctors", icon: Users, href: "/#doctors" },
   { key: "nav.services", icon: Stethoscope, href: "/#services" },
-  { key: "nav.appointments", icon: Calendar, href: "/appointments" },
   { key: "nav.news", icon: Award, href: "/#news" },
   { key: "nav.contact", icon: Phone, href: "/#contact" },
   { key: "nav.messages", icon: MessageSquare, href: "/messages" },
-  { key: "nav.inventory", icon: Package, href: "/inventory" },
+  { key: "nav.appointments", icon: Calendar, href: "/appointments" },
   { key: "nav.patients", icon: UserCheck, href: "/patients" },
   { key: "nav.billing", icon: Receipt, href: "/billing" },
+  { key: "nav.inventory", icon: Package, href: "/inventory" },
   { key: "nav.activityLogs", icon: ScrollText, href: "/activity-logs" },
 ]
 

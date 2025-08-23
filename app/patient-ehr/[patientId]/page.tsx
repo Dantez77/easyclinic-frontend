@@ -42,7 +42,7 @@ const mockPatientEHR = {
   occupation: "Contadora",
 
   // Contact Information
-  phone: "809-555-0123",
+  phone: "503-7555-0123",
   email: "maria.gonzalez@email.com",
   address: "Calle Principal #123, Los Alcarrizos",
   city: "Santo Domingo",
@@ -53,7 +53,7 @@ const mockPatientEHR = {
   emergencyContact: {
     name: "Carlos González",
     relationship: "Esposo",
-    phone: "809-555-0124",
+    phone: "503-7555-0124",
     email: "carlos.gonzalez@email.com",
   },
 
