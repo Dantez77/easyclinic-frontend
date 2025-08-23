@@ -90,7 +90,9 @@ export function AppSidebar() {
             <SidebarMenu>
               {navigationItems.map((item) => (
                 <SidebarMenuItem key={item.key}>
-                  <SidebarMenuButton asChild className="hover:bg-main-50 dark:hover:bg-main-950">
+                  <SidebarMenuButton
+                    asChild
+                    className="hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/30 transition-colors">
                     {/* Use Next.js Link to prevent full reloads */}
                     <Link href={item.href} className="flex items-center gap-3">
                       <item.icon className="h-4 w-4 text-primary dark:text-main-400" />

@@ -84,7 +84,7 @@ export default function PatientRegistrationPage() {
     // Personal Information
     firstName: "",
     lastName: "",
-    cedula: "",
+    dui: "",
     gender: "",
     bloodType: "",
     maritalStatus: "",
@@ -95,7 +95,7 @@ export default function PatientRegistrationPage() {
     email: "",
     address: "",
     city: "",
-    province: "",
+    departamento: "",
     postalCode: "",
 
     // Emergency Contact
@@ -220,14 +220,14 @@ export default function PatientRegistrationPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="cedula" className="text-sm font-medium">
-                    Cédula/ID *
+                  <Label htmlFor="dui" className="text-sm font-medium">
+                    DUI *
                   </Label>
                   <Input
-                    id="cedula"
-                    value={formData.cedula}
-                    onChange={(e) => handleInputChange("cedula", e.target.value)}
-                    placeholder="000-0000000-0"
+                    id="dui"
+                    value={formData.dui}
+                    onChange={(e) => handleInputChange("dui", e.target.value)}
+                    placeholder="00000000-0"
                     required
                     className="mt-1"
                   />
@@ -349,7 +349,7 @@ export default function PatientRegistrationPage() {
                       id="phone"
                       value={formData.phone}
                       onChange={(e) => handleInputChange("phone", e.target.value)}
-                      placeholder="809-000-0000"
+                      placeholder="503-0000-0000"
                       required
                       className="pl-10"
                     />
@@ -405,14 +405,14 @@ export default function PatientRegistrationPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="province" className="text-sm font-medium">
-                    Provincia *
+                  <Label htmlFor="departamento" className="text-sm font-medium">
+                    Departamento *
                   </Label>
                   <Input
-                    id="province"
-                    value={formData.province}
-                    onChange={(e) => handleInputChange("province", e.target.value)}
-                    placeholder="Provincia"
+                    id="departamento"
+                    value={formData.departamento}
+                    onChange={(e) => handleInputChange("departamento", e.target.value)}
+                    placeholder="Departamento"
                     required
                     className="mt-1"
                   />

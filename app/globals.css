@@ -115,52 +115,33 @@
         @apply border-border transition-colors;
     }
 
-    /* Remove tab borders after clicking - Light mode */
-    [role="tab"][data-state="active"] {
+    /* Remove tab borders after clicking */
+    [role="tab"][data-state="active"],
+    [role="tab"]:focus,
+    [role="tab"]:focus-visible {
         border: none !important;
         box-shadow: none !important;
-    }
-
-    /* Remove focus rings on tabs - Light mode */
-    [role="tab"]:focus {
         outline: none !important;
-        box-shadow: none !important;
-    }
-
-    [role="tab"]:focus-visible {
-        outline: none !important;
-        box-shadow: none !important;
     }
 
     body {
         @apply bg-background text-foreground;
     }
 
-    /* Dark mode backgrounds */
     .dark {
         background: hsl(var(--background));
         min-height: 100vh;
     }
+}
 
-    .dark .bg-background {
-        background: hsl(var(--background));
-    }
-
-    .dark .bg-card {
-        background: hsl(var(--card));
-    }
-
-    .dark .bg-secondary {
-        background: hsl(var(--secondary));
-    }
-
-    .dark .bg-muted {
-        background: hsl(var(--muted));
-    }
-
-    .dark .bg-accent {
-        background: hsl(var(--accent));
-    }
+/* -------------------- Dark Mode Overrides -------------------- */
+@layer components {
+    /* Backgrounds */
+    .dark .bg-background { background: hsl(var(--background)) !important; }
+    .dark .bg-card { background: hsl(var(--card)) !important; }
+    .dark .bg-secondary { background: hsl(var(--secondary)) !important; }
+    .dark .bg-muted { background: hsl(var(--muted)) !important; }
+    .dark .bg-accent { background: hsl(var(--accent)) !important; }
 
     /* Buttons */
     .dark .bg-primary {
@@ -168,422 +149,68 @@
         color: hsl(0 0% 100%);
         box-shadow: 0 2px 6px rgba(0,0,0,0.25);
     }
-
     .dark .bg-primary:hover {
         background: linear-gradient(135deg, hsl(215 52% 55%) 0%, hsl(215 52% 50%) 100%);
         box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     }
 
-    /* Inputs and Textareas */
+    /* Inputs */
     .dark input,
-    .dark textarea {
-        background: hsl(var(--muted));
-        color: hsl(var(--foreground));
+    .dark textarea,
+    .dark select {
+        background: hsl(var(--muted)) !important;
+        color: hsl(var(--foreground)) !important;
+        border-color: hsl(var(--border)) !important;
     }
-
     .dark input:focus,
-    .dark textarea:focus {
-        border-color: hsl(var(--ring));
+    .dark textarea:focus,
+    .dark select:focus {
+        border-color: hsl(var(--ring)) !important;
         outline: none;
+        box-shadow: 0 0 0 3px hsl(var(--ring) / 0.2) !important;
     }
 
-    /* Sidebar and hover */
-    .dark .border-main-800 {
-        border-color: hsl(var(--sidebar-border));
-    }
+    /* Text colors */
+    .dark .text-foreground { color: hsl(var(--foreground)) !important; }
+    .dark .text-muted-foreground { color: hsl(var(--muted-foreground)) !important; }
 
-    .dark .hover\:bg-main-950:hover {
-        background: hsl(var(--main-900));
-        border: 1px solid hsl(var(--sidebar-border));
-        color: hsl(var(--sidebar-primary-foreground)); /* ensures readable text */
-    }
+    /* Borders */
+    .dark .border { border-color: hsl(var(--border)) !important; }
+    .dark .border-b,
+    .dark .border-t,
+    .dark .border-l,
+    .dark .border-r { border-color: hsl(var(--border)) !important; }
 
     /* Shadows */
     .dark .shadow-lg {
         box-shadow: 0 8px 12px rgba(0,0,0,0.3);
     }
-
+    .dark .shadow-xl {
+        box-shadow: 0 20px 25px -5px rgba(0,0,0,0.4),
+        0 10px 10px -5px rgba(0,0,0,0.3);
+    }
     .dark .shadow-2xl {
-        box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+        box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
     }
 
-    /* Text colors */
-    .dark .text-main-400 {
-        color: hsl(215 52% 65%);
+    /* Tables */
+    .dark table,
+    .dark tr,
+    .dark td,
+    .dark th {
+        border-color: hsl(var(--border)) !important;
     }
+    .dark thead { background: hsl(var(--muted)) !important; }
+    .dark th { color: hsl(var(--foreground)) !important; }
 
-    .dark .text-muted-foreground {
-        color: hsl(var(--muted-foreground));
-        font-weight: 400;
-    }
-}
-
-/* -------------------- Dark Mode Hover Fixes -------------------- */
-@layer components {
-    /* Fix all hover states in dark mode */
-    .dark .hover\:bg-main-50:hover {
-        background: hsl(var(--main-100)) !important;
-        color: hsl(var(--foreground)) !important;
-    }
-
-    .dark .hover\:bg-main-100:hover {
-        background: hsl(var(--main-200)) !important;
-        color: hsl(var(--foreground)) !important;
-    }
-
-    .dark .hover\:bg-main-200:hover {
-        background: hsl(var(--main-300)) !important;
-        color: hsl(var(--foreground)) !important;
-    }
-
-    .dark .hover\:bg-main-300:hover {
-        background: hsl(var(--main-400)) !important;
-        color: hsl(var(--foreground)) !important;
-    }
-
-    .dark .hover\:bg-main-400:hover {
-        background: hsl(var(--main-500)) !important;
-        color: hsl(var(--foreground)) !important;
-    }
-
-    .dark .hover\:bg-main-500:hover {
-        background: hsl(var(--main-600)) !important;
-        color: hsl(var(--foreground)) !important;
-    }
-
-    .dark .hover\:bg-main-600:hover {
-        background: hsl(var(--main-700)) !important;
-        color: hsl(var(--foreground)) !important;
-    }
-
-    .dark .hover\:bg-main-700:hover {
-        background: hsl(var(--main-800)) !important;
-        color: hsl(var(--foreground)) !important;
-    }
-
-    .dark .hover\:bg-main-800:hover {
-        background: hsl(var(--main-900)) !important;
-        color: hsl(var(--foreground)) !important;
-    }
-
-    .dark .hover\:bg-main-900:hover {
-        background: hsl(var(--main-950)) !important;
-        color: hsl(var(--foreground)) !important;
-    }
-
-    .dark .hover\:bg-main-950:hover {
-        background: hsl(var(--main-900)) !important;
-        color: hsl(var(--foreground)) !important;
-    }
-
-    /* Fix button hover states */
-    .dark .hover\:bg-primary:hover {
-        background: linear-gradient(135deg, hsl(215 52% 55%) 0%, hsl(215 52% 50%) 100%) !important;
-        color: hsl(0 0% 100%) !important;
-    }
-
-    .dark .hover\:bg-main-800:hover {
-        background: hsl(var(--main-700)) !important;
-        color: hsl(var(--foreground)) !important;
-    }
-
-    /* Fix card hover states */
-    .dark .hover\:shadow-lg:hover {
-        box-shadow: 0 8px 12px rgba(0,0,0,0.4) !important;
-    }
-
-    /* Fix sidebar hover states */
-    .dark .sidebar-item:hover {
-        background: hsl(var(--main-100)) !important;
-        color: hsl(var(--foreground)) !important;
-    }
-
-    /* Fix navigation hover states */
-    .dark .nav-item:hover {
-        background: hsl(var(--main-100)) !important;
-        color: hsl(var(--foreground)) !important;
-    }
-
-    /* Fix table row hover states */
-    .dark .hover\:bg-muted:hover {
-        background: hsl(var(--muted)) !important;
-        color: hsl(var(--foreground)) !important;
-    }
-
-    /* Fix dropdown hover states */
+    /* Dropdowns / sidebar / nav hover */
+    .dark .sidebar-item:hover,
+    .dark .nav-item:hover,
     .dark .dropdown-item:hover {
         background: hsl(var(--main-100)) !important;
         color: hsl(var(--foreground)) !important;
     }
 
-    /* Fix any remaining white backgrounds */
-    .dark .bg-white {
-        background: hsl(var(--card)) !important;
-    }
-
-    /* Ensure all backgrounds use CSS variables */
-    .dark .bg-background {
-        background: hsl(var(--background)) !important;
-    }
-
-    .dark .bg-card {
-        background: hsl(var(--card)) !important;
-    }
-
-    .dark .bg-muted {
-        background: hsl(var(--muted)) !important;
-    }
-
-    .dark .bg-accent {
-        background: hsl(var(--accent)) !important;
-    }
-
-    .dark .bg-gray-50,
-    .dark .bg-gray-100,
-    .dark .bg-gray-200,
-    .dark .bg-gray-300,
-    .dark .bg-gray-400,
-    .dark .bg-gray-500,
-    .dark .bg-gray-600,
-    .dark .bg-gray-700,
-    .dark .bg-gray-800,
-    .dark .bg-gray-900 {
-        background: hsl(var(--muted)) !important;
-    }
-
-    /* Fix text colors in dark mode */
-    .dark .text-gray-900,
-    .dark .text-gray-800,
-    .dark .text-gray-700,
-    .dark .text-gray-600 {
-        color: hsl(var(--foreground)) !important;
-    }
-
-    .dark .text-gray-500,
-    .dark .text-gray-400,
-    .dark .text-gray-300,
-    .dark .text-gray-200,
-    .dark .text-gray-100 {
-        color: hsl(var(--muted-foreground)) !important;
-    }
-
-    /* Fix background colors with opacity */
-    .dark .bg-primary\/10 {
-        background: hsl(var(--primary) / 0.1) !important;
-    }
-
-    .dark .bg-green-500\/10 {
-        background: hsl(142 76% 36% / 0.1) !important;
-    }
-
-    .dark .bg-yellow-500\/10 {
-        background: hsl(48 96% 53% / 0.1) !important;
-    }
-
-    .dark .bg-red-500\/10 {
-        background: hsl(0 84% 60% / 0.1) !important;
-    }
-
-    /* Ensure proper text colors for colored backgrounds */
-    .dark .text-green-600 {
-        color: hsl(142 76% 46%) !important;
-    }
-
-    .dark .text-yellow-600 {
-        color: hsl(48 96% 53%) !important;
-    }
-
-    .dark .text-red-600 {
-        color: hsl(0 84% 60%) !important;
-    }
-
-    /* Fix any remaining hardcoded colors */
-    .dark .bg-transparent {
-        background: transparent !important;
-    }
-
-    /* Ensure consistent spacing and layout */
-    .dark .container {
-        max-width: 100%;
-        margin: 0 auto;
-        padding: 0 1rem;
-    }
-
-    /* Fix any remaining hardcoded borders */
-    .dark .border-gray-200,
-    .dark .border-gray-300,
-    .dark .border-gray-400 {
-        border-color: hsl(var(--border)) !important;
-    }
-
-    /* Ensure proper contrast for all text */
-    .dark .text-foreground {
-        color: hsl(var(--foreground)) !important;
-    }
-
-    .dark .text-muted-foreground {
-        color: hsl(var(--muted-foreground)) !important;
-    }
-
-    /* Fix any remaining hardcoded shadows */
-    .dark .shadow-lg {
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2) !important;
-    }
-
-    .dark .shadow-xl {
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3) !important;
-    }
-
-    .dark .shadow-2xl {
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
-    }
-
-    /* Fix login page specific styles */
-    .dark .bg-gradient-to-br {
-        background: linear-gradient(to bottom right, hsl(var(--primary) / 0.8), hsl(var(--primary) / 0.6), hsl(var(--primary) / 0.8)) !important;
-    }
-
-    /* Ensure proper contrast for all interactive elements */
-    .dark button,
-    .dark input,
-    .dark select,
-    .dark textarea {
-        background: hsl(var(--muted)) !important;
-        border-color: hsl(var(--border)) !important;
-        color: hsl(var(--foreground)) !important;
-    }
-
-    .dark button:focus,
-    .dark input:focus,
-    .dark select:focus,
-    .dark textarea:focus {
-        border-color: hsl(var(--ring)) !important;
-        box-shadow: 0 0 0 3px hsl(var(--ring) / 0.2) !important;
-    }
-
-    /* Ensure proper table styling */
-    .dark thead {
-        background: hsl(var(--muted)) !important;
-    }
-
-    .dark th {
-        color: hsl(var(--foreground)) !important;
-        border-color: hsl(var(--border)) !important;
-    }
-
-    .dark td {
-        border-color: hsl(var(--border)) !important;
-    }
-
-    /* Fix any remaining progress bars */
-    .dark .bg-muted {
-        background: hsl(var(--muted)) !important;
-    }
-
-    /* Ensure proper badge styling */
-    .dark .badge {
-        background: hsl(var(--muted)) !important;
-        color: hsl(var(--foreground)) !important;
-        border-color: hsl(var(--border)) !important;
-    }
-
-    /* Remove tab borders after clicking */
-    .dark [role="tab"][data-state="active"] {
-        border: none !important;
-        box-shadow: none !important;
-    }
-
-    /* Remove focus rings on tabs */
-    .dark [role="tab"]:focus {
-        outline: none !important;
-        box-shadow: none !important;
-    }
-
-    .dark [role="tab"]:focus-visible {
-        outline: none !important;
-        box-shadow: none !important;
-    }
-
-    /* Fix white lines in dark mode - more specific */
-    .dark .border-white,
-    .dark .border-gray-100,
-    .dark .border-gray-200,
-    .dark .border-gray-300 {
-        border-color: hsl(var(--border)) !important;
-    }
-
-    /* Fix specific border issues */
-    .dark .border-b {
-        border-bottom-color: hsl(var(--border)) !important;
-    }
-
-    .dark .border-t {
-        border-top-color: hsl(var(--border)) !important;
-    }
-
-    .dark .border-l {
-        border-left-color: hsl(var(--border)) !important;
-    }
-
-    .dark .border-r {
-        border-right-color: hsl(var(--border)) !important;
-    }
-
-
-
-
-
-    /* Fix any remaining white backgrounds */
-    .dark .bg-white {
-        background: hsl(var(--card)) !important;
-    }
-
-    /* Fix table borders specifically */
-    .dark table {
-        border-color: hsl(var(--border)) !important;
-    }
-
-    .dark tr {
-        border-color: hsl(var(--border)) !important;
-    }
-
-    .dark td,
-    .dark th {
-        border-color: hsl(var(--border)) !important;
-    }
-
-    /* Fix card borders */
-    .dark .border {
-        border-color: hsl(var(--border)) !important;
-    }
-
-    /* Ensure container padding is preserved */
-    .dark .container {
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
-    }
-
-    /* Ensure padding classes work in dark mode */
-    .dark .px-4 {
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
-    }
-
-    .dark .py-4 {
-        padding-top: 1rem !important;
-        padding-bottom: 1rem !important;
-    }
-
-    .dark .py-6 {
-        padding-top: 1.5rem !important;
-        padding-bottom: 1.5rem !important;
-    }
-
-    .dark .p-4 {
-        padding: 1rem !important;
-    }
-
-    .dark .p-6 {
-        padding: 1.5rem !important;
-    }
+    /* Fix white backgrounds */
+    .dark .bg-white { background: hsl(var(--card)) !important; }
 }
