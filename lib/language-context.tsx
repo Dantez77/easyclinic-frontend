@@ -91,7 +91,7 @@ const translations = {
     'footer.copyright': '© 2024 Intergastro. All rights reserved. | Licensed Healthcare Provider',
     
     // Quick Contact
-    'quick.contact.phone': '(503) 7123-4567',
+    'quick.contact.phone': '(503) 7777-7777',
     'quick.contact.email': 'info@intergastro.com',
     'quick.contact.hours': 'Mon-Fri: 8AM-6PM',
   },
@@ -173,7 +173,7 @@ const translations = {
     'footer.copyright': '© 2024 Intergastro. Todos los derechos reservados. | Proveedor de Salud Licenciado',
     
     // Quick Contact
-    'quick.contact.phone': '(555) 7123-4567',
+    'quick.contact.phone': '(503) 7777-7777',
     'quick.contact.email': 'info@intergastro.com',
     'quick.contact.hours': 'Lun-Vie: 8AM-6PM',
   }
