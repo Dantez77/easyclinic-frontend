@@ -86,14 +86,15 @@ export const DOCUMENT_TYPES = {
 
 export const mockServices = [
   { id: "SRV-001", name: "Consulta Médica General", price: 1500, category: "Consultas" },
-  { id: "SRV-002", name: "Consulta Especializada - Cardiología", price: 2500, category: "Consultas" },
-  { id: "SRV-003", name: "Consulta Especializada - Neurología", price: 2500, category: "Consultas" },
-  { id: "SRV-004", name: "Electrocardiograma", price: 800, category: "Procedimientos" },
-  { id: "SRV-005", name: "Radiografía de Tórax", price: 1200, category: "Imagenología" },
-  { id: "SRV-006", name: "Hemograma Completo", price: 600, category: "Laboratorio" },
-  { id: "SRV-007", name: "Química Sanguínea", price: 800, category: "Laboratorio" },
-  { id: "SRV-008", name: "Ultrasonido Abdominal", price: 1800, category: "Imagenología" },
-]
+  { id: "SRV-002", name: "Consulta Especializada - Gastroenterología", price: 2500, category: "Consultas" },
+  { id: "SRV-003", name: "Endoscopia Digestiva Alta", price: 5500, category: "Procedimientos" },
+  { id: "SRV-004", name: "Colonoscopia", price: 7000, category: "Procedimientos" },
+  { id: "SRV-005", name: "Ecografía Abdominal", price: 1800, category: "Imagenología" },
+  { id: "SRV-006", name: "Prueba de H. Pylori (aliento/sangre)", price: 1200, category: "Laboratorio" },
+  { id: "SRV-007", name: "Perfil Hepático", price: 1400, category: "Laboratorio" },
+  { id: "SRV-008", name: "CPRE (Colangiopancreatografía Endoscópica Retrógrada)", price: 9000, category: "Procedimientos" },
+];
+
 
 export const mockPatients = [
   {
