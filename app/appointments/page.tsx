@@ -1,4 +1,4 @@
-"use client"
+git ad"use client"
 
 import * as React from "react"
 import {
@@ -965,10 +965,7 @@ export default function AppointmentsPage() {
                     {selectedAppointment.status === "confirmed" && (
                       <Button
                         onClick={() =>
-                          window.open(
-                            `/consultation?patient=${encodeURIComponent(selectedAppointment.patientName)}&appointmentId=${selectedAppointment.id}`,
-                            "_blank",
-                          )
+                          window.location.href = `/consultation?patient=${encodeURIComponent(selectedAppointment.patientName)}&appointmentId=${selectedAppointment.id}`
                         }
                         className="bg-primary hover:bg-main-800 text-white"
                       >
