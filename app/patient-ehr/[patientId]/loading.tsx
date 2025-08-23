@@ -3,9 +3,9 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 
 export default function PatientEHRLoading() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header Skeleton */}
-      <div className="bg-white border-b border-gray-200 p-4 lg:p-6">
+      <div className="bg-card border-b border-main-200 dark:border-main-800 p-4 lg:p-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -89,7 +89,7 @@ export default function PatientEHRLoading() {
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
                 {Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="text-center p-3 bg-gray-50 rounded-lg">
+                  <div key={i} className="text-center p-3 bg-muted rounded-lg">
                     <Skeleton className="h-3 w-16 mx-auto mb-2" />
                     <Skeleton className="h-6 w-12 mx-auto" />
                   </div>

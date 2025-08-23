@@ -65,7 +65,7 @@ export function LoginForm() {
             />
           </div>
 
-          <Button type="submit" className="w-full bg-white text-gray-900 hover:bg-gray-100 font-medium">
+          <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-medium">
             Ingresar
           </Button>
         </form>
@@ -73,7 +73,7 @@ export function LoginForm() {
         <Button
           variant="outline"
           onClick={handleGoogleLogin}
-          className="w-full bg-white text-gray-900 border-gray-300 hover:bg-gray-100 font-medium"
+          className="w-full bg-background text-foreground border-border hover:bg-accent font-medium"
         >
           <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
             <path

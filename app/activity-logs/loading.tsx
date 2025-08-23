@@ -3,9 +3,9 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 export default function ActivityLogsLoading() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header Skeleton */}
-      <div className="bg-white border-b border-gray-200 p-4 lg:p-6">
+      <div className="bg-card border-b border-main-200 dark:border-main-800 p-4 lg:p-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -27,7 +27,7 @@ export default function ActivityLogsLoading() {
       <div className="max-w-7xl mx-auto p-4 lg:p-6">
         <div className="space-y-6">
           {/* Tabs Skeleton */}
-          <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-fit">
+          <div className="flex space-x-1 bg-muted p-1 rounded-lg w-fit">
             <Skeleton className="h-8 w-20" />
             <Skeleton className="h-8 w-24" />
             <Skeleton className="h-8 w-20" />
@@ -59,7 +59,7 @@ export default function ActivityLogsLoading() {
             <CardContent className="p-0">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50 border-b">
+                  <thead className="bg-muted border-b">
                   <tr>
                     <th className="p-4 text-left">
                       <Skeleton className="w-4 h-4" />
@@ -86,7 +86,7 @@ export default function ActivityLogsLoading() {
                   </thead>
                   <tbody className="divide-y divide-gray-200">
                   {Array.from({ length: 10 }).map((_, index) => (
-                    <tr key={index} className="hover:bg-gray-50">
+                    <tr key={index} className="hover:bg-muted">
                       <td className="p-4">
                         <Skeleton className="w-4 h-4" />
                       </td>

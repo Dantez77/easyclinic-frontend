@@ -173,11 +173,11 @@ function getStatusColor(status: string) {
     case "confirmed":
       return "bg-main-100 text-main-800 dark:bg-main-900 dark:text-main-300"
     case "pending":
-      return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+      return "bg-yellow-500/10 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
     case "cancelled":
-      return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+      return "bg-red-500/10 text-red-800 dark:bg-red-900 dark:text-red-300"
     case "completed":
-      return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+      return "bg-green-500/10 text-green-800 dark:bg-green-900 dark:text-green-300"
     default:
       return "bg-main-100 text-main-800 dark:bg-main-900 dark:text-main-300"
   }
@@ -425,7 +425,7 @@ export default function AppointmentsPage() {
                         return (
                           <div
                             key={time}
-                            className="flex items-center gap-4 p-2 border-b border-gray-100 dark:border-gray-800"
+                            className="flex items-center gap-4 p-2 border-b border-main-200 dark:border-main-800 dark:border-main-200 dark:border-main-800"
                           >
                             <div className="w-16 text-sm font-medium text-muted-foreground">{time}</div>
                             <div className="flex-1">

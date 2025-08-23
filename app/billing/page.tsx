@@ -881,25 +881,25 @@ export default function BillingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 p-4 lg:p-6">
+      <div className="bg-card border-b border-main-200 dark:border-main-800 p-4 lg:p-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+              <div className="w-10 h-10 bg-green-500/10 rounded-full flex items-center justify-center">
                 <DollarSign className="w-5 h-5 text-green-600" />
               </div>
               <div>
-                <h1 className="text-xl lg:text-2xl font-bold text-gray-900">Facturación</h1>
-                <p className="text-sm lg:text-base text-gray-500">Gestión de facturas y pagos</p>
+                <h1 className="text-xl lg:text-2xl font-bold text-foreground">Facturación</h1>
+                <p className="text-sm lg:text-base text-muted-foreground">Gestión de facturas y pagos</p>
               </div>
             </div>
             <div className="flex gap-2">
               {/* Stripe Terminal Connection Status */}
-              <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100">
+              <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-muted">
                 <div className={`w-2 h-2 rounded-full ${stripeTerminalConnected ? "bg-green-500" : "bg-red-500"}`} />
-                <span className="text-xs text-gray-600">
+                <span className="text-xs text-muted-foreground">
                   {stripeTerminalConnected ? "Terminal Conectado" : "Terminal Desconectado"}
                 </span>
               </div>
@@ -935,10 +935,10 @@ export default function BillingPage() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Ingresos Totales</p>
+                      <p className="text-sm font-medium text-muted-foreground">Ingresos Totales</p>
                       <p className="text-2xl font-bold text-green-600">${totalRevenue.toLocaleString()}</p>
                     </div>
-                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                    <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center">
                       <TrendingUp className="w-6 h-6 text-green-600" />
                     </div>
                   </div>
@@ -949,10 +949,10 @@ export default function BillingPage() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Facturas Pendientes</p>
+                      <p className="text-sm font-medium text-muted-foreground">Facturas Pendientes</p>
                       <p className="text-2xl font-bold text-yellow-600">${pendingAmount.toLocaleString()}</p>
                     </div>
-                    <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                    <div className="w-12 h-12 bg-yellow-500/10 rounded-full flex items-center justify-center">
                       <Clock className="w-6 h-6 text-yellow-600" />
                     </div>
                   </div>
@@ -963,10 +963,10 @@ export default function BillingPage() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Facturas Vencidas</p>
+                      <p className="text-sm font-medium text-muted-foreground">Facturas Vencidas</p>
                       <p className="text-2xl font-bold text-red-600">${overdueAmount.toLocaleString()}</p>
                     </div>
-                    <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                    <div className="w-12 h-12 bg-red-500/10 rounded-full flex items-center justify-center">
                       <AlertCircle className="w-6 h-6 text-red-600" />
                     </div>
                   </div>
@@ -977,11 +977,11 @@ export default function BillingPage() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Total Facturas</p>
-                      <p className="text-2xl font-bold text-blue-600">{invoices.length}</p>
+                      <p className="text-sm font-medium text-muted-foreground">Total Facturas</p>
+                      <p className="text-2xl font-bold text-primary">{invoices.length}</p>
                     </div>
-                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                      <Receipt className="w-6 h-6 text-blue-600" />
+                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                      <Receipt className="w-6 h-6 text-primary" />
                     </div>
                   </div>
                 </CardContent>
@@ -1002,7 +1002,7 @@ export default function BillingPage() {
                           {getStatusIcon(invoice.status)}
                           <div>
                             <p className="font-medium">{invoice.id}</p>
-                            <p className="text-sm text-gray-500">{invoice.patientName}</p>
+                            <p className="text-sm text-muted-foreground">{invoice.patientName}</p>
                             {invoice.dteUuid && (
                               <div className="flex items-center gap-1 text-xs text-green-600">
                                 <Shield className="w-3 h-3" />
@@ -1033,7 +1033,7 @@ export default function BillingPage() {
                 <div className="flex flex-col lg:flex-row gap-4">
                   <div className="flex-1">
                     <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                       <Input
                         placeholder="Buscar por paciente o número de factura..."
                         value={searchTerm}
@@ -1088,25 +1088,25 @@ export default function BillingPage() {
               <CardContent className="p-0">
                 <div className="overflow-x-auto">
                   <table className="w-full">
-                    <thead className="bg-gray-50 border-b">
+                    <thead className="bg-muted border-b">
                     <tr>
-                      <th className="p-4 text-left text-sm font-medium text-gray-900">Documento</th>
-                      <th className="p-4 text-left text-sm font-medium text-gray-900">Paciente</th>
-                      <th className="p-4 text-left text-sm font-medium text-gray-900 hidden md:table-cell">Fecha</th>
-                      <th className="p-4 text-left text-sm font-medium text-gray-900 hidden lg:table-cell">
+                      <th className="p-4 text-left text-sm font-medium text-foreground">Documento</th>
+                      <th className="p-4 text-left text-sm font-medium text-foreground">Paciente</th>
+                      <th className="p-4 text-left text-sm font-medium text-foreground hidden md:table-cell">Fecha</th>
+                      <th className="p-4 text-left text-sm font-medium text-foreground hidden lg:table-cell">
                         Vencimiento
                       </th>
-                      <th className="p-4 text-left text-sm font-medium text-gray-900">Total</th>
-                      <th className="p-4 text-left text-sm font-medium text-gray-900">Estado</th>
-                      <th className="p-4 text-left text-sm font-medium text-gray-900">Acciones</th>
+                      <th className="p-4 text-left text-sm font-medium text-foreground">Total</th>
+                      <th className="p-4 text-left text-sm font-medium text-foreground">Estado</th>
+                      <th className="p-4 text-left text-sm font-medium text-foreground">Acciones</th>
                     </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
                     {paginatedInvoices.map((invoice) => (
-                      <tr key={invoice.id} className="hover:bg-gray-50">
+                      <tr key={invoice.id} className="hover:bg-muted">
                         <td className="p-4">
-                          <div className="font-medium text-gray-900">{invoice.id}</div>
-                          <div className="text-xs text-gray-500">{DOCUMENT_TYPES[invoice.documentType]?.name}</div>
+                          <div className="font-medium text-foreground">{invoice.id}</div>
+                          <div className="text-xs text-muted-foreground">{DOCUMENT_TYPES[invoice.documentType]?.name}</div>
                           {invoice.dteUuid && (
                             <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
                               <Shield className="w-3 h-3" />
@@ -1116,29 +1116,29 @@ export default function BillingPage() {
                         </td>
                         <td className="p-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                              <User className="w-4 h-4 text-blue-600" />
+                            <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                              <User className="w-4 h-4 text-primary" />
                             </div>
                             <div>
-                              <div className="font-medium text-gray-900">{invoice.patientName}</div>
-                              <div className="text-sm text-gray-500">{invoice.patientId}</div>
+                              <div className="font-medium text-foreground">{invoice.patientName}</div>
+                              <div className="text-sm text-muted-foreground">{invoice.patientId}</div>
                             </div>
                           </div>
                         </td>
                         <td className="p-4 hidden md:table-cell">
-                          <div className="text-sm text-gray-900">
+                          <div className="text-sm text-foreground">
                             {format(new Date(invoice.date), "dd/MM/yyyy", { locale: es })}
                           </div>
                         </td>
                         <td className="p-4 hidden lg:table-cell">
-                          <div className="text-sm text-gray-900">
+                          <div className="text-sm text-foreground">
                             {format(new Date(invoice.dueDate), "dd/MM/yyyy", { locale: es })}
                           </div>
                         </td>
                         <td className="p-4">
-                          <div className="font-medium text-gray-900">${invoice.total.toLocaleString()}</div>
+                          <div className="font-medium text-foreground">${invoice.total.toLocaleString()}</div>
                           {invoice.insuranceCoverage > 0 && (
-                            <div className="text-xs text-gray-500">Seguro: {invoice.insuranceCoverage}%</div>
+                            <div className="text-xs text-muted-foreground">Seguro: {invoice.insuranceCoverage}%</div>
                           )}
                         </td>
                         <td className="p-4">
@@ -1210,7 +1210,7 @@ export default function BillingPage() {
                 {/* Pagination */}
                 {totalPages > 1 && (
                   <div className="flex items-center justify-between p-4 border-t">
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-muted-foreground">
                       Mostrando {(currentPage - 1) * itemsPerPage + 1} a{" "}
                       {Math.min(currentPage * itemsPerPage, filteredInvoices.length)} de {filteredInvoices.length}{" "}
                       facturas
@@ -1456,29 +1456,29 @@ export default function BillingPage() {
                   onFocus={() => setShowPatientSuggestions(searchPatientTerm.length > 0)}
                 />
                 {showPatientSuggestions && (
-                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto">
+                  <div className="absolute z-10 w-full mt-1 bg-white border border-main-200 dark:border-main-800 rounded-md shadow-lg max-h-60 overflow-auto">
                     {filteredPatientSuggestions.length > 0 ? (
                       filteredPatientSuggestions.map((patient) => (
                         <div
                           key={patient.id}
-                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0"
+                          className="px-4 py-2 hover:bg-accent cursor-pointer border-b border-main-200 dark:border-main-800 last:border-b-0"
                           onClick={() => {
                             setNewInvoice({ ...newInvoice, patientId: patient.id })
                             setSearchPatientTerm("")
                             setShowPatientSuggestions(false)
                           }}
                         >
-                          <div className="font-medium text-gray-900">{patient.name}</div>
-                          <div className="text-sm text-gray-500">
+                          <div className="font-medium text-foreground">{patient.name}</div>
+                          <div className="text-sm text-muted-foreground">
                             {patient.id} - {patient.insurance}
                           </div>
-                          <div className="text-xs text-gray-400">
+                          <div className="text-xs text-muted-foreground">
                             Cobertura: {patient.coverage}% | NIT: {patient.nit || "No registrado"}
                           </div>
                         </div>
                       ))
                     ) : (
-                      <div className="px-4 py-2 text-gray-500 text-sm">No se encontraron pacientes</div>
+                      <div className="px-4 py-2 text-muted-foreground text-sm">No se encontraron pacientes</div>
                     )}
                   </div>
                 )}
@@ -1494,7 +1494,7 @@ export default function BillingPage() {
                         {mockPatients.find((p) => p.id === newInvoice.patientId)?.insurance} - Cobertura:{" "}
                         {mockPatients.find((p) => p.id === newInvoice.patientId)?.coverage}%
                       </p>
-                      <p className="text-xs text-blue-600">
+                      <p className="text-xs text-primary">
                         NIT: {mockPatients.find((p) => p.id === newInvoice.patientId)?.nit || "No registrado"}
                       </p>
                     </div>
@@ -1668,7 +1668,7 @@ export default function BillingPage() {
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <h3 className="text-lg font-semibold">{viewingInvoice.id}</h3>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-muted-foreground">
                         Fecha: {format(new Date(viewingInvoice.date), "dd/MM/yyyy", { locale: es })}
                       </p>
                       {viewingInvoice.dteUuid && (
@@ -1684,20 +1684,20 @@ export default function BillingPage() {
                   </div>
                   <div>
                     <p className="font-medium">{viewingInvoice.patientName}</p>
-                    <p className="text-sm text-gray-500">{viewingInvoice.patientId}</p>
-                    {viewingInvoice.nit && <p className="text-sm text-gray-500">NIT: {viewingInvoice.nit}</p>}
+                    <p className="text-sm text-muted-foreground">{viewingInvoice.patientId}</p>
+                    {viewingInvoice.nit && <p className="text-sm text-muted-foreground">NIT: {viewingInvoice.nit}</p>}
                   </div>
                 </div>
 
                 {/* Services */}
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-3">Servicios</h4>
+                  <h4 className="font-medium text-foreground mb-3">Servicios</h4>
                   <div className="space-y-2">
                     {viewingInvoice.services.map((service, index) => (
-                      <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                      <div key={index} className="flex justify-between items-center p-3 bg-muted rounded-lg">
                         <div>
                           <p className="font-medium text-sm">{service.description}</p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-muted-foreground">
                             {service.quantity} x ${service.unitPrice.toLocaleString()}
                           </p>
                         </div>
@@ -1711,17 +1711,17 @@ export default function BillingPage() {
                 <div className="border-t pt-4">
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Subtotal:</span>
+                      <span className="text-muted-foreground">Subtotal:</span>
                       <span>${viewingInvoice.subtotal.toLocaleString()}</span>
                     </div>
                     {viewingInvoice.discount > 0 && (
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Descuento:</span>
+                        <span className="text-muted-foreground">Descuento:</span>
                         <span className="text-red-600">-${viewingInvoice.discount.toLocaleString()}</span>
                       </div>
                     )}
                     <div className="flex justify-between">
-                      <span className="text-gray-600">
+                      <span className="text-muted-foreground">
                         {viewingInvoice.documentType.includes("dte") ? "IVA (13%)" : "ITBIS (18%)"}:
                       </span>
                       <span>${viewingInvoice.tax.toLocaleString()}</span>
@@ -1736,10 +1736,10 @@ export default function BillingPage() {
                 {/* Insurance Coverage */}
                 {viewingInvoice.insuranceCoverage > 0 && (
                   <div className="border-t pt-4">
-                    <h4 className="font-medium text-gray-900 mb-3">Cobertura del Seguro</h4>
+                    <h4 className="font-medium text-foreground mb-3">Cobertura del Seguro</h4>
                     <div className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Cobertura ({viewingInvoice.insuranceCoverage}%):</span>
+                        <span className="text-muted-foreground">Cobertura ({viewingInvoice.insuranceCoverage}%):</span>
                         <span className="text-green-600">${viewingInvoice.insuranceAmount.toLocaleString()}</span>
                       </div>
                       <div className="flex justify-between font-medium">
@@ -1753,19 +1753,19 @@ export default function BillingPage() {
                 {/* Payment Info */}
                 {viewingInvoice.status === "Pagada" && (
                   <div className="border-t pt-4">
-                    <h4 className="font-medium text-gray-900 mb-3">Información de Pago</h4>
+                    <h4 className="font-medium text-foreground mb-3">Información de Pago</h4>
                     <div className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Método de Pago:</span>
+                        <span className="text-muted-foreground">Método de Pago:</span>
                         <span>{viewingInvoice.paymentMethod}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Fecha de Pago:</span>
+                        <span className="text-muted-foreground">Fecha de Pago:</span>
                         <span>{format(new Date(viewingInvoice.paymentDate), "dd/MM/yyyy", { locale: es })}</span>
                       </div>
                       {viewingInvoice.stripePaymentId && (
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Stripe ID:</span>
+                          <span className="text-muted-foreground">Stripe ID:</span>
                           <span className="text-xs font-mono">{viewingInvoice.stripePaymentId}</span>
                         </div>
                       )}
@@ -1776,14 +1776,14 @@ export default function BillingPage() {
                 {/* DTE Information */}
                 {viewingInvoice.dteUuid && (
                   <div className="border-t pt-4">
-                    <h4 className="font-medium text-gray-900 mb-3">Información DTE</h4>
+                    <h4 className="font-medium text-foreground mb-3">Información DTE</h4>
                     <div className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-gray-600">UUID DTE:</span>
+                        <span className="text-muted-foreground">UUID DTE:</span>
                         <span className="text-xs font-mono">{viewingInvoice.dteUuid}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Estado DTE:</span>
+                        <span className="text-muted-foreground">Estado DTE:</span>
                         <Badge variant={viewingInvoice.dteStatus === "accepted" ? "default" : "secondary"}>
                           {viewingInvoice.dteStatus}
                         </Badge>
@@ -1795,13 +1795,13 @@ export default function BillingPage() {
                 {/* Notes */}
                 {viewingInvoice.notes && (
                   <div className="border-t pt-4">
-                    <h4 className="font-medium text-gray-900 mb-2">Notas</h4>
-                    <p className="text-sm text-gray-600">{viewingInvoice.notes}</p>
+                    <h4 className="font-medium text-foreground mb-2">Notas</h4>
+                    <p className="text-sm text-muted-foreground">{viewingInvoice.notes}</p>
                   </div>
                 )}
 
                 {/* Actions */}
-                <div className="flex flex-col sm:flex-row gap-2 pt-4 sticky bottom-0 bg-white pb-4">
+                <div className="flex flex-col sm:flex-row gap-2 pt-4 sticky bottom-0 bg-card pb-4">
                   {/*<Button variant="outline" className="flex-1 bg-transparent">
                     <Download className="w-4 h-4 mr-2" />
                     Descargar PDF
@@ -1841,14 +1841,14 @@ export default function BillingPage() {
           </DialogHeader>
           {processingPayment && (
             <div className="space-y-4">
-              <div className="p-4 bg-gray-50 rounded-lg">
+              <div className="p-4 bg-muted rounded-lg">
                 <p className="font-medium">{processingPayment.patientName}</p>
-                <p className="text-sm text-gray-500">Factura: {processingPayment.id}</p>
+                <p className="text-sm text-muted-foreground">Factura: {processingPayment.id}</p>
                 <p className="text-lg font-bold text-green-600 mt-2">
                   Total: ${processingPayment.patientAmount.toLocaleString()}
                 </p>
                 {processingPayment.insuranceCoverage > 0 && (
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-muted-foreground">
                     (Seguro cubre: ${processingPayment.insuranceAmount.toLocaleString()})
                   </p>
                 )}
@@ -1904,12 +1904,12 @@ export default function BillingPage() {
       {/* Processing Overlays */}
       {isProcessingStripePayment && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full mx-4">
+          <div className="bg-card p-6 rounded-lg shadow-lg max-w-sm w-full mx-4">
             <div className="text-center">
-              <CreditCard className="w-12 h-12 mx-auto mb-4 text-blue-600 animate-pulse" />
+              <CreditCard className="w-12 h-12 mx-auto mb-4 text-primary animate-pulse" />
               <h3 className="text-lg font-semibold mb-2">Procesando Pago</h3>
-              <p className="text-gray-600 mb-4">Presente la tarjeta o dispositivo móvil al lector NFC</p>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <p className="text-muted-foreground mb-4">Presente la tarjeta o dispositivo móvil al lector NFC</p>
+              <div className="w-full bg-muted rounded-full h-2">
                 <div className="bg-blue-600 h-2 rounded-full animate-pulse" style={{ width: "60%" }}></div>
               </div>
             </div>
@@ -1919,12 +1919,12 @@ export default function BillingPage() {
 
       {isDteProcessing && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full mx-4">
+          <div className="bg-card p-6 rounded-lg shadow-lg max-w-sm w-full mx-4">
             <div className="text-center">
               <Shield className="w-12 h-12 mx-auto mb-4 text-green-600 animate-pulse" />
               <h3 className="text-lg font-semibold mb-2">Generando DTE</h3>
-              <p className="text-gray-600 mb-4">Enviando documento al Ministerio de Hacienda...</p>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <p className="text-muted-foreground mb-4">Enviando documento al Ministerio de Hacienda...</p>
+              <div className="w-full bg-muted rounded-full h-2">
                 <div className="bg-green-600 h-2 rounded-full animate-pulse" style={{ width: "80%" }}></div>
               </div>
             </div>

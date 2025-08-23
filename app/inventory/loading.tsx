@@ -3,9 +3,9 @@ import { Card, CardContent } from "@/components/ui/card"
 
 export default function InventoryLoading() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header Skeleton */}
-      <div className="bg-white border-b border-gray-200 p-4 lg:p-6">
+      <div className="bg-card border-b border-main-200 dark:border-main-800 p-4 lg:p-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -69,7 +69,7 @@ export default function InventoryLoading() {
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b">
+                <thead className="bg-muted border-b">
                 <tr>
                   {Array.from({ length: 7 }).map((_, i) => (
                     <th key={i} className="p-4 text-left">

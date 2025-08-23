@@ -28,7 +28,7 @@ export default function LoginPage() {
       </div>
 
       {/* Right side - Welcome Section */}
-      <div className="flex-1 bg-gray-900 flex flex-col items-center justify-center p-8">
+      <div className="flex-1 bg-card flex flex-col items-center justify-center p-8">
         <div className="text-center">
           {/* InterGastro Logo */}
           <div className="mb-8">

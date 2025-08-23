@@ -164,17 +164,17 @@ export default function PatientRegistrationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Page Header */}
-      <div className="bg-white border-b border-gray-200 p-4 lg:p-6">
+      <div className="bg-card border-b border-main-200 dark:border-main-800 p-4 lg:p-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-              <UserPlus className="w-5 h-5 text-blue-600" />
+            <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+              <UserPlus className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <h1 className="text-xl lg:text-2xl font-bold text-gray-900">Registro de Paciente</h1>
-              <p className="text-sm lg:text-base text-gray-500">Ingrese la información del nuevo paciente</p>
+              <h1 className="text-xl lg:text-2xl font-bold text-foreground">Registro de Paciente</h1>
+              <p className="text-sm lg:text-base text-muted-foreground">Ingrese la información del nuevo paciente</p>
             </div>
           </div>
         </div>
@@ -261,7 +261,7 @@ export default function PatientRegistrationPage() {
                       />
                     </PopoverContent>
                   </Popover>
-                  {dateOfBirth && <p className="text-xs text-gray-500 mt-1">Edad: {calculateAge(dateOfBirth)} años</p>}
+                  {dateOfBirth && <p className="text-xs text-muted-foreground mt-1">Edad: {calculateAge(dateOfBirth)} años</p>}
                 </div>
 
                 <div>
@@ -344,7 +344,7 @@ export default function PatientRegistrationPage() {
                     Teléfono *
                   </Label>
                   <div className="relative mt-1">
-                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
                       id="phone"
                       value={formData.phone}
@@ -360,7 +360,7 @@ export default function PatientRegistrationPage() {
                     Correo Electrónico
                   </Label>
                   <div className="relative mt-1">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
                       id="email"
                       type="email"
@@ -378,7 +378,7 @@ export default function PatientRegistrationPage() {
                   Dirección *
                 </Label>
                 <div className="relative mt-1">
-                  <MapPin className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                  <MapPin className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
                   <Textarea
                     id="address"
                     value={formData.address}
@@ -486,7 +486,7 @@ export default function PatientRegistrationPage() {
                     Teléfono *
                   </Label>
                   <div className="relative mt-1">
-                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
                       id="emergencyPhone"
                       value={formData.emergencyPhone}
@@ -502,7 +502,7 @@ export default function PatientRegistrationPage() {
                     Correo Electrónico
                   </Label>
                   <div className="relative mt-1">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
                       id="emergencyEmail"
                       type="email"

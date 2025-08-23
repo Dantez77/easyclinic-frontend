@@ -2,352 +2,588 @@
 @tailwind components;
 @tailwind utilities;
 
+/* -------------------- Utilities -------------------- */
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+    .text-balance {
+        text-wrap: balance;
+    }
 }
 
+/* -------------------- Root Colors -------------------- */
 @layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 215 52% 37%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 215 52% 37%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 215 52% 37%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 215 52% 37%;
-    
-    /* Custom color variants for the new main color */
-    --main-50: 215 52% 95%;
-    --main-100: 215 52% 90%;
-    --main-200: 215 52% 80%;
-    --main-300: 215 52% 70%;
-    --main-400: 215 52% 60%;
-    --main-500: 215 52% 50%;
-    --main-600: 215 52% 40%;
-    --main-700: 215 52% 30%;
-    --main-800: 215 52% 25%;
-    --main-900: 215 52% 20%;
-    --main-950: 215 52% 15%;
-  }
-  
-  .dark {
-    /* Neutral grayscale dark mode */
-    --background: 0 0% 7%;
-    --foreground: 0 0% 95%;
-    --card: 0 0% 10%;
-    --card-foreground: 0 0% 95%;
-    --popover: 0 0% 10%;
-    --popover-foreground: 0 0% 95%;
-    --primary: 215 52% 60%;
-    --primary-foreground: 0 0% 7%;
-    --secondary: 0 0% 14%;
-    --secondary-foreground: 0 0% 95%;
-    --muted: 0 0% 16%;
-    --muted-foreground: 0 0% 70%;
-    --accent: 0 0% 16%;
-    --accent-foreground: 0 0% 95%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 0 0% 95%;
-    --border: 0 0% 22%;
-    --input: 0 0% 22%;
-    --ring: 215 52% 60%;
-    --chart-1: 215 52% 60%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --sidebar-background: 0 0% 9%;
-    --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 215 52% 60%;
-    --sidebar-primary-foreground: 0 0% 7%;
-    --sidebar-accent: 0 0% 16%;
-    --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 0 0% 22%;
-    --sidebar-ring: 215 52% 60%;
-    
-    /* Custom color variants for dark mode */
-    --main-50: 215 52% 20%;
-    --main-100: 215 52% 25%;
-    --main-200: 215 52% 30%;
-    --main-300: 215 52% 40%;
-    --main-400: 215 52% 50%;
-    --main-500: 215 52% 60%;
-    --main-600: 215 52% 70%;
-    --main-700: 215 52% 80%;
-    --main-800: 215 52% 85%;
-    --main-900: 215 52% 90%;
-    --main-950: 215 52% 95%;
-  }
+    :root {
+        --background: 0 0% 100%;
+        --foreground: 0 0% 3.9%;
+        --card: 0 0% 100%;
+        --card-foreground: 0 0% 3.9%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 0 0% 3.9%;
+        --primary: 215 52% 37%;
+        --primary-foreground: 0 0% 98%;
+        --secondary: 0 0% 96.1%;
+        --secondary-foreground: 0 0% 9%;
+        --muted: 0 0% 96.1%;
+        --muted-foreground: 0 0% 45.1%;
+        --accent: 0 0% 96.1%;
+        --accent-foreground: 0 0% 9%;
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 0 0% 89.8%;
+        --input: 0 0% 89.8%;
+        --ring: 215 52% 37%;
+        --chart-1: 12 76% 61%;
+        --chart-2: 173 58% 39%;
+        --chart-3: 197 37% 24%;
+        --chart-4: 43 74% 66%;
+        --chart-5: 27 87% 67%;
+        --radius: 0.5rem;
+        --sidebar-background: 0 0% 98%;
+        --sidebar-foreground: 240 5.3% 26.1%;
+        --sidebar-primary: 215 52% 37%;
+        --sidebar-primary-foreground: 0 0% 98%;
+        --sidebar-accent: 240 4.8% 95.9%;
+        --sidebar-accent-foreground: 240 5.9% 10%;
+        --sidebar-border: 220 13% 91%;
+        --sidebar-ring: 215 52% 37%;
+
+        /* Main color variants */
+        --main-50: 215 52% 95%;
+        --main-100: 215 52% 90%;
+        --main-200: 215 52% 80%;
+        --main-300: 215 52% 70%;
+        --main-400: 215 52% 60%;
+        --main-500: 215 52% 50%;
+        --main-600: 215 52% 40%;
+        --main-700: 215 52% 30%;
+        --main-800: 215 52% 25%;
+        --main-900: 215 52% 20%;
+        --main-950: 215 52% 15%;
+    }
+
+    /* -------------------- Dark Mode Colors -------------------- */
+    .dark {
+        --background: 0 0% 6%;
+        --foreground: 0 0% 95%;
+        --card: 0 0% 10%;
+        --card-foreground: 0 0% 95%;
+        --popover: 0 0% 10%;
+        --popover-foreground: 0 0% 95%;
+        --primary: 215 52% 60%;
+        --primary-foreground: 0 0% 7%;
+        --secondary: 0 0% 12%;
+        --secondary-foreground: 0 0% 95%;
+        --muted: 0 0% 18%;
+        --muted-foreground: 0 0% 65%;
+        --accent: 0 0% 16%;
+        --accent-foreground: 0 0% 95%;
+        --destructive: 0 63% 31%;
+        --destructive-foreground: 0 0% 95%;
+        --border: 0 0% 20%;
+        --input: 0 0% 20%;
+        --ring: 215 52% 60%;
+        --chart-1: 215 52% 60%;
+        --chart-2: 160 60% 45%;
+        --chart-3: 30 80% 55%;
+        --chart-4: 280 65% 60%;
+        --chart-5: 340 75% 55%;
+        --sidebar-background: 0 0% 8%;
+        --sidebar-foreground: 0 0% 95%;
+        --sidebar-primary: 215 52% 60%;
+        --sidebar-primary-foreground: 0 0% 7%;
+        --sidebar-accent: 0 0% 14%;
+        --sidebar-accent-foreground: 0 0% 95%;
+        --sidebar-border: 0 0% 14%;
+        --sidebar-ring: 215 52% 60%;
+
+        --main-50: 215 52% 20%;
+        --main-100: 215 52% 25%;
+        --main-200: 215 52% 30%;
+        --main-300: 215 52% 40%;
+        --main-400: 215 52% 50%;
+        --main-500: 215 52% 60%;
+        --main-600: 215 52% 70%;
+        --main-700: 215 52% 80%;
+        --main-800: 215 52% 85%;
+        --main-900: 215 52% 90%;
+        --main-950: 215 52% 95%;
+    }
 }
 
+/* -------------------- Base Styles -------------------- */
 @layer base {
-  * {
-    @apply border-border;
-  }
-  
-  body {
-    @apply bg-background text-foreground;
-  }
-  
-  /* Enhanced dark mode styling */
-  .dark {
-    background: linear-gradient(135deg, hsl(0 0% 7%) 0%, hsl(0 0% 10%) 100%);
-    min-height: 100vh;
-  }
-  
-  .dark .bg-background {
-    background: linear-gradient(135deg, hsl(0 0% 7%) 0%, hsl(0 0% 10%) 100%);
-  }
-  
-  .dark .bg-card {
-    background: linear-gradient(135deg, hsl(0 0% 10%) 0%, hsl(0 0% 14%) 100%);
-    border: 1px solid hsl(0 0% 22%);
-    box-shadow: 
-      0 4px 6px -1px rgba(0, 0, 0, 0.3),
-      0 2px 4px -1px rgba(0, 0, 0, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  }
-  
-  .dark .bg-secondary {
-    background: linear-gradient(135deg, hsl(0 0% 14%) 0%, hsl(0 0% 16%) 100%);
-    border: 1px solid hsl(0 0% 26%);
-    box-shadow: 
-      0 2px 4px -1px rgba(0, 0, 0, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.03);
-  }
-  
-  .dark .bg-muted {
-    background: linear-gradient(135deg, hsl(0 0% 16%) 0%, hsl(0 0% 18%) 100%);
-    border: 1px solid hsl(0 0% 26%);
-  }
-  
-  .dark .bg-accent {
-    background: linear-gradient(135deg, hsl(0 0% 16%) 0%, hsl(0 0% 20%) 100%);
-    border: 1px solid hsl(0 0% 26%);
-  }
-  
-  /* Enhanced button styling for dark mode */
-  .dark .bg-primary {
-    background: linear-gradient(135deg, hsl(215 52% 60%) 0%, hsl(215 52% 55%) 100%);
-    box-shadow: 
-      0 4px 6px -1px rgba(215, 52%, 37%, 0.3),
-      0 2px 4px -1px rgba(215, 52%, 37%, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  }
-  
-  .dark .bg-primary:hover {
-    background: linear-gradient(135deg, hsl(215 52% 65%) 0%, hsl(215 52% 60%) 100%);
-    box-shadow: 
-      0 6px 8px -1px rgba(215, 52%, 37%, 0.4),
-      0 4px 6px -1px rgba(215, 52%, 37%, 0.3),
-      inset 0 1px 0 rgba(255, 255, 255, 0.15);
-  }
-  
-  /* Enhanced input styling for dark mode */
-  .dark input, .dark textarea {
-    background: linear-gradient(135deg, hsl(0 0% 12%) 0%, hsl(0 0% 14%) 100%);
-    border: 1px solid hsl(0 0% 26%);
-    box-shadow: 
-      0 1px 2px rgba(0, 0, 0, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  }
-  
-  .dark input:focus, .dark textarea:focus {
-    border-color: hsl(215 52% 60%);
-    box-shadow: 
-      0 0 0 3px rgba(215, 52%, 37%, 0.1),
-      0 1px 2px rgba(0, 0, 0, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  }
-  
-  /* Enhanced sidebar styling for dark mode */
-  .dark .border-main-800 {
-    border-color: hsl(0 0% 26%);
-  }
-  
-  .dark .hover\:bg-main-950:hover {
-    background: linear-gradient(135deg, hsl(0 0% 20%) 0%, hsl(0 0% 24%) 100%);
-    border: 1px solid hsl(0 0% 30%);
-  }
-  
-  /* Contact section dark mode fixes */
-  .dark #contact {
-    position: relative;
-    z-index: 1;
-  }
-  
-  .dark #contact .container {
-    position: relative;
-    z-index: 10;
-  }
-  
-  .dark #contact .card {
-    background: hsl(var(--card));
-    border-color: hsl(var(--border));
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-  }
-  
-  .dark #contact input,
-  .dark #contact textarea {
-    background: hsl(var(--input));
-    border-color: hsl(var(--border));
-    color: hsl(var(--foreground));
-    position: relative;
-    z-index: 10;
-  }
-  
-  .dark #contact input:focus,
-  .dark #contact textarea:focus {
-    border-color: hsl(var(--ring));
-    box-shadow: 0 0 0 3px rgba(215, 52%, 37%, 0.1);
-    outline: none;
-  }
-  
-  .dark #contact .text-muted-foreground {
-    color: hsl(var(--muted-foreground));
-  }
-  
-  .dark #contact .text-primary {
-    color: hsl(var(--primary));
-  }
-  
-  /* Enhanced section backgrounds for dark mode */
-  .dark .bg-main-950\/20 {
-    background: linear-gradient(135deg, 
-      rgba(24, 24, 27, 0.15) 0%, 
-      rgba(24, 24, 27, 0.08) 100%);
-    border: 1px solid rgba(24, 24, 27, 0.18);
-    backdrop-filter: blur(10px);
-  }
-  
-  /* Enhanced hero section for dark mode */
-  .dark .dark\:from-main-950 {
-    background: linear-gradient(135deg, 
-      hsl(0 0% 7%) 0%, 
-      hsl(0 0% 10%) 50%,
-      hsl(0 0% 12%) 100%);
-  }
-  
-  .dark .dark\:to-background {
-    background: linear-gradient(135deg, 
-      hsl(0 0% 7%) 0%, 
-      hsl(0 0% 10%) 50%,
-      hsl(0 0% 12%) 100%);
-  }
-  
-  /* Enhanced shadows for dark mode */
-  .dark .shadow-lg {
-    box-shadow: 
-      0 10px 15px -3px rgba(0, 0, 0, 0.4),
-      0 4px 6px -2px rgba(0, 0, 0, 0.3),
-      0 0 0 1px rgba(255, 255, 255, 0.05);
-  }
-  
-  .dark .shadow-2xl {
-    box-shadow: 
-      0 25px 50px -12px rgba(0, 0, 0, 0.5),
-      0 0 0 1px rgba(255, 255, 255, 0.05);
-  }
-  
-  /* Enhanced text colors for better readability */
-  .dark .text-main-400 {
-    color: hsl(215 52% 70%);
-    text-shadow: 0 0 20px rgba(215, 52%, 37%, 0.3);
-  }
-  
-  .dark .text-muted-foreground {
-    color: hsl(215 16% 75%);
-  }
-  
-  /* Enhanced badge styling for dark mode */
-  .dark .bg-main-900 {
-    background: linear-gradient(135deg, hsl(220 23% 15%) 0%, hsl(220 23% 18%) 100%);
-    border: 1px solid hsl(220 23% 20%);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-  }
-  
-  /* Enhanced separator styling for dark mode */
-  .dark .border-main-800 {
-    border-color: hsl(0 0% 26%);
-  }
-  
-  /* Enhanced backdrop blur for dark mode */
-  .dark .backdrop-blur {
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    background: rgba(215, 52%, 37%, 0.1);
-  }
-  
-  /* Firefox-specific fixes for sidebar responsiveness */
-  @supports (-moz-appearance: none) {
-    .dark .bg-main-950\/20 {
-      background: rgba(215, 52%, 37%, 0.15);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+    * {
+        @apply border-border transition-colors;
     }
-    
-    /* Ensure proper stacking context for Firefox */
-    .dark header {
-      transform: translateZ(0);
-      will-change: transform;
+
+    /* Remove tab borders after clicking - Light mode */
+    [role="tab"][data-state="active"] {
+        border: none !important;
+        box-shadow: none !important;
     }
-    
-    /* Fix Firefox transform issues */
-    .dark .absolute {
-      transform: translateZ(0);
+
+    /* Remove focus rings on tabs - Light mode */
+    [role="tab"]:focus {
+        outline: none !important;
+        box-shadow: none !important;
     }
-    
-    /* Firefox-specific backdrop filter fallback */
-    .dark .bg-main-50 {
-      background: rgb(239 246 255);
+
+    [role="tab"]:focus-visible {
+        outline: none !important;
+        box-shadow: none !important;
     }
-    
-    .dark .dark\:bg-main-950\/20 {
-      background: rgba(215, 52%, 37%, 0.15);
+
+    body {
+        @apply bg-background text-foreground;
     }
-    
-    /* Firefox sidebar transition fixes */
-    [data-sidebar] {
-      transform: translateZ(0);
-      will-change: transform;
+
+    /* Dark mode backgrounds */
+    .dark {
+        background: hsl(var(--background));
+        min-height: 100vh;
     }
-    
-    /* Ensure proper z-index stacking in Firefox */
-    .sidebar {
-      transform: translateZ(0);
+
+    .dark .bg-background {
+        background: hsl(var(--background));
     }
-    
-    /* Fix Firefox sticky positioning issues */
-    .sticky {
-      transform: translateZ(0);
+
+    .dark .bg-card {
+        background: hsl(var(--card));
     }
-  }
+
+    .dark .bg-secondary {
+        background: hsl(var(--secondary));
+    }
+
+    .dark .bg-muted {
+        background: hsl(var(--muted));
+    }
+
+    .dark .bg-accent {
+        background: hsl(var(--accent));
+    }
+
+    /* Buttons */
+    .dark .bg-primary {
+        background: linear-gradient(135deg, hsl(215 52% 50%) 0%, hsl(215 52% 45%) 100%);
+        color: hsl(0 0% 100%);
+        box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    }
+
+    .dark .bg-primary:hover {
+        background: linear-gradient(135deg, hsl(215 52% 55%) 0%, hsl(215 52% 50%) 100%);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+
+    /* Inputs and Textareas */
+    .dark input,
+    .dark textarea {
+        background: hsl(var(--muted));
+        color: hsl(var(--foreground));
+    }
+
+    .dark input:focus,
+    .dark textarea:focus {
+        border-color: hsl(var(--ring));
+        outline: none;
+    }
+
+    /* Sidebar and hover */
+    .dark .border-main-800 {
+        border-color: hsl(var(--sidebar-border));
+    }
+
+    .dark .hover\:bg-main-950:hover {
+        background: hsl(var(--main-900));
+        border: 1px solid hsl(var(--sidebar-border));
+        color: hsl(var(--sidebar-primary-foreground)); /* ensures readable text */
+    }
+
+    /* Shadows */
+    .dark .shadow-lg {
+        box-shadow: 0 8px 12px rgba(0,0,0,0.3);
+    }
+
+    .dark .shadow-2xl {
+        box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+    }
+
+    /* Text colors */
+    .dark .text-main-400 {
+        color: hsl(215 52% 65%);
+    }
+
+    .dark .text-muted-foreground {
+        color: hsl(var(--muted-foreground));
+        font-weight: 400;
+    }
+}
+
+/* -------------------- Dark Mode Hover Fixes -------------------- */
+@layer components {
+    /* Fix all hover states in dark mode */
+    .dark .hover\:bg-main-50:hover {
+        background: hsl(var(--main-100)) !important;
+        color: hsl(var(--foreground)) !important;
+    }
+
+    .dark .hover\:bg-main-100:hover {
+        background: hsl(var(--main-200)) !important;
+        color: hsl(var(--foreground)) !important;
+    }
+
+    .dark .hover\:bg-main-200:hover {
+        background: hsl(var(--main-300)) !important;
+        color: hsl(var(--foreground)) !important;
+    }
+
+    .dark .hover\:bg-main-300:hover {
+        background: hsl(var(--main-400)) !important;
+        color: hsl(var(--foreground)) !important;
+    }
+
+    .dark .hover\:bg-main-400:hover {
+        background: hsl(var(--main-500)) !important;
+        color: hsl(var(--foreground)) !important;
+    }
+
+    .dark .hover\:bg-main-500:hover {
+        background: hsl(var(--main-600)) !important;
+        color: hsl(var(--foreground)) !important;
+    }
+
+    .dark .hover\:bg-main-600:hover {
+        background: hsl(var(--main-700)) !important;
+        color: hsl(var(--foreground)) !important;
+    }
+
+    .dark .hover\:bg-main-700:hover {
+        background: hsl(var(--main-800)) !important;
+        color: hsl(var(--foreground)) !important;
+    }
+
+    .dark .hover\:bg-main-800:hover {
+        background: hsl(var(--main-900)) !important;
+        color: hsl(var(--foreground)) !important;
+    }
+
+    .dark .hover\:bg-main-900:hover {
+        background: hsl(var(--main-950)) !important;
+        color: hsl(var(--foreground)) !important;
+    }
+
+    .dark .hover\:bg-main-950:hover {
+        background: hsl(var(--main-900)) !important;
+        color: hsl(var(--foreground)) !important;
+    }
+
+    /* Fix button hover states */
+    .dark .hover\:bg-primary:hover {
+        background: linear-gradient(135deg, hsl(215 52% 55%) 0%, hsl(215 52% 50%) 100%) !important;
+        color: hsl(0 0% 100%) !important;
+    }
+
+    .dark .hover\:bg-main-800:hover {
+        background: hsl(var(--main-700)) !important;
+        color: hsl(var(--foreground)) !important;
+    }
+
+    /* Fix card hover states */
+    .dark .hover\:shadow-lg:hover {
+        box-shadow: 0 8px 12px rgba(0,0,0,0.4) !important;
+    }
+
+    /* Fix sidebar hover states */
+    .dark .sidebar-item:hover {
+        background: hsl(var(--main-100)) !important;
+        color: hsl(var(--foreground)) !important;
+    }
+
+    /* Fix navigation hover states */
+    .dark .nav-item:hover {
+        background: hsl(var(--main-100)) !important;
+        color: hsl(var(--foreground)) !important;
+    }
+
+    /* Fix table row hover states */
+    .dark .hover\:bg-muted:hover {
+        background: hsl(var(--muted)) !important;
+        color: hsl(var(--foreground)) !important;
+    }
+
+    /* Fix dropdown hover states */
+    .dark .dropdown-item:hover {
+        background: hsl(var(--main-100)) !important;
+        color: hsl(var(--foreground)) !important;
+    }
+
+    /* Fix any remaining white backgrounds */
+    .dark .bg-white {
+        background: hsl(var(--card)) !important;
+    }
+
+    /* Ensure all backgrounds use CSS variables */
+    .dark .bg-background {
+        background: hsl(var(--background)) !important;
+    }
+
+    .dark .bg-card {
+        background: hsl(var(--card)) !important;
+    }
+
+    .dark .bg-muted {
+        background: hsl(var(--muted)) !important;
+    }
+
+    .dark .bg-accent {
+        background: hsl(var(--accent)) !important;
+    }
+
+    .dark .bg-gray-50,
+    .dark .bg-gray-100,
+    .dark .bg-gray-200,
+    .dark .bg-gray-300,
+    .dark .bg-gray-400,
+    .dark .bg-gray-500,
+    .dark .bg-gray-600,
+    .dark .bg-gray-700,
+    .dark .bg-gray-800,
+    .dark .bg-gray-900 {
+        background: hsl(var(--muted)) !important;
+    }
+
+    /* Fix text colors in dark mode */
+    .dark .text-gray-900,
+    .dark .text-gray-800,
+    .dark .text-gray-700,
+    .dark .text-gray-600 {
+        color: hsl(var(--foreground)) !important;
+    }
+
+    .dark .text-gray-500,
+    .dark .text-gray-400,
+    .dark .text-gray-300,
+    .dark .text-gray-200,
+    .dark .text-gray-100 {
+        color: hsl(var(--muted-foreground)) !important;
+    }
+
+    /* Fix background colors with opacity */
+    .dark .bg-primary\/10 {
+        background: hsl(var(--primary) / 0.1) !important;
+    }
+
+    .dark .bg-green-500\/10 {
+        background: hsl(142 76% 36% / 0.1) !important;
+    }
+
+    .dark .bg-yellow-500\/10 {
+        background: hsl(48 96% 53% / 0.1) !important;
+    }
+
+    .dark .bg-red-500\/10 {
+        background: hsl(0 84% 60% / 0.1) !important;
+    }
+
+    /* Ensure proper text colors for colored backgrounds */
+    .dark .text-green-600 {
+        color: hsl(142 76% 46%) !important;
+    }
+
+    .dark .text-yellow-600 {
+        color: hsl(48 96% 53%) !important;
+    }
+
+    .dark .text-red-600 {
+        color: hsl(0 84% 60%) !important;
+    }
+
+    /* Fix any remaining hardcoded colors */
+    .dark .bg-transparent {
+        background: transparent !important;
+    }
+
+    /* Ensure consistent spacing and layout */
+    .dark .container {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+
+    /* Fix any remaining hardcoded borders */
+    .dark .border-gray-200,
+    .dark .border-gray-300,
+    .dark .border-gray-400 {
+        border-color: hsl(var(--border)) !important;
+    }
+
+    /* Ensure proper contrast for all text */
+    .dark .text-foreground {
+        color: hsl(var(--foreground)) !important;
+    }
+
+    .dark .text-muted-foreground {
+        color: hsl(var(--muted-foreground)) !important;
+    }
+
+    /* Fix any remaining hardcoded shadows */
+    .dark .shadow-lg {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    .dark .shadow-xl {
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    .dark .shadow-2xl {
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+    }
+
+    /* Fix login page specific styles */
+    .dark .bg-gradient-to-br {
+        background: linear-gradient(to bottom right, hsl(var(--primary) / 0.8), hsl(var(--primary) / 0.6), hsl(var(--primary) / 0.8)) !important;
+    }
+
+    /* Ensure proper contrast for all interactive elements */
+    .dark button,
+    .dark input,
+    .dark select,
+    .dark textarea {
+        background: hsl(var(--muted)) !important;
+        border-color: hsl(var(--border)) !important;
+        color: hsl(var(--foreground)) !important;
+    }
+
+    .dark button:focus,
+    .dark input:focus,
+    .dark select:focus,
+    .dark textarea:focus {
+        border-color: hsl(var(--ring)) !important;
+        box-shadow: 0 0 0 3px hsl(var(--ring) / 0.2) !important;
+    }
+
+    /* Ensure proper table styling */
+    .dark thead {
+        background: hsl(var(--muted)) !important;
+    }
+
+    .dark th {
+        color: hsl(var(--foreground)) !important;
+        border-color: hsl(var(--border)) !important;
+    }
+
+    .dark td {
+        border-color: hsl(var(--border)) !important;
+    }
+
+    /* Fix any remaining progress bars */
+    .dark .bg-muted {
+        background: hsl(var(--muted)) !important;
+    }
+
+    /* Ensure proper badge styling */
+    .dark .badge {
+        background: hsl(var(--muted)) !important;
+        color: hsl(var(--foreground)) !important;
+        border-color: hsl(var(--border)) !important;
+    }
+
+    /* Remove tab borders after clicking */
+    .dark [role="tab"][data-state="active"] {
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    /* Remove focus rings on tabs */
+    .dark [role="tab"]:focus {
+        outline: none !important;
+        box-shadow: none !important;
+    }
+
+    .dark [role="tab"]:focus-visible {
+        outline: none !important;
+        box-shadow: none !important;
+    }
+
+    /* Fix white lines in dark mode - more specific */
+    .dark .border-white,
+    .dark .border-gray-100,
+    .dark .border-gray-200,
+    .dark .border-gray-300 {
+        border-color: hsl(var(--border)) !important;
+    }
+
+    /* Fix specific border issues */
+    .dark .border-b {
+        border-bottom-color: hsl(var(--border)) !important;
+    }
+
+    .dark .border-t {
+        border-top-color: hsl(var(--border)) !important;
+    }
+
+    .dark .border-l {
+        border-left-color: hsl(var(--border)) !important;
+    }
+
+    .dark .border-r {
+        border-right-color: hsl(var(--border)) !important;
+    }
+
+
+
+
+
+    /* Fix any remaining white backgrounds */
+    .dark .bg-white {
+        background: hsl(var(--card)) !important;
+    }
+
+    /* Fix table borders specifically */
+    .dark table {
+        border-color: hsl(var(--border)) !important;
+    }
+
+    .dark tr {
+        border-color: hsl(var(--border)) !important;
+    }
+
+    .dark td,
+    .dark th {
+        border-color: hsl(var(--border)) !important;
+    }
+
+    /* Fix card borders */
+    .dark .border {
+        border-color: hsl(var(--border)) !important;
+    }
+
+    /* Ensure container padding is preserved */
+    .dark .container {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    /* Ensure padding classes work in dark mode */
+    .dark .px-4 {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    .dark .py-4 {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+
+    .dark .py-6 {
+        padding-top: 1.5rem !important;
+        padding-bottom: 1.5rem !important;
+    }
+
+    .dark .p-4 {
+        padding: 1rem !important;
+    }
+
+    .dark .p-6 {
+        padding: 1.5rem !important;
+    }
 }

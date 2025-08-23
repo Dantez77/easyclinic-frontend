@@ -678,18 +678,18 @@ export default function InventoryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 p-4 lg:p-6">
+      <div className="bg-card border-b border-main-200 dark:border-main-800 p-4 lg:p-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                <Package className="w-5 h-5 text-blue-600" />
+              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                <Package className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <h1 className="text-xl lg:text-2xl font-bold text-gray-900">Inventario Médico</h1>
-                <p className="text-sm lg:text-base text-gray-500">
+                <h1 className="text-xl lg:text-2xl font-bold text-foreground">Inventario Médico</h1>
+                <p className="text-sm lg:text-base text-muted-foreground">
                   {filteredItems.length} artículo{filteredItems.length !== 1 ? "s" : ""} en inventario
                 </p>
               </div>
@@ -726,10 +726,10 @@ export default function InventoryPage() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Valor Total Inventario</p>
+                      <p className="text-sm font-medium text-muted-foreground">Valor Total Inventario</p>
                       <p className="text-2xl font-bold text-green-600">${totalStockValue.toLocaleString()}</p>
                     </div>
-                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                    <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center">
                       <BarChart3 className="w-6 h-6 text-green-600" />
                     </div>
                   </div>
@@ -740,10 +740,10 @@ export default function InventoryPage() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Stock Bajo</p>
+                      <p className="text-sm font-medium text-muted-foreground">Stock Bajo</p>
                       <p className="text-2xl font-bold text-red-600">{lowStockItems.length}</p>
                     </div>
-                    <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                    <div className="w-12 h-12 bg-red-500/10 rounded-full flex items-center justify-center">
                       <TrendingDown className="w-6 h-6 text-red-600" />
                     </div>
                   </div>
@@ -754,10 +754,10 @@ export default function InventoryPage() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Próximos a Vencer</p>
+                      <p className="text-sm font-medium text-muted-foreground">Próximos a Vencer</p>
                       <p className="text-2xl font-bold text-yellow-600">{expiringItems.length}</p>
                     </div>
-                    <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                    <div className="w-12 h-12 bg-yellow-500/10 rounded-full flex items-center justify-center">
                       <Calendar className="w-6 h-6 text-yellow-600" />
                     </div>
                   </div>
@@ -768,7 +768,7 @@ export default function InventoryPage() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Sustancias Controladas</p>
+                      <p className="text-sm font-medium text-muted-foreground">Sustancias Controladas</p>
                       <p className="text-2xl font-bold text-purple-600">{controlledItems.length}</p>
                     </div>
                     <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
@@ -797,19 +797,19 @@ export default function InventoryPage() {
                           {getCategoryIcon(item.category)}
                           <div>
                             <p className="font-medium text-sm">{item.name}</p>
-                            <p className="text-xs text-gray-500">{item.location}</p>
+                            <p className="text-xs text-muted-foreground">{item.location}</p>
                           </div>
                         </div>
                         <div className="text-right">
                           <p className="text-sm font-bold text-red-600">
                             {item.currentStock} / {item.minThreshold}
                           </p>
-                          <p className="text-xs text-gray-500">{item.unitOfMeasure}</p>
+                          <p className="text-xs text-muted-foreground">{item.unitOfMeasure}</p>
                         </div>
                       </div>
                     ))}
                     {lowStockItems.length === 0 && (
-                      <p className="text-center text-gray-500 py-4">No hay alertas de stock bajo</p>
+                      <p className="text-center text-muted-foreground py-4">No hay alertas de stock bajo</p>
                     )}
                   </div>
                 </CardContent>
@@ -831,21 +831,21 @@ export default function InventoryPage() {
                           {getCategoryIcon(item.category)}
                           <div>
                             <p className="font-medium text-sm">{item.name}</p>
-                            <p className="text-xs text-gray-500">Lote: {item.batchNumber}</p>
+                            <p className="text-xs text-muted-foreground">Lote: {item.batchNumber}</p>
                           </div>
                         </div>
                         <div className="text-right">
                           <p className="text-sm font-bold text-yellow-600">
                             {item.expiryDate && format(new Date(item.expiryDate), "dd/MM/yyyy")}
                           </p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-muted-foreground">
                             {item.currentStock} {item.unitOfMeasure}
                           </p>
                         </div>
                       </div>
                     ))}
                     {expiringItems.length === 0 && (
-                      <p className="text-center text-gray-500 py-4">No hay artículos próximos a vencer</p>
+                      <p className="text-center text-muted-foreground py-4">No hay artículos próximos a vencer</p>
                     )}
                   </div>
                 </CardContent>
@@ -870,16 +870,16 @@ export default function InventoryPage() {
                           {getCategoryIcon(category)}
                           <div>
                             <p className="font-medium">{category}</p>
-                            <p className="text-sm text-gray-500">{categoryItems.length} artículos</p>
+                            <p className="text-sm text-muted-foreground">{categoryItems.length} artículos</p>
                           </div>
                         </div>
                         <div className="text-right">
                           <p className="font-bold">${categoryValue.toLocaleString()}</p>
                           <div className="flex items-center gap-2">
-                            <div className="w-20 h-2 bg-gray-200 rounded-full">
+                            <div className="w-20 h-2 bg-muted rounded-full">
                               <div className="h-2 bg-blue-600 rounded-full" style={{ width: `${percentage}%` }}></div>
                             </div>
-                            <span className="text-xs text-gray-500">{percentage.toFixed(1)}%</span>
+                            <span className="text-xs text-muted-foreground">{percentage.toFixed(1)}%</span>
                           </div>
                         </div>
                       </div>
@@ -898,7 +898,7 @@ export default function InventoryPage() {
                 <div className="flex flex-col lg:flex-row gap-4">
                   <div className="flex-1">
                     <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                       <Input
                         placeholder="Buscar por nombre, SKU, descripción o proveedor..."
                         value={searchTerm}
@@ -956,7 +956,7 @@ export default function InventoryPage() {
               <Card>
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm text-muted-foreground">
                       {selectedItems.length} artículo{selectedItems.length !== 1 ? "s" : ""} seleccionado
                       {selectedItems.length !== 1 ? "s" : ""}
                     </span>
@@ -999,7 +999,7 @@ export default function InventoryPage() {
               <CardContent className="p-0">
                 <div className="overflow-x-auto">
                   <table className="w-full">
-                    <thead className="bg-gray-50 border-b">
+                    <thead className="bg-muted border-b">
                     <tr>
                       <th className="p-4 text-left">
                         <Checkbox
@@ -1007,19 +1007,19 @@ export default function InventoryPage() {
                           onCheckedChange={handleSelectAll}
                         />
                       </th>
-                      <th className="p-4 text-left text-sm font-medium text-gray-900">Artículo</th>
-                      <th className="p-4 text-left text-sm font-medium text-gray-900 hidden md:table-cell">Stock</th>
-                      <th className="p-4 text-left text-sm font-medium text-gray-900 hidden lg:table-cell">
+                      <th className="p-4 text-left text-sm font-medium text-foreground">Artículo</th>
+                      <th className="p-4 text-left text-sm font-medium text-foreground hidden md:table-cell">Stock</th>
+                      <th className="p-4 text-left text-sm font-medium text-foreground hidden lg:table-cell">
                         Ubicación
                       </th>
-                      <th className="p-4 text-left text-sm font-medium text-gray-900 hidden sm:table-cell">Estado</th>
-                      <th className="p-4 text-left text-sm font-medium text-gray-900 hidden lg:table-cell">Valor</th>
-                      <th className="p-4 text-left text-sm font-medium text-gray-900">Acciones</th>
+                      <th className="p-4 text-left text-sm font-medium text-foreground hidden sm:table-cell">Estado</th>
+                      <th className="p-4 text-left text-sm font-medium text-foreground hidden lg:table-cell">Valor</th>
+                      <th className="p-4 text-left text-sm font-medium text-foreground">Acciones</th>
                     </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
                     {paginatedItems.map((item) => (
-                      <tr key={item.id} className="hover:bg-gray-50">
+                      <tr key={item.id} className="hover:bg-muted">
                         <td className="p-4">
                           <Checkbox
                             checked={selectedItems.includes(item.id)}
@@ -1028,13 +1028,13 @@ export default function InventoryPage() {
                         </td>
                         <td className="p-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
                               {getCategoryIcon(item.category)}
                             </div>
                             <div>
-                              <div className="font-medium text-gray-900">{item.name}</div>
-                              <div className="text-sm text-gray-500">{item.sku}</div>
-                              <div className="text-xs text-gray-400 md:hidden">
+                              <div className="font-medium text-foreground">{item.name}</div>
+                              <div className="text-sm text-muted-foreground">{item.sku}</div>
+                              <div className="text-xs text-muted-foreground md:hidden">
                                 Stock: {item.currentStock} {item.unitOfMeasure}
                               </div>
                               {item.controlledSubstance && (
@@ -1047,10 +1047,10 @@ export default function InventoryPage() {
                         </td>
                         <td className="p-4 hidden md:table-cell">
                           <div className="text-sm">
-                            <div className="font-medium text-gray-900">
+                            <div className="font-medium text-foreground">
                               {item.currentStock} {item.unitOfMeasure}
                             </div>
-                            <div className="text-gray-500">
+                            <div className="text-muted-foreground">
                               Mín: {item.minThreshold} | Máx: {item.maxThreshold}
                             </div>
                             {item.currentStock <= item.minThreshold && (
@@ -1060,11 +1060,11 @@ export default function InventoryPage() {
                         </td>
                         <td className="p-4 hidden lg:table-cell">
                           <div className="text-sm">
-                            <div className="flex items-center gap-1 text-gray-900">
+                            <div className="flex items-center gap-1 text-foreground">
                               <MapPin className="w-3 h-3" />
                               {item.location}
                             </div>
-                            <div className="text-gray-500">{item.department}</div>
+                            <div className="text-muted-foreground">{item.department}</div>
                           </div>
                         </td>
                         <td className="p-4 hidden sm:table-cell">
@@ -1075,8 +1075,8 @@ export default function InventoryPage() {
                         </td>
                         <td className="p-4 hidden lg:table-cell">
                           <div className="text-sm">
-                            <div className="font-medium text-gray-900">${item.totalValue.toLocaleString()}</div>
-                            <div className="text-gray-500">${item.unitCost} c/u</div>
+                            <div className="font-medium text-foreground">${item.totalValue.toLocaleString()}</div>
+                            <div className="text-muted-foreground">${item.unitCost} c/u</div>
                           </div>
                         </td>
                         <td className="p-4">
@@ -1164,7 +1164,7 @@ export default function InventoryPage() {
                 {/* Pagination */}
                 {totalPages > 1 && (
                   <div className="flex items-center justify-between p-4 border-t">
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-muted-foreground">
                       Mostrando {(currentPage - 1) * itemsPerPage + 1} a{" "}
                       {Math.min(currentPage * itemsPerPage, filteredItems.length)} de {filteredItems.length} artículos
                     </div>
@@ -1210,20 +1210,20 @@ export default function InventoryPage() {
                 <div className="space-y-4">
                   {auditLogs.map((log) => (
                     <div key={log.id} className="flex items-start gap-4 p-4 border rounded-lg">
-                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <History className="w-5 h-5 text-blue-600" />
+                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                        <History className="w-5 h-5 text-primary" />
                       </div>
                       <div className="flex-1">
                         <div className="flex items-start justify-between">
                           <div>
-                            <h4 className="font-medium text-gray-900">{log.action}</h4>
-                            <p className="text-sm text-gray-600">{log.itemName}</p>
-                            <p className="text-xs text-gray-500 mt-1">
+                            <h4 className="font-medium text-foreground">{log.action}</h4>
+                            <p className="text-sm text-muted-foreground">{log.itemName}</p>
+                            <p className="text-xs text-muted-foreground mt-1">
                               {log.previousValue} → {log.newValue}
                             </p>
-                            {log.reason && <p className="text-xs text-gray-500">Razón: {log.reason}</p>}
+                            {log.reason && <p className="text-xs text-muted-foreground">Razón: {log.reason}</p>}
                           </div>
-                          <div className="text-right text-xs text-gray-500">
+                          <div className="text-right text-xs text-muted-foreground">
                             <p>{log.user}</p>
                             <p>{log.timestamp}</p>
                             <Badge variant="outline" className="mt-1">
@@ -1254,9 +1254,9 @@ export default function InventoryPage() {
                     <div key={order.id} className="border rounded-lg p-4">
                       <div className="flex items-start justify-between mb-4">
                         <div>
-                          <h4 className="font-medium text-gray-900">{order.id}</h4>
-                          <p className="text-sm text-gray-600">{order.supplier}</p>
-                          <p className="text-xs text-gray-500">Solicitado por: {order.requestedBy}</p>
+                          <h4 className="font-medium text-foreground">{order.id}</h4>
+                          <p className="text-sm text-muted-foreground">{order.supplier}</p>
+                          <p className="text-xs text-muted-foreground">Solicitado por: {order.requestedBy}</p>
                         </div>
                         <div className="text-right">
                           <Badge
@@ -1284,7 +1284,7 @@ export default function InventoryPage() {
                         ))}
                       </div>
                       <div className="flex justify-between items-center mt-4 pt-4 border-t">
-                        <div className="text-sm text-gray-500">
+                        <div className="text-sm text-muted-foreground">
                           <p>Fecha: {format(new Date(order.orderDate), "dd/MM/yyyy")}</p>
                           <p>Entrega esperada: {format(new Date(order.expectedDelivery), "dd/MM/yyyy")}</p>
                         </div>
@@ -1552,10 +1552,10 @@ export default function InventoryPage() {
           </DialogHeader>
           {updatingStockItem && (
             <div className="space-y-4">
-              <div className="p-4 bg-gray-50 rounded-lg">
+              <div className="p-4 bg-muted rounded-lg">
                 <h4 className="font-medium">{updatingStockItem.name}</h4>
-                <p className="text-sm text-gray-500">SKU: {updatingStockItem.sku}</p>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-muted-foreground">SKU: {updatingStockItem.sku}</p>
+                <p className="text-sm text-muted-foreground">
                   Stock actual: {updatingStockItem.currentStock} {updatingStockItem.unitOfMeasure}
                 </p>
               </div>
@@ -1645,12 +1645,12 @@ export default function InventoryPage() {
                 {/* Item Header */}
                 <div className="border-b pb-4">
                   <div className="flex items-center gap-4 mb-4">
-                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
                       {getCategoryIcon(viewingItem.category)}
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold">{viewingItem.name}</h3>
-                      <p className="text-sm text-gray-500">{viewingItem.sku}</p>
+                      <p className="text-sm text-muted-foreground">{viewingItem.sku}</p>
                       <Badge variant={getStatusColor(viewingItem.status)} className="mt-1">
                         {viewingItem.status}
                       </Badge>
@@ -1660,29 +1660,29 @@ export default function InventoryPage() {
 
                 {/* Basic Information */}
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-3">Información Básica</h4>
+                  <h4 className="font-medium text-foreground mb-3">Información Básica</h4>
                   <div className="space-y-3">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <span className="text-sm text-gray-500">Categoría:</span>
+                        <span className="text-sm text-muted-foreground">Categoría:</span>
                         <p className="font-medium">{viewingItem.category}</p>
                       </div>
                       <div>
-                        <span className="text-sm text-gray-500">Departamento:</span>
+                        <span className="text-sm text-muted-foreground">Departamento:</span>
                         <p className="font-medium">{viewingItem.department}</p>
                       </div>
                     </div>
                     <div>
-                      <span className="text-sm text-gray-500">Descripción:</span>
+                      <span className="text-sm text-muted-foreground">Descripción:</span>
                       <p className="font-medium">{viewingItem.description}</p>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <span className="text-sm text-gray-500">Proveedor:</span>
+                        <span className="text-sm text-muted-foreground">Proveedor:</span>
                         <p className="font-medium">{viewingItem.supplier}</p>
                       </div>
                       <div>
-                        <span className="text-sm text-gray-500">Fabricante:</span>
+                        <span className="text-sm text-muted-foreground">Fabricante:</span>
                         <p className="font-medium">{viewingItem.manufacturer}</p>
                       </div>
                     </div>
@@ -1691,23 +1691,23 @@ export default function InventoryPage() {
 
                 {/* Stock Information */}
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-3">Información de Stock</h4>
+                  <h4 className="font-medium text-foreground mb-3">Información de Stock</h4>
                   <div className="space-y-3">
                     <div className="grid grid-cols-3 gap-4">
                       <div>
-                        <span className="text-sm text-gray-500">Stock Actual:</span>
+                        <span className="text-sm text-muted-foreground">Stock Actual:</span>
                         <p className="font-bold text-lg">
                           {viewingItem.currentStock} {viewingItem.unitOfMeasure}
                         </p>
                       </div>
                       <div>
-                        <span className="text-sm text-gray-500">Stock Mínimo:</span>
+                        <span className="text-sm text-muted-foreground">Stock Mínimo:</span>
                         <p className="font-medium">
                           {viewingItem.minThreshold} {viewingItem.unitOfMeasure}
                         </p>
                       </div>
                       <div>
-                        <span className="text-sm text-gray-500">Stock Máximo:</span>
+                        <span className="text-sm text-muted-foreground">Stock Máximo:</span>
                         <p className="font-medium">
                           {viewingItem.maxThreshold} {viewingItem.unitOfMeasure}
                         </p>
@@ -1715,11 +1715,11 @@ export default function InventoryPage() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <span className="text-sm text-gray-500">Costo Unitario:</span>
+                        <span className="text-sm text-muted-foreground">Costo Unitario:</span>
                         <p className="font-medium">${viewingItem.unitCost.toLocaleString()}</p>
                       </div>
                       <div>
-                        <span className="text-sm text-gray-500">Valor Total:</span>
+                        <span className="text-sm text-muted-foreground">Valor Total:</span>
                         <p className="font-bold text-green-600">${viewingItem.totalValue.toLocaleString()}</p>
                       </div>
                     </div>
@@ -1728,10 +1728,10 @@ export default function InventoryPage() {
 
                 {/* Location & Tracking */}
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-3">Ubicación y Seguimiento</h4>
+                  <h4 className="font-medium text-foreground mb-3">Ubicación y Seguimiento</h4>
                   <div className="space-y-3">
                     <div>
-                      <span className="text-sm text-gray-500">Ubicación:</span>
+                      <span className="text-sm text-muted-foreground">Ubicación:</span>
                       <p className="font-medium flex items-center gap-1">
                         <MapPin className="w-4 h-4" />
                         {viewingItem.location}
@@ -1739,17 +1739,17 @@ export default function InventoryPage() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <span className="text-sm text-gray-500">Número de Lote:</span>
+                        <span className="text-sm text-muted-foreground">Número de Lote:</span>
                         <p className="font-medium">{viewingItem.batchNumber}</p>
                       </div>
                       <div>
-                        <span className="text-sm text-gray-500">Código de Barras:</span>
+                        <span className="text-sm text-muted-foreground">Código de Barras:</span>
                         <p className="font-medium font-mono text-sm">{viewingItem.barcode}</p>
                       </div>
                     </div>
                     {viewingItem.expiryDate && (
                       <div>
-                        <span className="text-sm text-gray-500">Fecha de Vencimiento:</span>
+                        <span className="text-sm text-muted-foreground">Fecha de Vencimiento:</span>
                         <p className="font-medium">
                           {format(new Date(viewingItem.expiryDate), "dd/MM/yyyy", { locale: es })}
                         </p>
@@ -1760,7 +1760,7 @@ export default function InventoryPage() {
 
                 {/* Compliance & Safety */}
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-3">Cumplimiento y Seguridad</h4>
+                  <h4 className="font-medium text-foreground mb-3">Cumplimiento y Seguridad</h4>
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <Checkbox checked={viewingItem.controlledSubstance} disabled />
@@ -1775,23 +1775,23 @@ export default function InventoryPage() {
 
                 {/* Last Update */}
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-3">Última Actualización</h4>
+                  <h4 className="font-medium text-foreground mb-3">Última Actualización</h4>
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-sm text-gray-500">Fecha:</span>
+                      <span className="text-sm text-muted-foreground">Fecha:</span>
                       <span className="text-sm font-medium">
                         {format(new Date(viewingItem.lastUpdated), "dd/MM/yyyy", { locale: es })}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-sm text-gray-500">Usuario:</span>
+                      <span className="text-sm text-muted-foreground">Usuario:</span>
                       <span className="text-sm font-medium">{viewingItem.updatedBy}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Actions */}
-                <div className="flex flex-col sm:flex-row gap-2 pt-4 sticky bottom-0 bg-white pb-4">
+                <div className="flex flex-col sm:flex-row gap-2 pt-4 sticky bottom-0 bg-card pb-4">
                   <Button
                     variant="outline"
                     className="flex-1 bg-transparent"

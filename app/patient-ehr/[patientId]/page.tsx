@@ -312,18 +312,18 @@ export default function PatientEHRPage({ params }: { params: { patientId: string
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 p-4 lg:p-6 print:hidden">
+      <div className="bg-card border-b border-main-200 dark:border-main-800 p-4 lg:p-6 print:hidden">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                <FileText className="w-5 h-5 text-blue-600" />
+              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                <FileText className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <h1 className="text-xl lg:text-2xl font-bold text-gray-900">Expediente Médico Electrónico</h1>
-                <p className="text-sm lg:text-base text-gray-500">
+                <h1 className="text-xl lg:text-2xl font-bold text-foreground">Expediente Médico Electrónico</h1>
+                <p className="text-sm lg:text-base text-muted-foreground">
                   {mockPatientEHR.firstName} {mockPatientEHR.lastName} - {mockPatientEHR.id}
                 </p>
               </div>
@@ -346,7 +346,7 @@ export default function PatientEHRPage({ params }: { params: { patientId: string
       <div className="hidden print:block p-6 border-b">
         <div className="text-center mb-4">
           <h1 className="text-2xl font-bold">EXPEDIENTE MÉDICO ELECTRÓNICO</h1>
-          <p className="text-gray-600">Centro Médico - Sistema de Salud</p>
+          <p className="text-muted-foreground">Centro Médico - Sistema de Salud</p>
         </div>
         <div className="flex justify-between items-center">
           <div>
@@ -386,86 +386,86 @@ export default function PatientEHRPage({ params }: { params: { patientId: string
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   <div className="space-y-4">
-                    <h4 className="font-medium text-gray-900">Datos Personales</h4>
+                    <h4 className="font-medium text-foreground">Datos Personales</h4>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Nombre Completo:</span>
+                        <span className="text-muted-foreground">Nombre Completo:</span>
                         <span className="font-medium">
                           {mockPatientEHR.firstName} {mockPatientEHR.lastName}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Cédula:</span>
+                        <span className="text-muted-foreground">Cédula:</span>
                         <span>{mockPatientEHR.cedula}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Fecha de Nacimiento:</span>
+                        <span className="text-muted-foreground">Fecha de Nacimiento:</span>
                         <span>{format(new Date(mockPatientEHR.dateOfBirth), "dd/MM/yyyy", { locale: es })}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Edad:</span>
+                        <span className="text-muted-foreground">Edad:</span>
                         <span>{mockPatientEHR.age} años</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Género:</span>
+                        <span className="text-muted-foreground">Género:</span>
                         <span>{mockPatientEHR.gender}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Estado Civil:</span>
+                        <span className="text-muted-foreground">Estado Civil:</span>
                         <span>{mockPatientEHR.maritalStatus}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Ocupación:</span>
+                        <span className="text-muted-foreground">Ocupación:</span>
                         <span>{mockPatientEHR.occupation}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Tipo de Sangre:</span>
+                        <span className="text-muted-foreground">Tipo de Sangre:</span>
                         <Badge variant="outline">{mockPatientEHR.bloodType}</Badge>
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-4">
-                    <h4 className="font-medium text-gray-900">Información de Contacto</h4>
+                    <h4 className="font-medium text-foreground">Información de Contacto</h4>
                     <div className="space-y-2 text-sm">
                       <div className="flex items-center gap-2">
-                        <Phone className="w-4 h-4 text-gray-400" />
+                        <Phone className="w-4 h-4 text-muted-foreground" />
                         <span>{mockPatientEHR.phone}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Mail className="w-4 h-4 text-gray-400" />
+                        <Mail className="w-4 h-4 text-muted-foreground" />
                         <span>{mockPatientEHR.email}</span>
                       </div>
                       <div className="flex items-start gap-2">
-                        <MapPin className="w-4 h-4 text-gray-400 mt-0.5" />
+                        <MapPin className="w-4 h-4 text-muted-foreground mt-0.5" />
                         <div>
                           <div>{mockPatientEHR.address}</div>
-                          <div className="text-gray-500">
+                          <div className="text-muted-foreground">
                             {mockPatientEHR.city}, {mockPatientEHR.province}
                           </div>
-                          <div className="text-gray-500">{mockPatientEHR.postalCode}</div>
+                          <div className="text-muted-foreground">{mockPatientEHR.postalCode}</div>
                         </div>
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-4">
-                    <h4 className="font-medium text-gray-900">Contacto de Emergencia</h4>
+                    <h4 className="font-medium text-foreground">Contacto de Emergencia</h4>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Nombre:</span>
+                        <span className="text-muted-foreground">Nombre:</span>
                         <span className="font-medium">{mockPatientEHR.emergencyContact.name}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Parentesco:</span>
+                        <span className="text-muted-foreground">Parentesco:</span>
                         <span>{mockPatientEHR.emergencyContact.relationship}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Phone className="w-4 h-4 text-gray-400" />
+                        <Phone className="w-4 h-4 text-muted-foreground" />
                         <span>{mockPatientEHR.emergencyContact.phone}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Mail className="w-4 h-4 text-gray-400" />
+                        <Mail className="w-4 h-4 text-muted-foreground" />
                         <span>{mockPatientEHR.emergencyContact.email}</span>
                       </div>
                     </div>
@@ -486,27 +486,27 @@ export default function PatientEHRPage({ params }: { params: { patientId: string
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Proveedor:</span>
+                      <span className="text-muted-foreground">Proveedor:</span>
                       <span className="font-medium">{mockPatientEHR.insurance.provider}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Número de Póliza:</span>
+                      <span className="text-muted-foreground">Número de Póliza:</span>
                       <span>{mockPatientEHR.insurance.policyNumber}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Número de Grupo:</span>
+                      <span className="text-muted-foreground">Número de Grupo:</span>
                       <span>{mockPatientEHR.insurance.groupNumber}</span>
                     </div>
                   </div>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Fecha de Vigencia:</span>
+                      <span className="text-muted-foreground">Fecha de Vigencia:</span>
                       <span>
                         {format(new Date(mockPatientEHR.insurance.effectiveDate), "dd/MM/yyyy", { locale: es })}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Fecha de Vencimiento:</span>
+                      <span className="text-muted-foreground">Fecha de Vencimiento:</span>
                       <span>
                         {format(new Date(mockPatientEHR.insurance.expirationDate), "dd/MM/yyyy", { locale: es })}
                       </span>
@@ -530,16 +530,16 @@ export default function PatientEHRPage({ params }: { params: { patientId: string
                     {Object.entries(mockPatientEHR.vitalSigns[0])
                       .filter(([key]) => key !== "date")
                       .map(([key, value]) => (
-                        <div key={key} className="text-center p-3 bg-gray-50 rounded-lg">
-                          <div className="text-xs text-gray-500 mb-1 capitalize">
+                        <div key={key} className="text-center p-3 bg-muted rounded-lg">
+                          <div className="text-xs text-muted-foreground mb-1 capitalize">
                             {key.replace(/([A-Z])/g, " $1").trim()}
                           </div>
-                          <div className="font-semibold text-gray-900">{value}</div>
+                          <div className="font-semibold text-foreground">{value}</div>
                         </div>
                       ))}
                   </div>
                 )}
-                <div className="mt-4 text-xs text-gray-500">
+                <div className="mt-4 text-xs text-muted-foreground">
                   Última actualización:{" "}
                   {format(new Date(mockPatientEHR.vitalSigns[0].date), "dd/MM/yyyy", { locale: es })}
                 </div>
@@ -564,9 +564,9 @@ export default function PatientEHRPage({ params }: { params: { patientId: string
                       <div key={index} className="border rounded-lg p-4">
                         <div className="flex items-start justify-between">
                           <div>
-                            <h4 className="font-medium text-gray-900">{allergy.substance}</h4>
-                            <p className="text-sm text-gray-600">Reacción: {allergy.reaction}</p>
-                            <p className="text-xs text-gray-500">
+                            <h4 className="font-medium text-foreground">{allergy.substance}</h4>
+                            <p className="text-sm text-muted-foreground">Reacción: {allergy.reaction}</p>
+                            <p className="text-xs text-muted-foreground">
                               Identificada: {format(new Date(allergy.dateIdentified), "dd/MM/yyyy", { locale: es })}
                             </p>
                           </div>
@@ -578,7 +578,7 @@ export default function PatientEHRPage({ params }: { params: { patientId: string
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-500">Sin alergias conocidas</p>
+                  <p className="text-muted-foreground">Sin alergias conocidas</p>
                 )}
               </CardContent>
             </Card>
@@ -598,9 +598,9 @@ export default function PatientEHRPage({ params }: { params: { patientId: string
                       <div key={index} className="border rounded-lg p-4">
                         <div className="flex items-start justify-between">
                           <div>
-                            <h4 className="font-medium text-gray-900">{condition.condition}</h4>
-                            <p className="text-sm text-gray-600">{condition.notes}</p>
-                            <p className="text-xs text-gray-500">
+                            <h4 className="font-medium text-foreground">{condition.condition}</h4>
+                            <p className="text-sm text-muted-foreground">{condition.notes}</p>
+                            <p className="text-xs text-muted-foreground">
                               Diagnosticada: {format(new Date(condition.diagnosisDate), "dd/MM/yyyy", { locale: es })}
                             </p>
                           </div>
@@ -612,7 +612,7 @@ export default function PatientEHRPage({ params }: { params: { patientId: string
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-500">Sin condiciones crónicas registradas</p>
+                  <p className="text-muted-foreground">Sin condiciones crónicas registradas</p>
                 )}
               </CardContent>
             </Card>
@@ -626,18 +626,18 @@ export default function PatientEHRPage({ params }: { params: { patientId: string
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
                     <div>
-                      <h4 className="font-medium text-gray-900 mb-2">Hábitos</h4>
+                      <h4 className="font-medium text-foreground mb-2">Hábitos</h4>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
-                          <span className="text-gray-500">Tabaquismo:</span>
+                          <span className="text-muted-foreground">Tabaquismo:</span>
                           <span>{mockPatientEHR.socialHistory.smoking.status}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-500">Alcohol:</span>
+                          <span className="text-muted-foreground">Alcohol:</span>
                           <span>{mockPatientEHR.socialHistory.alcohol.status}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-500">Drogas:</span>
+                          <span className="text-muted-foreground">Drogas:</span>
                           <span>{mockPatientEHR.socialHistory.drugs.status}</span>
                         </div>
                       </div>
@@ -645,18 +645,18 @@ export default function PatientEHRPage({ params }: { params: { patientId: string
                   </div>
                   <div className="space-y-4">
                     <div>
-                      <h4 className="font-medium text-gray-900 mb-2">Estilo de Vida</h4>
+                      <h4 className="font-medium text-foreground mb-2">Estilo de Vida</h4>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
-                          <span className="text-gray-500">Ejercicio:</span>
+                          <span className="text-muted-foreground">Ejercicio:</span>
                           <span>{mockPatientEHR.socialHistory.exercise.frequency}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-500">Tipo:</span>
+                          <span className="text-muted-foreground">Tipo:</span>
                           <span>{mockPatientEHR.socialHistory.exercise.type}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-500">Dieta:</span>
+                          <span className="text-muted-foreground">Dieta:</span>
                           <span>{mockPatientEHR.socialHistory.diet.type}</span>
                         </div>
                       </div>
@@ -674,12 +674,12 @@ export default function PatientEHRPage({ params }: { params: { patientId: string
               <CardContent>
                 <div className="space-y-3">
                   {mockPatientEHR.familyHistory.map((family, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
                       <div>
                         <span className="font-medium">{family.relation}</span>
-                        <span className="text-gray-500 ml-2">- {family.condition}</span>
+                        <span className="text-muted-foreground ml-2">- {family.condition}</span>
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-muted-foreground">
                         Edad de inicio: {family.ageOfOnset} años ({family.status})
                       </div>
                     </div>
@@ -705,9 +705,9 @@ export default function PatientEHRPage({ params }: { params: { patientId: string
                     <div key={lab.id} className="border rounded-lg p-4">
                       <div className="flex items-start justify-between mb-4">
                         <div>
-                          <h4 className="font-medium text-gray-900">{lab.test}</h4>
-                          <p className="text-sm text-gray-600">Ordenado por: Dr. {lab.orderedBy}</p>
-                          <p className="text-xs text-gray-500">
+                          <h4 className="font-medium text-foreground">{lab.test}</h4>
+                          <p className="text-sm text-muted-foreground">Ordenado por: Dr. {lab.orderedBy}</p>
+                          <p className="text-xs text-muted-foreground">
                             {format(new Date(lab.date), "dd/MM/yyyy", { locale: es })}
                           </p>
                         </div>
@@ -715,7 +715,7 @@ export default function PatientEHRPage({ params }: { params: { patientId: string
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {Object.entries(lab.values).map(([test, data]) => (
-                          <div key={test} className="p-3 bg-gray-50 rounded-lg">
+                          <div key={test} className="p-3 bg-muted rounded-lg">
                             <div className="flex items-center justify-between mb-1">
                               <span className="text-sm font-medium">{test}</span>
                               <Badge variant={getStatusColor(data.status)} className="text-xs">
@@ -725,7 +725,7 @@ export default function PatientEHRPage({ params }: { params: { patientId: string
                             <div className="text-lg font-semibold">
                               {data.value} {data.unit}
                             </div>
-                            <div className="text-xs text-gray-500">Ref: {data.reference}</div>
+                            <div className="text-xs text-muted-foreground">Ref: {data.reference}</div>
                           </div>
                         ))}
                       </div>
@@ -790,8 +790,8 @@ export default function PatientEHRPage({ params }: { params: { patientId: string
                     <div key={index} className="border rounded-lg p-4">
                       <div className="flex items-start justify-between mb-2">
                         <div>
-                          <h4 className="font-medium text-gray-900">{medication.medication}</h4>
-                          <p className="text-sm text-gray-600">
+                          <h4 className="font-medium text-foreground">{medication.medication}</h4>
+                          <p className="text-sm text-muted-foreground">
                             {medication.dosage} - {medication.frequency}
                           </p>
                         </div>
@@ -799,15 +799,15 @@ export default function PatientEHRPage({ params }: { params: { patientId: string
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                         <div>
-                          <span className="text-gray-500">Indicación:</span>
+                          <span className="text-muted-foreground">Indicación:</span>
                           <p className="font-medium">{medication.indication}</p>
                         </div>
                         <div>
-                          <span className="text-gray-500">Prescrito por:</span>
+                          <span className="text-muted-foreground">Prescrito por:</span>
                           <p className="font-medium">{medication.prescribedBy}</p>
                         </div>
                         <div>
-                          <span className="text-gray-500">Fecha de inicio:</span>
+                          <span className="text-muted-foreground">Fecha de inicio:</span>
                           <p className="font-medium">
                             {format(new Date(medication.startDate), "dd/MM/yyyy", { locale: es })}
                           </p>
@@ -836,11 +836,11 @@ export default function PatientEHRPage({ params }: { params: { patientId: string
                     <div key={consultation.id} className="border rounded-lg p-4">
                       <div className="flex items-start justify-between mb-4">
                         <div>
-                          <h4 className="font-medium text-gray-900">{consultation.reason}</h4>
-                          <p className="text-sm text-gray-600">
+                          <h4 className="font-medium text-foreground">{consultation.reason}</h4>
+                          <p className="text-sm text-muted-foreground">
                             Dr. {consultation.doctor} - {consultation.specialty}
                           </p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-muted-foreground">
                             {format(new Date(consultation.date), "dd/MM/yyyy", { locale: es })}
                           </p>
                         </div>
@@ -850,7 +850,7 @@ export default function PatientEHRPage({ params }: { params: { patientId: string
                       <div className="space-y-3">
                         {consultation.symptoms.length > 0 && (
                           <div>
-                            <span className="text-sm font-medium text-gray-700">Síntomas:</span>
+                            <span className="text-sm font-medium text-foreground">Síntomas:</span>
                             <div className="flex flex-wrap gap-1 mt-1">
                               {consultation.symptoms.map((symptom, index) => (
                                 <Badge key={index} variant="secondary" className="text-xs">
@@ -862,24 +862,24 @@ export default function PatientEHRPage({ params }: { params: { patientId: string
                         )}
 
                         <div>
-                          <span className="text-sm font-medium text-gray-700">Diagnóstico:</span>
-                          <p className="text-sm text-gray-600">{consultation.diagnosis}</p>
+                          <span className="text-sm font-medium text-foreground">Diagnóstico:</span>
+                          <p className="text-sm text-muted-foreground">{consultation.diagnosis}</p>
                         </div>
 
                         <div>
-                          <span className="text-sm font-medium text-gray-700">Tratamiento:</span>
-                          <p className="text-sm text-gray-600">{consultation.treatment}</p>
+                          <span className="text-sm font-medium text-foreground">Tratamiento:</span>
+                          <p className="text-sm text-muted-foreground">{consultation.treatment}</p>
                         </div>
 
                         <div>
-                          <span className="text-sm font-medium text-gray-700">Notas:</span>
-                          <p className="text-sm text-gray-600">{consultation.notes}</p>
+                          <span className="text-sm font-medium text-foreground">Notas:</span>
+                          <p className="text-sm text-muted-foreground">{consultation.notes}</p>
                         </div>
 
                         {consultation.followUp && (
                           <div>
-                            <span className="text-sm font-medium text-gray-700">Próximo seguimiento:</span>
-                            <p className="text-sm text-gray-600">
+                            <span className="text-sm font-medium text-foreground">Próximo seguimiento:</span>
+                            <p className="text-sm text-muted-foreground">
                               {format(new Date(consultation.followUp), "dd/MM/yyyy", { locale: es })}
                             </p>
                           </div>
@@ -907,12 +907,12 @@ export default function PatientEHRPage({ params }: { params: { patientId: string
                     <div key={document.id} className="border rounded-lg p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                            <FileText className="w-5 h-5 text-blue-600" />
+                          <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                            <FileText className="w-5 h-5 text-primary" />
                           </div>
                           <div>
-                            <h4 className="font-medium text-gray-900">{document.name}</h4>
-                            <div className="flex items-center gap-2 text-sm text-gray-500">
+                            <h4 className="font-medium text-foreground">{document.name}</h4>
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
                               <Badge variant="secondary" className="text-xs">
                                 {document.type}
                               </Badge>
@@ -920,7 +920,7 @@ export default function PatientEHRPage({ params }: { params: { patientId: string
                               <span>•</span>
                               <span>{format(new Date(document.date), "dd/MM/yyyy", { locale: es })}</span>
                             </div>
-                            <p className="text-sm text-gray-600">Subido por: {document.uploadedBy}</p>
+                            <p className="text-sm text-muted-foreground">Subido por: {document.uploadedBy}</p>
                           </div>
                         </div>
                         <div className="flex gap-2">

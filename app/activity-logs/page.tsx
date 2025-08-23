@@ -448,35 +448,35 @@ export default function ActivityLogsPage() {
   const getCategoryColor = (category: string) => {
     switch (category) {
       case "clinical":
-        return "bg-blue-100 text-blue-800"
+        return "bg-primary/10 text-blue-800"
       case "administrative":
-        return "bg-green-100 text-green-800"
+        return "bg-green-500/10 text-green-800"
       case "financial":
-        return "bg-yellow-100 text-yellow-800"
+        return "bg-yellow-500/10 text-yellow-800"
       case "inventory":
         return "bg-purple-100 text-purple-800"
       case "security":
-        return "bg-red-100 text-red-800"
+        return "bg-red-500/10 text-red-800"
       case "compliance":
         return "bg-orange-100 text-orange-800"
       default:
-        return "bg-gray-100 text-gray-800"
+        return "bg-muted text-foreground"
     }
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 p-4 lg:p-6">
+      <div className="bg-card border-b border-main-200 dark:border-main-800 p-4 lg:p-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                <Activity className="w-5 h-5 text-blue-600" />
+              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                <Activity className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <h1 className="text-xl lg:text-2xl font-bold text-gray-900">Registro de Actividades</h1>
-                <p className="text-sm lg:text-base text-gray-500">
+                <h1 className="text-xl lg:text-2xl font-bold text-foreground">Registro de Actividades</h1>
+                <p className="text-sm lg:text-base text-muted-foreground">
                   {filteredLogs.length} actividad{filteredLogs.length !== 1 ? "es" : ""} registrada
                   {filteredLogs.length !== 1 ? "s" : ""}
                 </p>
@@ -514,11 +514,11 @@ export default function ActivityLogsPage() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Actividades Totales</p>
-                      <p className="text-2xl font-bold text-blue-600">{mockSystemMetrics.totalActivities}</p>
+                      <p className="text-sm font-medium text-muted-foreground">Actividades Totales</p>
+                      <p className="text-2xl font-bold text-primary">{mockSystemMetrics.totalActivities}</p>
                     </div>
-                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                      <BarChart3 className="w-6 h-6 text-blue-600" />
+                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                      <BarChart3 className="w-6 h-6 text-primary" />
                     </div>
                   </div>
                 </CardContent>
@@ -528,10 +528,10 @@ export default function ActivityLogsPage() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Actividades Hoy</p>
+                      <p className="text-sm font-medium text-muted-foreground">Actividades Hoy</p>
                       <p className="text-2xl font-bold text-green-600">{mockSystemMetrics.todayActivities}</p>
                     </div>
-                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                    <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center">
                       <TrendingUp className="w-6 h-6 text-green-600" />
                     </div>
                   </div>
@@ -542,10 +542,10 @@ export default function ActivityLogsPage() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Alertas Críticas</p>
+                      <p className="text-sm font-medium text-muted-foreground">Alertas Críticas</p>
                       <p className="text-2xl font-bold text-red-600">{mockSystemMetrics.criticalAlerts}</p>
                     </div>
-                    <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                    <div className="w-12 h-12 bg-red-500/10 rounded-full flex items-center justify-center">
                       <AlertTriangle className="w-6 h-6 text-red-600" />
                     </div>
                   </div>
@@ -556,7 +556,7 @@ export default function ActivityLogsPage() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Usuarios Activos</p>
+                      <p className="text-sm font-medium text-muted-foreground">Usuarios Activos</p>
                       <p className="text-2xl font-bold text-purple-600">{mockSystemMetrics.activeUsers}</p>
                     </div>
                     <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
@@ -570,7 +570,7 @@ export default function ActivityLogsPage() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Intentos Fallidos</p>
+                      <p className="text-sm font-medium text-muted-foreground">Intentos Fallidos</p>
                       <p className="text-2xl font-bold text-orange-600">{mockSystemMetrics.failedLogins}</p>
                     </div>
                     <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
@@ -584,7 +584,7 @@ export default function ActivityLogsPage() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Tiempo de Actividad</p>
+                      <p className="text-sm font-medium text-muted-foreground">Tiempo de Actividad</p>
                       <p className="text-2xl font-bold text-teal-600">{mockSystemMetrics.systemUptime}</p>
                     </div>
                     <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center">
@@ -617,14 +617,14 @@ export default function ActivityLogsPage() {
                           {getModuleIcon(module)}
                           <div>
                             <p className="font-medium">{module}</p>
-                            <p className="text-sm text-gray-500">{todayActivities.length} actividades</p>
+                            <p className="text-sm text-muted-foreground">{todayActivities.length} actividades</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <div className="w-20 h-2 bg-gray-200 rounded-full">
+                          <div className="w-20 h-2 bg-muted rounded-full">
                             <div className="h-2 bg-blue-600 rounded-full" style={{ width: `${percentage}%` }}></div>
                           </div>
-                          <span className="text-xs text-gray-500 w-12">{percentage.toFixed(1)}%</span>
+                          <span className="text-xs text-muted-foreground w-12">{percentage.toFixed(1)}%</span>
                         </div>
                       </div>
                     )
@@ -648,7 +648,7 @@ export default function ActivityLogsPage() {
                     .slice(0, 5)
                     .map((log) => (
                       <div key={log.id} className="flex items-start gap-3 p-3 bg-red-50 rounded-lg">
-                        <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <div className="w-8 h-8 bg-red-500/10 rounded-full flex items-center justify-center flex-shrink-0">
                           {getSeverityIcon(log.severity)}
                         </div>
                         <div className="flex-1">
@@ -668,7 +668,7 @@ export default function ActivityLogsPage() {
                       </div>
                     ))}
                   {activityLogs.filter((log) => log.severity === "critical" || log.severity === "error").length ===
-                    0 && <p className="text-center text-gray-500 py-4">No hay actividades críticas recientes</p>}
+                    0 && <p className="text-center text-muted-foreground py-4">No hay actividades críticas recientes</p>}
                 </div>
               </CardContent>
             </Card>
@@ -685,17 +685,17 @@ export default function ActivityLogsPage() {
                   {mockUserActivity.map((user, index) => (
                     <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                          <User className="w-6 h-6 text-blue-600" />
+                        <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                          <User className="w-6 h-6 text-primary" />
                         </div>
                         <div>
-                          <p className="font-medium text-gray-900">{user.user}</p>
-                          <p className="text-sm text-gray-500">{user.role}</p>
+                          <p className="font-medium text-foreground">{user.user}</p>
+                          <p className="text-sm text-muted-foreground">{user.role}</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="font-bold text-blue-600">{user.actions} acciones</p>
-                        <p className="text-xs text-gray-500">
+                        <p className="font-bold text-primary">{user.actions} acciones</p>
+                        <p className="text-xs text-muted-foreground">
                           Última: {format(new Date(user.lastActivity), "dd/MM HH:mm")}
                         </p>
                       </div>
@@ -724,7 +724,7 @@ export default function ActivityLogsPage() {
                       .slice(0, 5)
                       .map((log) => (
                         <div key={log.id} className="flex items-start gap-3 p-3 border rounded-lg">
-                          <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                          <div className="w-8 h-8 bg-red-500/10 rounded-full flex items-center justify-center flex-shrink-0">
                             {log.action.includes("Bloqueado") ? (
                               <Lock className="w-4 h-4 text-red-600" />
                             ) : (
@@ -733,8 +733,8 @@ export default function ActivityLogsPage() {
                           </div>
                           <div className="flex-1">
                             <p className="font-medium text-sm">{log.action}</p>
-                            <p className="text-xs text-gray-600">{log.description}</p>
-                            <p className="text-xs text-gray-500 mt-1">
+                            <p className="text-xs text-muted-foreground">{log.description}</p>
+                            <p className="text-xs text-muted-foreground mt-1">
                               IP: {log.ipAddress} • {format(new Date(log.timestamp), "dd/MM HH:mm")}
                             </p>
                           </div>
@@ -792,7 +792,7 @@ export default function ActivityLogsPage() {
                     .slice(0, 5)
                     .map((log) => (
                       <div key={log.id} className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
-                        <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <div className="w-8 h-8 bg-green-500/10 rounded-full flex items-center justify-center flex-shrink-0">
                           <CheckCircle className="w-4 h-4 text-green-600" />
                         </div>
                         <div className="flex-1">
@@ -818,7 +818,7 @@ export default function ActivityLogsPage() {
                   <div className="flex flex-col lg:flex-row gap-4">
                     <div className="flex-1">
                       <div className="relative">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                         <Input
                           placeholder="Buscar por descripción, usuario, paciente o acción..."
                           value={searchTerm}
@@ -923,7 +923,7 @@ export default function ActivityLogsPage() {
               <Card>
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm text-muted-foreground">
                       {selectedLogs.length} registro{selectedLogs.length !== 1 ? "s" : ""} seleccionado
                       {selectedLogs.length !== 1 ? "s" : ""}
                     </span>
@@ -943,7 +943,7 @@ export default function ActivityLogsPage() {
               <CardContent className="p-0">
                 <div className="overflow-x-auto">
                   <table className="w-full">
-                    <thead className="bg-gray-50 border-b">
+                    <thead className="bg-muted border-b">
                     <tr>
                       <th className="p-4 text-left">
                         <Checkbox
@@ -951,23 +951,23 @@ export default function ActivityLogsPage() {
                           onCheckedChange={handleSelectAll}
                         />
                       </th>
-                      <th className="p-4 text-left text-sm font-medium text-gray-900">Actividad</th>
-                      <th className="p-4 text-left text-sm font-medium text-gray-900 hidden md:table-cell">
+                      <th className="p-4 text-left text-sm font-medium text-foreground">Actividad</th>
+                      <th className="p-4 text-left text-sm font-medium text-foreground hidden md:table-cell">
                         Usuario
                       </th>
-                      <th className="p-4 text-left text-sm font-medium text-gray-900 hidden lg:table-cell">
+                      <th className="p-4 text-left text-sm font-medium text-foreground hidden lg:table-cell">
                         Paciente
                       </th>
-                      <th className="p-4 text-left text-sm font-medium text-gray-900 hidden sm:table-cell">
+                      <th className="p-4 text-left text-sm font-medium text-foreground hidden sm:table-cell">
                         Severidad
                       </th>
-                      <th className="p-4 text-left text-sm font-medium text-gray-900 hidden lg:table-cell">Fecha</th>
-                      <th className="p-4 text-left text-sm font-medium text-gray-900">Acciones</th>
+                      <th className="p-4 text-left text-sm font-medium text-foreground hidden lg:table-cell">Fecha</th>
+                      <th className="p-4 text-left text-sm font-medium text-foreground">Acciones</th>
                     </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
                     {paginatedLogs.map((log) => (
-                      <tr key={log.id} className="hover:bg-gray-50">
+                      <tr key={log.id} className="hover:bg-muted">
                         <td className="p-4">
                           <Checkbox
                             checked={selectedLogs.includes(log.id)}
@@ -976,19 +976,19 @@ export default function ActivityLogsPage() {
                         </td>
                         <td className="p-4">
                           <div className="flex items-start gap-3">
-                            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
                               {getModuleIcon(log.module)}
                             </div>
                             <div>
-                              <div className="font-medium text-gray-900">{log.action}</div>
-                              <div className="text-sm text-gray-600 line-clamp-2">{log.description}</div>
+                              <div className="font-medium text-foreground">{log.action}</div>
+                              <div className="text-sm text-muted-foreground line-clamp-2">{log.description}</div>
                               <div className="flex items-center gap-2 mt-1">
                                   <span className={`text-xs px-2 py-1 rounded-full ${getCategoryColor(log.category)}`}>
                                     {log.category}
                                   </span>
-                                <span className="text-xs text-gray-500">{log.module}</span>
+                                <span className="text-xs text-muted-foreground">{log.module}</span>
                               </div>
-                              <div className="text-xs text-gray-400 md:hidden mt-1">
+                              <div className="text-xs text-muted-foreground md:hidden mt-1">
                                 {log.user} • {format(new Date(log.timestamp), "dd/MM HH:mm")}
                               </div>
                             </div>
@@ -996,18 +996,18 @@ export default function ActivityLogsPage() {
                         </td>
                         <td className="p-4 hidden md:table-cell">
                           <div className="text-sm">
-                            <div className="font-medium text-gray-900">{log.user}</div>
-                            <div className="text-gray-500">{log.userRole}</div>
+                            <div className="font-medium text-foreground">{log.user}</div>
+                            <div className="text-muted-foreground">{log.userRole}</div>
                           </div>
                         </td>
                         <td className="p-4 hidden lg:table-cell">
                           {log.patientName ? (
                             <div className="text-sm">
-                              <div className="font-medium text-gray-900">{log.patientName}</div>
-                              <div className="text-gray-500">{log.patientId}</div>
+                              <div className="font-medium text-foreground">{log.patientName}</div>
+                              <div className="text-muted-foreground">{log.patientId}</div>
                             </div>
                           ) : (
-                            <span className="text-gray-400">N/A</span>
+                            <span className="text-muted-foreground">N/A</span>
                           )}
                         </td>
                         <td className="p-4 hidden sm:table-cell">
@@ -1017,8 +1017,8 @@ export default function ActivityLogsPage() {
                           </Badge>
                         </td>
                         <td className="p-4 hidden lg:table-cell">
-                          <div className="text-sm text-gray-900">{format(new Date(log.timestamp), "dd/MM/yyyy")}</div>
-                          <div className="text-xs text-gray-500">{format(new Date(log.timestamp), "HH:mm:ss")}</div>
+                          <div className="text-sm text-foreground">{format(new Date(log.timestamp), "dd/MM/yyyy")}</div>
+                          <div className="text-xs text-muted-foreground">{format(new Date(log.timestamp), "HH:mm:ss")}</div>
                         </td>
                         <td className="p-4">
                           <Button
@@ -1042,7 +1042,7 @@ export default function ActivityLogsPage() {
                 {/* Pagination */}
                 {totalPages > 1 && (
                   <div className="flex items-center justify-between p-4 border-t">
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-muted-foreground">
                       Mostrando {(currentPage - 1) * itemsPerPage + 1} a{" "}
                       {Math.min(currentPage * itemsPerPage, filteredLogs.length)} de {filteredLogs.length} registros
                     </div>
@@ -1089,12 +1089,12 @@ export default function ActivityLogsPage() {
                 {/* Activity Header */}
                 <div className="border-b pb-4">
                   <div className="flex items-start gap-4 mb-4">
-                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
                       {getModuleIcon(viewingLog.module)}
                     </div>
                     <div className="flex-1">
                       <h3 className="text-lg font-semibold">{viewingLog.action}</h3>
-                      <p className="text-sm text-gray-600">{viewingLog.description}</p>
+                      <p className="text-sm text-muted-foreground">{viewingLog.description}</p>
                       <div className="flex items-center gap-2 mt-2">
                         <Badge variant={getSeverityColor(viewingLog.severity)} className="flex items-center gap-1">
                           {getSeverityIcon(viewingLog.severity)}
@@ -1110,27 +1110,27 @@ export default function ActivityLogsPage() {
 
                 {/* Basic Information */}
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-3">Información Básica</h4>
+                  <h4 className="font-medium text-foreground mb-3">Información Básica</h4>
                   <div className="space-y-3">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <span className="text-sm text-gray-500">ID de Registro:</span>
+                        <span className="text-sm text-muted-foreground">ID de Registro:</span>
                         <p className="font-medium font-mono text-sm">{viewingLog.id}</p>
                       </div>
                       <div>
-                        <span className="text-sm text-gray-500">Módulo:</span>
+                        <span className="text-sm text-muted-foreground">Módulo:</span>
                         <p className="font-medium">{viewingLog.module}</p>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <span className="text-sm text-gray-500">Fecha y Hora:</span>
+                        <span className="text-sm text-muted-foreground">Fecha y Hora:</span>
                         <p className="font-medium">
                           {format(new Date(viewingLog.timestamp), "dd/MM/yyyy HH:mm:ss", { locale: es })}
                         </p>
                       </div>
                       <div>
-                        <span className="text-sm text-gray-500">Categoría:</span>
+                        <span className="text-sm text-muted-foreground">Categoría:</span>
                         <p className="font-medium capitalize">{viewingLog.category}</p>
                       </div>
                     </div>
@@ -1139,25 +1139,25 @@ export default function ActivityLogsPage() {
 
                 {/* User Information */}
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-3">Información del Usuario</h4>
+                  <h4 className="font-medium text-foreground mb-3">Información del Usuario</h4>
                   <div className="space-y-3">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <span className="text-sm text-gray-500">Usuario:</span>
+                        <span className="text-sm text-muted-foreground">Usuario:</span>
                         <p className="font-medium">{viewingLog.user}</p>
                       </div>
                       <div>
-                        <span className="text-sm text-gray-500">Rol:</span>
+                        <span className="text-sm text-muted-foreground">Rol:</span>
                         <p className="font-medium">{viewingLog.userRole}</p>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <span className="text-sm text-gray-500">Dirección IP:</span>
+                        <span className="text-sm text-muted-foreground">Dirección IP:</span>
                         <p className="font-medium font-mono text-sm">{viewingLog.ipAddress}</p>
                       </div>
                       <div>
-                        <span className="text-sm text-gray-500">Navegador:</span>
+                        <span className="text-sm text-muted-foreground">Navegador:</span>
                         <p className="font-medium text-sm truncate" title={viewingLog.userAgent}>
                           {viewingLog.userAgent.split(" ")[0]}
                         </p>
@@ -1169,15 +1169,15 @@ export default function ActivityLogsPage() {
                 {/* Patient Information */}
                 {viewingLog.patientId && (
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-3">Información del Paciente</h4>
+                    <h4 className="font-medium text-foreground mb-3">Información del Paciente</h4>
                     <div className="space-y-3">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <span className="text-sm text-gray-500">Nombre:</span>
+                          <span className="text-sm text-muted-foreground">Nombre:</span>
                           <p className="font-medium">{viewingLog.patientName}</p>
                         </div>
                         <div>
-                          <span className="text-sm text-gray-500">ID del Paciente:</span>
+                          <span className="text-sm text-muted-foreground">ID del Paciente:</span>
                           <p className="font-medium font-mono text-sm">{viewingLog.patientId}</p>
                         </div>
                       </div>
@@ -1188,11 +1188,11 @@ export default function ActivityLogsPage() {
                 {/* Activity Details */}
                 {viewingLog.details && Object.keys(viewingLog.details).length > 0 && (
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-3">Detalles de la Actividad</h4>
+                    <h4 className="font-medium text-foreground mb-3">Detalles de la Actividad</h4>
                     <div className="space-y-2">
                       {Object.entries(viewingLog.details).map(([key, value]) => (
-                        <div key={key} className="flex justify-between py-2 border-b border-gray-100 last:border-b-0">
-                          <span className="text-sm text-gray-500 capitalize">
+                        <div key={key} className="flex justify-between py-2 border-b border-main-200 dark:border-main-800 last:border-b-0">
+                          <span className="text-sm text-muted-foreground capitalize">
                             {key.replace(/([A-Z])/g, " $1").trim()}:
                           </span>
                           <span className="text-sm font-medium text-right max-w-xs truncate" title={String(value)}>
@@ -1207,18 +1207,18 @@ export default function ActivityLogsPage() {
                 {/* Changes Made */}
                 {viewingLog.changes && viewingLog.changes.length > 0 && (
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-3">Cambios Realizados</h4>
+                    <h4 className="font-medium text-foreground mb-3">Cambios Realizados</h4>
                     <div className="space-y-3">
                       {viewingLog.changes.map((change, index) => (
-                        <div key={index} className="p-3 bg-gray-50 rounded-lg">
-                          <div className="font-medium text-sm text-gray-900 mb-2">{change.field}</div>
+                        <div key={index} className="p-3 bg-muted rounded-lg">
+                          <div className="font-medium text-sm text-foreground mb-2">{change.field}</div>
                           <div className="grid grid-cols-2 gap-4 text-sm">
                             <div>
-                              <span className="text-gray-500">Antes:</span>
+                              <span className="text-muted-foreground">Antes:</span>
                               <p className="font-medium text-red-600">{change.before || "N/A"}</p>
                             </div>
                             <div>
-                              <span className="text-gray-500">Después:</span>
+                              <span className="text-muted-foreground">Después:</span>
                               <p className="font-medium text-green-600">{change.after}</p>
                             </div>
                           </div>
@@ -1230,16 +1230,16 @@ export default function ActivityLogsPage() {
 
                 {/* Technical Information */}
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-3">Información Técnica</h4>
+                  <h4 className="font-medium text-foreground mb-3">Información Técnica</h4>
                   <div className="space-y-2 text-sm">
-                    <div className="flex justify-between py-2 border-b border-gray-100">
-                      <span className="text-gray-500">User Agent:</span>
+                    <div className="flex justify-between py-2 border-b border-main-200 dark:border-main-800">
+                      <span className="text-muted-foreground">User Agent:</span>
                       <span className="font-mono text-xs max-w-xs truncate" title={viewingLog.userAgent}>
                         {viewingLog.userAgent}
                       </span>
                     </div>
                     <div className="flex justify-between py-2">
-                      <span className="text-gray-500">Timestamp:</span>
+                      <span className="text-muted-foreground">Timestamp:</span>
                       <span className="font-mono text-xs">{viewingLog.timestamp}</span>
                     </div>
                   </div>

@@ -55,11 +55,7 @@ export function AppSidebar() {
 
   return (
     <Sidebar 
-      className="border-r border-main-200 dark:border-main-800 bg-white dark:bg-gray-900 [&_*]:!bg-opacity-100"
-      style={{ 
-        backgroundColor: 'var(--background)',
-        '--tw-bg-opacity': '1'
-      } as React.CSSProperties}
+      className="border-r border-main-200 dark:border-main-800 bg-background"
     >
       <SidebarHeader className="border-b border-main-200 dark:border-main-800 p-4">
         <div className="flex items-center gap-3">

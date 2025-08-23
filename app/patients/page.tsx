@@ -367,18 +367,18 @@ export default function PatientManagementPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Page Header */}
-      <div className="bg-white border-b border-gray-200 p-4 lg:p-6">
+      <div className="bg-card border-b border-main-200 dark:border-main-800 p-4 lg:p-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                <Users className="w-5 h-5 text-blue-600" />
+              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                <Users className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <h1 className="text-xl lg:text-2xl font-bold text-gray-900">Gestión de Pacientes</h1>
-                <p className="text-sm lg:text-base text-gray-500">
+                <h1 className="text-xl lg:text-2xl font-bold text-foreground">Gestión de Pacientes</h1>
+                <p className="text-sm lg:text-base text-muted-foreground">
                   {filteredPatients.length} paciente{filteredPatients.length !== 1 ? "s" : ""} encontrado
                   {filteredPatients.length !== 1 ? "s" : ""}
                 </p>
@@ -405,7 +405,7 @@ export default function PatientManagementPage() {
             <div className="flex flex-col lg:flex-row gap-4">
               <div className="flex-1">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
                     placeholder="Buscar por nombre, cédula, ID o teléfono..."
                     value={searchTerm}
@@ -448,7 +448,7 @@ export default function PatientManagementPage() {
           <Card className="mb-4">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-muted-foreground">
                   {selectedPatients.length} paciente{selectedPatients.length !== 1 ? "s" : ""} seleccionado
                   {selectedPatients.length !== 1 ? "s" : ""}
                 </span>
@@ -488,7 +488,7 @@ export default function PatientManagementPage() {
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b">
+                <thead className="bg-muted border-b">
                   <tr>
                     <th className="p-4 text-left">
                       <Checkbox
@@ -496,19 +496,19 @@ export default function PatientManagementPage() {
                         onCheckedChange={handleSelectAll}
                       />
                     </th>
-                    <th className="p-4 text-left text-sm font-medium text-gray-900">Paciente</th>
-                    <th className="p-4 text-left text-sm font-medium text-gray-900 hidden md:table-cell">Contacto</th>
-                    <th className="p-4 text-left text-sm font-medium text-gray-900 hidden lg:table-cell">Ubicación</th>
-                    <th className="p-4 text-left text-sm font-medium text-gray-900 hidden sm:table-cell">Estado</th>
-                    <th className="p-4 text-left text-sm font-medium text-gray-900 hidden lg:table-cell">
+                    <th className="p-4 text-left text-sm font-medium text-foreground">Paciente</th>
+                    <th className="p-4 text-left text-sm font-medium text-foreground hidden md:table-cell">Contacto</th>
+                    <th className="p-4 text-left text-sm font-medium text-foreground hidden lg:table-cell">Ubicación</th>
+                    <th className="p-4 text-left text-sm font-medium text-foreground hidden sm:table-cell">Estado</th>
+                    <th className="p-4 text-left text-sm font-medium text-foreground hidden lg:table-cell">
                       Última Visita
                     </th>
-                    <th className="p-4 text-left text-sm font-medium text-gray-900 w-32">Acciones</th>
+                    <th className="p-4 text-left text-sm font-medium text-foreground w-32">Acciones</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {paginatedPatients.map((patient) => (
-                    <tr key={patient.id} className="hover:bg-gray-50">
+                    <tr key={patient.id} className="hover:bg-muted">
                       <td className="p-4">
                         <Checkbox
                           checked={selectedPatients.includes(patient.id)}
@@ -517,25 +517,25 @@ export default function PatientManagementPage() {
                       </td>
                       <td className="p-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                            <User className="w-5 h-5 text-blue-600" />
+                          <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                            <User className="w-5 h-5 text-primary" />
                           </div>
                           <div>
-                            <div className="font-medium text-gray-900">
+                            <div className="font-medium text-foreground">
                               {patient.firstName} {patient.lastName}
                             </div>
-                            <div className="text-sm text-gray-500">{patient.id}</div>
-                            <div className="text-sm text-gray-500 md:hidden">{patient.phone}</div>
+                            <div className="text-sm text-muted-foreground">{patient.id}</div>
+                            <div className="text-sm text-muted-foreground md:hidden">{patient.phone}</div>
                           </div>
                         </div>
                       </td>
                       <td className="p-4 hidden md:table-cell">
                         <div className="text-sm">
-                          <div className="flex items-center gap-1 text-gray-900">
+                          <div className="flex items-center gap-1 text-foreground">
                             <Phone className="w-3 h-3" />
                             {patient.phone}
                           </div>
-                          <div className="flex items-center gap-1 text-gray-500 mt-1">
+                          <div className="flex items-center gap-1 text-muted-foreground mt-1">
                             <Mail className="w-3 h-3" />
                             {patient.email}
                           </div>
@@ -543,15 +543,15 @@ export default function PatientManagementPage() {
                       </td>
                       <td className="p-4 hidden lg:table-cell">
                         <div className="text-sm">
-                          <div className="text-gray-900">{patient.city}</div>
-                          <div className="text-gray-500">{patient.province}</div>
+                          <div className="text-foreground">{patient.city}</div>
+                          <div className="text-muted-foreground">{patient.province}</div>
                         </div>
                       </td>
                       <td className="p-4 hidden sm:table-cell">
                         <Badge variant={patient.status === "Activo" ? "default" : "secondary"}>{patient.status}</Badge>
                       </td>
                       <td className="p-4 hidden lg:table-cell">
-                        <div className="text-sm text-gray-900">
+                        <div className="text-sm text-foreground">
                           {format(new Date(patient.lastVisit), "dd/MM/yyyy", { locale: es })}
                         </div>
                       </td>
@@ -626,7 +626,7 @@ export default function PatientManagementPage() {
             {/* Pagination */}
             {totalPages > 1 && (
               <div className="flex items-center justify-between p-4 border-t">
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-muted-foreground">
                   Mostrando {(currentPage - 1) * itemsPerPage + 1} a{" "}
                   {Math.min(currentPage * itemsPerPage, filteredPatients.length)} de {filteredPatients.length} pacientes
                 </div>
@@ -669,14 +669,14 @@ export default function PatientManagementPage() {
             <ScrollArea className="h-full mt-6">
               <div className="space-y-6 pb-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-                    <User className="w-8 h-8 text-blue-600" />
+                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+                    <User className="w-8 h-8 text-primary" />
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold">
                       {viewingPatient.firstName} {viewingPatient.lastName}
                     </h3>
-                    <p className="text-sm text-gray-500">{viewingPatient.id}</p>
+                    <p className="text-sm text-muted-foreground">{viewingPatient.id}</p>
                     <Badge variant={viewingPatient.status === "Activo" ? "default" : "secondary"} className="mt-1">
                       {viewingPatient.status}
                     </Badge>
@@ -685,47 +685,47 @@ export default function PatientManagementPage() {
 
                 <div className="space-y-4">
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-2">Información Personal</h4>
+                    <h4 className="font-medium text-foreground mb-2">Información Personal</h4>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Cédula:</span>
+                        <span className="text-muted-foreground">Cédula:</span>
                         <span>{viewingPatient.cedula}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Fecha de Nacimiento:</span>
+                        <span className="text-muted-foreground">Fecha de Nacimiento:</span>
                         <span>{format(new Date(viewingPatient.dateOfBirth), "dd/MM/yyyy", { locale: es })}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Edad:</span>
+                        <span className="text-muted-foreground">Edad:</span>
                         <span>{viewingPatient.age} años</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Género:</span>
+                        <span className="text-muted-foreground">Género:</span>
                         <span>{viewingPatient.gender}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Tipo de Sangre:</span>
+                        <span className="text-muted-foreground">Tipo de Sangre:</span>
                         <Badge variant="outline">{viewingPatient.bloodType}</Badge>
                       </div>
                     </div>
                   </div>
 
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-2">Contacto</h4>
+                    <h4 className="font-medium text-foreground mb-2">Contacto</h4>
                     <div className="space-y-2 text-sm">
                       <div className="flex items-center gap-2">
-                        <Phone className="w-4 h-4 text-gray-400" />
+                        <Phone className="w-4 h-4 text-muted-foreground" />
                         <span>{viewingPatient.phone}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Mail className="w-4 h-4 text-gray-400" />
+                        <Mail className="w-4 h-4 text-muted-foreground" />
                         <span>{viewingPatient.email}</span>
                       </div>
                       <div className="flex items-start gap-2">
-                        <MapPin className="w-4 h-4 text-gray-400 mt-0.5" />
+                        <MapPin className="w-4 h-4 text-muted-foreground mt-0.5" />
                         <div>
                           <div>{viewingPatient.address}</div>
-                          <div className="text-gray-500">
+                          <div className="text-muted-foreground">
                             {viewingPatient.city}, {viewingPatient.province}
                           </div>
                         </div>
@@ -734,10 +734,10 @@ export default function PatientManagementPage() {
                   </div>
 
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-2">Información Médica</h4>
+                    <h4 className="font-medium text-foreground mb-2">Información Médica</h4>
                     <div className="space-y-2 text-sm">
                       <div>
-                        <span className="text-gray-500">Alergias:</span>
+                        <span className="text-muted-foreground">Alergias:</span>
                         <div className="flex flex-wrap gap-1 mt-1">
                           {viewingPatient.allergies.length > 0 ? (
                             viewingPatient.allergies.map((allergy, index) => (
@@ -746,20 +746,20 @@ export default function PatientManagementPage() {
                               </Badge>
                             ))
                           ) : (
-                            <span className="text-gray-400">Sin alergias conocidas</span>
+                            <span className="text-muted-foreground">Sin alergias conocidas</span>
                           )}
                         </div>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Seguro:</span>
+                        <span className="text-muted-foreground">Seguro:</span>
                         <span>{viewingPatient.insuranceProvider}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Contacto de Emergencia:</span>
+                        <span className="text-muted-foreground">Contacto de Emergencia:</span>
                         <span className="text-right">{viewingPatient.emergencyContact}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Última Visita:</span>
+                        <span className="text-muted-foreground">Última Visita:</span>
                         <span>{format(new Date(viewingPatient.lastVisit), "dd/MM/yyyy", { locale: es })}</span>
                       </div>
                     </div>
@@ -784,7 +784,7 @@ export default function PatientManagementPage() {
           <SheetHeader>
             <SheetTitle>Historial Médico</SheetTitle>
             {viewingHistory && (
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-muted-foreground">
                 {patients.find((p) => p.id === viewingHistory)?.firstName}{" "}
                 {patients.find((p) => p.id === viewingHistory)?.lastName}
               </p>
@@ -851,29 +851,29 @@ export default function PatientManagementPage() {
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-2">
                                 <Badge variant="outline">{consultation.status}</Badge>
-                                <span className="text-sm text-gray-500">
+                                <span className="text-sm text-muted-foreground">
                                   {format(new Date(consultation.date), "dd/MM/yyyy", { locale: es })}
                                 </span>
                               </div>
-                              <h4 className="font-medium text-gray-900 mb-1">{consultation.reason}</h4>
-                              <p className="text-sm text-gray-600 mb-2">Dr. {consultation.doctor}</p>
+                              <h4 className="font-medium text-foreground mb-1">{consultation.reason}</h4>
+                              <p className="text-sm text-muted-foreground mb-2">Dr. {consultation.doctor}</p>
 
                               <Collapsible>
-                                <CollapsibleTrigger className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700">
+                                <CollapsibleTrigger className="flex items-center gap-2 text-sm text-primary hover:text-blue-700">
                                   Ver detalles <ChevronDown className="w-4 h-4" />
                                 </CollapsibleTrigger>
                                 <CollapsibleContent className="mt-3 space-y-2">
                                   <div>
-                                    <span className="text-sm font-medium text-gray-700">Diagnóstico:</span>
-                                    <p className="text-sm text-gray-600">{consultation.diagnosis}</p>
+                                    <span className="text-sm font-medium text-foreground">Diagnóstico:</span>
+                                    <p className="text-sm text-muted-foreground">{consultation.diagnosis}</p>
                                   </div>
                                   <div>
-                                    <span className="text-sm font-medium text-gray-700">Tratamiento:</span>
-                                    <p className="text-sm text-gray-600">{consultation.treatment}</p>
+                                    <span className="text-sm font-medium text-foreground">Tratamiento:</span>
+                                    <p className="text-sm text-muted-foreground">{consultation.treatment}</p>
                                   </div>
                                   <div>
-                                    <span className="text-sm font-medium text-gray-700">Notas:</span>
-                                    <p className="text-sm text-gray-600">{consultation.notes}</p>
+                                    <span className="text-sm font-medium text-foreground">Notas:</span>
+                                    <p className="text-sm text-muted-foreground">{consultation.notes}</p>
                                   </div>
                                 </CollapsibleContent>
                               </Collapsible>
@@ -893,24 +893,24 @@ export default function PatientManagementPage() {
                         <CardContent className="p-4">
                           <div className="flex items-start justify-between mb-2">
                             <div>
-                              <h4 className="font-medium text-gray-900">{procedure.procedure}</h4>
-                              <p className="text-sm text-gray-600">Dr. {procedure.doctor}</p>
+                              <h4 className="font-medium text-foreground">{procedure.procedure}</h4>
+                              <p className="text-sm text-muted-foreground">Dr. {procedure.doctor}</p>
                             </div>
                             <div className="text-right">
                               <Badge variant="outline">{procedure.status}</Badge>
-                              <p className="text-sm text-gray-500 mt-1">
+                              <p className="text-sm text-muted-foreground mt-1">
                                 {format(new Date(procedure.date), "dd/MM/yyyy", { locale: es })}
                               </p>
                             </div>
                           </div>
                           <div className="space-y-2">
                             <div>
-                              <span className="text-sm font-medium text-gray-700">Resultados:</span>
-                              <p className="text-sm text-gray-600">{procedure.results}</p>
+                              <span className="text-sm font-medium text-foreground">Resultados:</span>
+                              <p className="text-sm text-muted-foreground">{procedure.results}</p>
                             </div>
                             <div>
-                              <span className="text-sm font-medium text-gray-700">Notas:</span>
-                              <p className="text-sm text-gray-600">{procedure.notes}</p>
+                              <span className="text-sm font-medium text-foreground">Notas:</span>
+                              <p className="text-sm text-muted-foreground">{procedure.notes}</p>
                             </div>
                           </div>
                         </CardContent>
@@ -927,30 +927,30 @@ export default function PatientManagementPage() {
                         <CardContent className="p-4">
                           <div className="flex items-start justify-between mb-2">
                             <div>
-                              <h4 className="font-medium text-gray-900">{lab.test}</h4>
-                              <p className="text-sm text-gray-600">Solicitado por: Dr. {lab.doctor}</p>
+                              <h4 className="font-medium text-foreground">{lab.test}</h4>
+                              <p className="text-sm text-muted-foreground">Solicitado por: Dr. {lab.doctor}</p>
                             </div>
                             <div className="text-right">
                               <Badge variant="outline">{lab.status}</Badge>
-                              <p className="text-sm text-gray-500 mt-1">
+                              <p className="text-sm text-muted-foreground mt-1">
                                 {format(new Date(lab.date), "dd/MM/yyyy", { locale: es })}
                               </p>
                             </div>
                           </div>
                           <div className="space-y-2">
                             <div>
-                              <span className="text-sm font-medium text-gray-700">Resultado General:</span>
-                              <p className="text-sm text-gray-600">{lab.results}</p>
+                              <span className="text-sm font-medium text-foreground">Resultado General:</span>
+                              <p className="text-sm text-muted-foreground">{lab.results}</p>
                             </div>
                             <Collapsible>
-                              <CollapsibleTrigger className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700">
+                              <CollapsibleTrigger className="flex items-center gap-2 text-sm text-primary hover:text-blue-700">
                                 Ver valores detallados <ChevronDown className="w-4 h-4" />
                               </CollapsibleTrigger>
                               <CollapsibleContent className="mt-3">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 p-3 bg-gray-50 rounded-lg">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 p-3 bg-muted rounded-lg">
                                   {Object.entries(lab.values).map(([key, value]) => (
                                     <div key={key} className="flex justify-between text-sm">
-                                      <span className="text-gray-700">{key}:</span>
+                                      <span className="text-foreground">{key}:</span>
                                       <span className="font-medium">{value}</span>
                                     </div>
                                   ))}
@@ -972,12 +972,12 @@ export default function PatientManagementPage() {
                         <CardContent className="p-4">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                                <FileText className="w-5 h-5 text-blue-600" />
+                              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                                <FileText className="w-5 h-5 text-primary" />
                               </div>
                               <div>
-                                <h4 className="font-medium text-gray-900">{document.name}</h4>
-                                <div className="flex items-center gap-2 text-sm text-gray-500">
+                                <h4 className="font-medium text-foreground">{document.name}</h4>
+                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                   <Badge variant="secondary" className="text-xs">
                                     {document.type}
                                   </Badge>
@@ -985,7 +985,7 @@ export default function PatientManagementPage() {
                                   <span>•</span>
                                   <span>{format(new Date(document.date), "dd/MM/yyyy", { locale: es })}</span>
                                 </div>
-                                <p className="text-sm text-gray-600">Subido por: {document.uploadedBy}</p>
+                                <p className="text-sm text-muted-foreground">Subido por: {document.uploadedBy}</p>
                               </div>
                             </div>
                             <div className="flex gap-2">
@@ -1011,9 +1011,9 @@ export default function PatientManagementPage() {
                         <CardContent className="p-4">
                           <div className="flex items-start justify-between">
                             <div>
-                              <h4 className="font-medium text-gray-900">{appointment.reason}</h4>
-                              <p className="text-sm text-gray-600">Dr. {appointment.doctor}</p>
-                              <div className="flex items-center gap-2 mt-2 text-sm text-gray-500">
+                              <h4 className="font-medium text-foreground">{appointment.reason}</h4>
+                              <p className="text-sm text-muted-foreground">Dr. {appointment.doctor}</p>
+                              <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
                                 <Calendar className="w-4 h-4" />
                                 <span>{format(new Date(appointment.date), "dd/MM/yyyy", { locale: es })}</span>
                                 <Clock className="w-4 h-4 ml-2" />
