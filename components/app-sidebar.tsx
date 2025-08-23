@@ -18,7 +18,7 @@ import {
   Settings,
   Wrench,
   LogOut,
-  MoreVertical, Receipt,
+  MoreVertical, Receipt, ScrollText,
 } from "lucide-react"
 import {
   Sidebar,
@@ -47,6 +47,7 @@ const navigationItems = [
   { key: "nav.inventory", icon: Package, href: "/inventory" },
   { key: "nav.patients", icon: UserCheck, href: "/patients" },
   { key: "nav.billing", icon: Receipt, href: "/billing" },
+  { key: "nav.activityLogs", icon: ScrollText, href: "/activity-logs" },
 ]
 
 export function AppSidebar() {

@@ -26,7 +26,8 @@ const translations = {
     "nav.inventory": "Inventory",
     "nav.patients": "Patients",
     "nav.billing": "Billing",
-    
+    "nav.activityLogs": "Activity Logs",
+
     // Header
     'header.title': 'Intergastro',
     'header.subtitle': 'Your Health Partner',
@@ -106,7 +107,9 @@ const translations = {
     "nav.inventory": "Inventario",
     "nav.patients": "Pacientes",
     "nav.billing": "Facturación",
-    
+    "nav.activityLogs": "Registros de Actividad",
+
+
     // Header
     'header.title': 'Intergastro',
     'header.subtitle': 'Tu Socio de Salud',

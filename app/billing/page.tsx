@@ -33,6 +33,8 @@ import {
   ChevronRight,
   Save,
   X,
+  Wifi,
+  Shield,
 } from "lucide-react"
 
 // Mock billing data
@@ -48,7 +50,7 @@ const mockInvoices = [
       { description: "Electrocardiograma", quantity: 1, unitPrice: 800, total: 800 },
     ],
     subtotal: 2300,
-    tax: 414, // 13% IVA
+    tax: 414, // 18% ITBIS
     discount: 0,
     total: 2714,
     status: "Pagada",
@@ -58,6 +60,14 @@ const mockInvoices = [
     insuranceAmount: 1899.8,
     patientAmount: 814.2,
     notes: "Pago completo recibido",
+    documentType: "factura",
+    // BACKEND: Add these fields for Stripe + DTE integration
+    stripePaymentId: "pi_1234567890",
+    stripeReceiptUrl: "https://stripe.com/receipt/123",
+    dteUuid: "DTE-UUID-123456789",
+    dteStatus: "accepted", // accepted, rejected, pending_retry
+    dteXmlUrl: "/dte/xml/DTE-UUID-123456789.xml",
+    dtePdfUrl: "/dte/pdf/DTE-UUID-123456789.pdf",
   },
   {
     id: "FAC-2024-002",
@@ -80,6 +90,7 @@ const mockInvoices = [
     insuranceAmount: 3332.8,
     patientAmount: 833.2,
     notes: "Esperando aprobación del seguro",
+    documentType: "factura",
   },
   {
     id: "FAC-2024-003",
@@ -99,8 +110,18 @@ const mockInvoices = [
     insuranceAmount: 0,
     patientAmount: 1770,
     notes: "Paciente sin seguro médico",
+    documentType: "factura",
   },
 ]
+
+const DOCUMENT_TYPES = {
+  ticket: { name: "Ticket", requiresRNC: false, hasITBIS: false },
+  factura: { name: "Factura", requiresRNC: true, hasITBIS: true },
+  creditoFiscal: { name: "Crédito Fiscal", requiresRNC: true, hasITBIS: true },
+  // BACKEND: Add DTE types for El Salvador
+  dteFactura: { name: "DTE Factura", requiresNIT: true, hasIVA: true },
+  dteComprobante: { name: "DTE Comprobante", requiresNIT: false, hasIVA: true },
+}
 
 const mockServices = [
   { id: "SRV-001", name: "Consulta Médica General", price: 1500, category: "Consultas" },
@@ -114,10 +135,20 @@ const mockServices = [
 ]
 
 const mockPatients = [
-  { id: "EXP-2024-001234", name: "María Elena González", insurance: "ARS Humano", coverage: 70 },
-  { id: "EXP-2024-001235", name: "Juan Carlos Rodríguez", insurance: "SeNaSa", coverage: 80 },
-  { id: "EXP-2024-001236", name: "Carmen Rosa Martínez", insurance: "Sin Seguro", coverage: 0 },
-  { id: "EXP-2024-001237", name: "Roberto Fernández", insurance: "ARS Universal", coverage: 75 },
+  {
+    id: "EXP-2024-001234",
+    name: "María Elena González",
+    insurance: "ARS Humano",
+    coverage: 70,
+    rnc: "101234567",
+    // BACKEND: Add NIT for El Salvador DTE
+    nit: "0614-123456-001-2",
+    email: "maria.gonzalez@email.com",
+    phone: "+503-7123-4567",
+  },
+  { id: "EXP-2024-001235", name: "Juan Carlos Rodríguez", insurance: "SeNaSa", coverage: 80, rnc: "101234568" },
+  { id: "EXP-2024-001236", name: "Carmen Rosa Martínez", insurance: "Sin Seguro", coverage: 0, rnc: "" },
+  { id: "EXP-2024-001237", name: "Roberto Fernández", insurance: "ARS Universal", coverage: 75, rnc: "101234569" },
 ]
 
 type Invoice = (typeof mockInvoices)[0]
@@ -135,6 +166,12 @@ export default function BillingPage() {
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false)
   const [processingPayment, setProcessingPayment] = useState<Invoice | null>(null)
   const [activeTab, setActiveTab] = useState("invoices")
+  const [documentTypeFilter, setDocumentTypeFilter] = useState("all")
+
+  // BACKEND: Add state for Stripe Terminal integration
+  const [stripeTerminalConnected, setStripeTerminalConnected] = useState(false)
+  const [isProcessingStripePayment, setIsProcessingStripePayment] = useState(false)
+  const [isDteProcessing, setIsDteProcessing] = useState(false)
 
   // New invoice form state
   const [newInvoice, setNewInvoice] = useState({
@@ -142,6 +179,7 @@ export default function BillingPage() {
     services: [{ serviceId: "", quantity: 1, customPrice: 0 }],
     discount: 0,
     notes: "",
+    documentType: "ticket",
   })
 
   const [searchPatientTerm, setSearchPatientTerm] = useState("")
@@ -156,7 +194,7 @@ export default function BillingPage() {
           patient.name.toLowerCase().includes(searchPatientTerm.toLowerCase()) ||
           patient.id.toLowerCase().includes(searchPatientTerm.toLowerCase()),
       )
-      .slice(0, 5) // Limit to 5 suggestions
+      .slice(0, 5)
   }, [searchPatientTerm])
 
   const itemsPerPage = 10
@@ -189,9 +227,12 @@ export default function BillingPage() {
         }
       })()
 
-      return matchesSearch && matchesStatus && matchesDate
+      const matchesDocumentType =
+        documentTypeFilter === "all" || invoice.documentType.toLowerCase() === documentTypeFilter.toLowerCase()
+
+      return matchesSearch && matchesStatus && matchesDate && matchesDocumentType
     })
-  }, [invoices, searchTerm, statusFilter, dateFilter])
+  }, [invoices, searchTerm, statusFilter, dateFilter, documentTypeFilter])
 
   // Pagination
   const totalPages = Math.ceil(filteredInvoices.length / itemsPerPage)
@@ -202,9 +243,17 @@ export default function BillingPage() {
   const pendingAmount = invoices.reduce((sum, invoice) => sum + (invoice.status === "Pendiente" ? invoice.total : 0), 0)
   const overdueAmount = invoices.reduce((sum, invoice) => sum + (invoice.status === "Vencida" ? invoice.total : 0), 0)
 
-  const handleCreateInvoice = () => {
-    // Calculate totals for new invoice
+  // BACKEND PROCESS: Create Invoice/Order
+  const handleCreateInvoice = async () => {
     const selectedPatient = mockPatients.find((p) => p.id === newInvoice.patientId)
+    const docType = DOCUMENT_TYPES[newInvoice.documentType]
+
+    // Check NIT/RNC requirement
+    if (docType.requiresNIT && !selectedPatient?.nit) {
+      alert("Este tipo de documento requiere que el paciente tenga NIT registrado.")
+      return
+    }
+
     const services = newInvoice.services.map((service) => {
       const serviceData = mockServices.find((s) => s.id === service.serviceId)
       const unitPrice = service.customPrice || serviceData?.price || 0
@@ -219,45 +268,277 @@ export default function BillingPage() {
     const subtotal = services.reduce((sum, service) => sum + service.total, 0)
     const discountAmount = (subtotal * newInvoice.discount) / 100
     const taxableAmount = subtotal - discountAmount
-    const tax = taxableAmount * 0.13 // 13% IVA
+
+    // Apply IVA only for DTE documents
+    const tax = docType.hasIVA ? taxableAmount * 0.13 : 0 // 13% IVA in El Salvador
     const total = taxableAmount + tax
 
     const insuranceCoverage = selectedPatient?.coverage || 0
     const insuranceAmount = (total * insuranceCoverage) / 100
     const patientAmount = total - insuranceAmount
 
-    const invoice: Invoice = {
-      id: `FAC-2024-${String(invoices.length + 1).padStart(3, "0")}`,
+    // BACKEND: Create order in database with status="pending_payment"
+    const orderData = {
       patientId: newInvoice.patientId,
       patientName: selectedPatient?.name || "",
-      date: format(new Date(), "yyyy-MM-dd"),
-      dueDate: format(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), "yyyy-MM-dd"),
       services,
       subtotal,
       tax,
       discount: discountAmount,
       total,
-      status: "Pendiente",
-      paymentMethod: "",
-      paymentDate: "",
-      insuranceCoverage,
-      insuranceAmount,
       patientAmount,
+      documentType: newInvoice.documentType,
+      status: "pending_payment", // Initial status
+      nit: selectedPatient?.nit || "",
       notes: newInvoice.notes,
     }
 
-    setInvoices([invoice, ...invoices])
-    setIsCreateDialogOpen(false)
-    setNewInvoice({
-      patientId: "",
-      services: [{ serviceId: "", quantity: 1, customPrice: 0 }],
-      discount: 0,
-      notes: "",
-    })
+    try {
+      // BACKEND API CALL: POST /api/orders
+      // const response = await fetch('/api/orders', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify(orderData)
+      // })
+      // const order = await response.json()
+
+      // Mock response for demo
+      const invoice: Invoice = {
+        id: generateDocumentNumber(newInvoice.documentType),
+        ...orderData,
+        date: format(new Date(), "yyyy-MM-dd"),
+        dueDate: format(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), "yyyy-MM-dd"),
+        status: "Pendiente",
+        paymentMethod: "",
+        paymentDate: "",
+        insuranceCoverage,
+        insuranceAmount,
+      }
+
+      setInvoices([invoice, ...invoices])
+      setIsCreateDialogOpen(false)
+      setNewInvoice({
+        patientId: "",
+        services: [{ serviceId: "", quantity: 1, customPrice: 0 }],
+        discount: 0,
+        notes: "",
+        documentType: "ticket",
+      })
+    } catch (error) {
+      console.error("Error creating order:", error)
+      alert("Error al crear la orden")
+    }
   }
 
+  // BACKEND PROCESS: Stripe Payment Integration
+  const handleProcessStripePayment = async (invoice: Invoice) => {
+    setIsProcessingStripePayment(true)
+
+    try {
+      // BACKEND API CALL: Create Stripe Payment Intent
+      // const response = await fetch('/api/payments/stripe/create-intent', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({
+      //     orderId: invoice.id,
+      //     amount: Math.round(invoice.patientAmount * 100), // Convert to cents
+      //     currency: 'usd', // or local currency
+      //     metadata: {
+      //       orderId: invoice.id,
+      //       patientId: invoice.patientId,
+      //       documentType: invoice.documentType
+      //     }
+      //   })
+      // })
+      // const { clientSecret, paymentIntentId } = await response.json()
+
+      // BACKEND: Initialize Stripe Terminal for NFC payment
+      // const terminal = StripeTerminal.create({
+      //   onFetchConnectionToken: async () => {
+      //     const response = await fetch('/api/stripe/connection-token', { method: 'POST' })
+      //     const { secret } = await response.json()
+      //     return secret
+      //   }
+      // })
+
+      // BACKEND: Process payment through Stripe Terminal
+      // const result = await terminal.collectPaymentMethod({
+      //   payment_intent: {
+      //     id: paymentIntentId,
+      //     client_secret: clientSecret
+      //   }
+      // })
+
+      // Mock successful payment for demo
+      await new Promise((resolve) => setTimeout(resolve, 3000)) // Simulate payment processing
+
+      // BACKEND API CALL: Confirm payment and update order
+      // const confirmResponse = await fetch('/api/payments/stripe/confirm', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({
+      //     orderId: invoice.id,
+      //     paymentIntentId: 'pi_mock_123456',
+      //     status: 'succeeded'
+      //   })
+      // })
+
+      // Update invoice status to paid
+      const updatedInvoices = invoices.map((inv) =>
+        inv.id === invoice.id
+          ? {
+            ...inv,
+            status: "Pagada" as const,
+            paymentMethod: "Tarjeta NFC",
+            paymentDate: format(new Date(), "yyyy-MM-dd"),
+            stripePaymentId: "pi_mock_123456",
+            stripeReceiptUrl: "https://stripe.com/receipt/mock_123456",
+          }
+          : inv,
+      )
+      setInvoices(updatedInvoices)
+
+      // BACKEND PROCESS: Generate DTE after successful payment
+      const updatedInvoice = updatedInvoices.find((inv) => inv.id === invoice.id)
+      if (updatedInvoice && (invoice.documentType === "dteFactura" || invoice.documentType === "dteComprobante")) {
+        await handleGenerateDTE(updatedInvoice)
+      }
+
+      alert("Pago procesado exitosamente con Stripe NFC")
+    } catch (error) {
+      console.error("Error processing Stripe payment:", error)
+      alert("Error al procesar el pago")
+    } finally {
+      setIsProcessingStripePayment(false)
+      setIsPaymentDialogOpen(false)
+      setProcessingPayment(null)
+    }
+  }
+
+  // BACKEND PROCESS: DTE Generation and Submission to Ministerio de Hacienda
+  const handleGenerateDTE = async (invoice: Invoice) => {
+    setIsDteProcessing(true)
+
+    try {
+      // BACKEND API CALL: Generate DTE document
+      // const dteData = {
+      //   // Datos Generales
+      //   tipoDocumento: invoice.documentType === 'dteFactura' ? '01' : '03',
+      //   numeroControl: generateDTEControlNumber(),
+      //   codigoGeneracion: generateDTECode(),
+      //   fechaEmision: new Date().toISOString(),
+      //   montoTotal: invoice.total,
+      //
+      //   // Receptor (Patient)
+      //   receptor: {
+      //     nit: invoice.nit,
+      //     nombre: invoice.patientName,
+      //     telefono: selectedPatient?.phone,
+      //     correo: selectedPatient?.email
+      //   },
+      //
+      //   // Detalle de servicios
+      //   cuerpoDocumento: invoice.services.map(service => ({
+      //     descripcion: service.description,
+      //     cantidad: service.quantity,
+      //     precioUnitario: service.unitPrice,
+      //     ventaTotal: service.total
+      //   })),
+      //
+      //   // Medio de pago
+      //   medioPago: {
+      //     codigo: '02', // Tarjeta
+      //     referencia: invoice.stripePaymentId
+      //   },
+      //
+      //   // Resumen
+      //   resumen: {
+      //     subTotal: invoice.subtotal,
+      //     descuento: invoice.discount,
+      //     ivaRetenido: 0,
+      //     reteRenta: 0,
+      //     montoTotalOperacion: invoice.total,
+      //     totalIva: invoice.tax,
+      //     totalPagar: invoice.total
+      //   }
+      // }
+
+      // BACKEND API CALL: Submit DTE to Ministerio de Hacienda
+      // const dteResponse = await fetch('/api/dte/submit', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({
+      //     orderId: invoice.id,
+      //     dteData: dteData
+      //   })
+      // })
+      // const dteResult = await dteResponse.json()
+
+      // Mock DTE processing for demo
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+
+      // BACKEND: Update order with DTE information
+      const updatedInvoices = invoices.map((inv) =>
+        inv.id === invoice.id
+          ? {
+            ...inv,
+            dteUuid: "DTE-UUID-" + Date.now(),
+            dteStatus: "accepted",
+            dteXmlUrl: `/dte/xml/${invoice.id}.xml`,
+            dtePdfUrl: `/dte/pdf/${invoice.id}.pdf`,
+          }
+          : inv,
+      )
+      setInvoices(updatedInvoices)
+
+      // BACKEND API CALL: Send DTE to patient via email/WhatsApp
+      // await fetch('/api/notifications/send-dte', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({
+      //     orderId: invoice.id,
+      //     patientEmail: selectedPatient?.email,
+      //     patientPhone: selectedPatient?.phone,
+      //     dteXmlUrl: `/dte/xml/${invoice.id}.xml`,
+      //     dtePdfUrl: `/dte/pdf/${invoice.id}.pdf`
+      //   })
+      // })
+
+      alert("DTE generado y enviado exitosamente")
+    } catch (error) {
+      console.error("Error generating DTE:", error)
+
+      // BACKEND: Mark order as paid_pending_dte for retry
+      const updatedInvoices = invoices.map((inv) =>
+        inv.id === invoice.id
+          ? {
+            ...inv,
+            dteStatus: "pending_retry",
+          }
+          : inv,
+      )
+      setInvoices(updatedInvoices)
+
+      alert("Pago exitoso, pero error al generar DTE. Se reintentará automáticamente.")
+    } finally {
+      setIsDteProcessing(false)
+    }
+  }
+
+  // BACKEND PROCESS: Legacy payment processing (cash, check, etc.)
   const handleProcessPayment = async (paymentMethod: string) => {
     if (processingPayment) {
+      // BACKEND API CALL: Process non-Stripe payment
+      // const response = await fetch('/api/payments/process', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({
+      //     orderId: processingPayment.id,
+      //     paymentMethod: paymentMethod,
+      //     amount: processingPayment.patientAmount
+      //   })
+      // })
+
       const updatedInvoices = invoices.map((invoice) =>
         invoice.id === processingPayment.id
           ? {
@@ -270,7 +551,7 @@ export default function BillingPage() {
       )
       setInvoices(updatedInvoices)
 
-      // Print receipt
+      // Print receipt for non-card payments
       const updatedInvoice = updatedInvoices.find((inv) => inv.id === processingPayment.id)
       if (updatedInvoice) {
         try {
@@ -283,6 +564,38 @@ export default function BillingPage() {
 
       setIsPaymentDialogOpen(false)
       setProcessingPayment(null)
+    }
+  }
+
+  // BACKEND PROCESS: Initialize Stripe Terminal connection
+  const initializeStripeTerminal = async () => {
+    try {
+      // BACKEND API CALL: Get connection token
+      // const response = await fetch('/api/stripe/connection-token', { method: 'POST' })
+      // const { secret } = await response.json()
+
+      // Initialize Stripe Terminal SDK
+      // const terminal = StripeTerminal.create({
+      //   onFetchConnectionToken: () => Promise.resolve(secret)
+      // })
+
+      // Discover and connect to reader
+      // const { discoveredReaders } = await terminal.discoverReaders({
+      //   simulated: false,
+      //   location: 'your_location_id'
+      // })
+
+      // if (discoveredReaders.length > 0) {
+      //   await terminal.connectReader(discoveredReaders[0])
+      //   setStripeTerminalConnected(true)
+      // }
+
+      // Mock connection for demo
+      setStripeTerminalConnected(true)
+      alert("Stripe Terminal conectado exitosamente")
+    } catch (error) {
+      console.error("Error connecting to Stripe Terminal:", error)
+      alert("Error al conectar con Stripe Terminal")
     }
   }
 
@@ -333,63 +646,86 @@ export default function BillingPage() {
     }
   }
 
-  // Thermal printer utilities
+  // BACKEND PROCESS: Thermal printer integration (existing code)
   const printReceipt = async (invoice: Invoice, paymentMethod: string) => {
     try {
-      // Check if Web Serial API is supported
       if ("serial" in navigator) {
-        // Request access to serial port (thermal printer)
         const port = await (navigator as any).serial.requestPort()
         await port.open({ baudRate: 9600 })
 
         const writer = port.writable.getWriter()
         const encoder = new TextEncoder()
 
-        // ESC/POS commands for thermal printer
         const ESC = "\x1B"
         const GS = "\x1D"
 
-        // Receipt content
         const receiptContent = generateReceiptContent(invoice, paymentMethod)
 
-        // Send commands to printer
-        await writer.write(encoder.encode(ESC + "@")) // Initialize printer
+        await writer.write(encoder.encode(ESC + "@"))
         await writer.write(encoder.encode(receiptContent))
-        await writer.write(encoder.encode("\n\n\n")) // Feed paper
-        await writer.write(encoder.encode(GS + "V" + String.fromCharCode(66, 0))) // Cut paper
+        await writer.write(encoder.encode("\n\n\n"))
+        await writer.write(encoder.encode(GS + "V" + String.fromCharCode(66, 0)))
 
         writer.releaseLock()
         await port.close()
 
         return true
       } else {
-        // Fallback to browser print
         printReceiptFallback(invoice, paymentMethod)
         return true
       }
     } catch (error) {
       console.error("Printer error:", error)
-      // Fallback to browser print
       printReceiptFallback(invoice, paymentMethod)
       return false
     }
+  }
+
+  const generateDocumentNumber = (documentType: string) => {
+    const prefix =
+      {
+        ticket: "TKT",
+        factura: "FAC",
+        creditoFiscal: "CF",
+        dteFactura: "DTE-FAC",
+        dteComprobante: "DTE-CCF",
+      }[documentType] || "DOC"
+
+    return `${prefix}-2024-${String(invoices.length + 1).padStart(3, "0")}`
   }
 
   const generateReceiptContent = (invoice: Invoice, paymentMethod: string) => {
     const now = new Date()
     const ESC = "\x1B"
     const GS = "\x1D"
+    const docType = DOCUMENT_TYPES[invoice.documentType]
+
+    let header = ""
+    if (invoice.documentType === "ticket") {
+      header = "TICKET DE VENTA"
+    } else if (invoice.documentType === "factura") {
+      header = "FACTURA"
+    } else if (invoice.documentType === "creditoFiscal") {
+      header = "CREDITO FISCAL"
+    } else if (invoice.documentType === "dteFactura") {
+      header = "DTE FACTURA"
+    } else if (invoice.documentType === "dteComprobante") {
+      header = "DTE COMPROBANTE"
+    }
 
     return (
-      `${ESC}a1` + // Center align
-      `CENTRO MEDICO\n` +
-      `RECIBO DE PAGO\n` +
-      `${ESC}a0` + // Left align
+      `${ESC}a1` +
+      `CLINICA MEDICA\n` +
+      `NIT: 0614-123456-001-2\n` +
+      `${header}\n` +
+      `${ESC}a0` +
       `--------------------------------\n` +
       `Fecha: ${format(now, "dd/MM/yyyy HH:mm", { locale: es })}\n` +
-      `Factura: ${invoice.id}\n` +
+      `Documento: ${invoice.id}\n` +
       `Paciente: ${invoice.patientName}\n` +
       `ID: ${invoice.patientId}\n` +
+      (invoice.nit ? `NIT Cliente: ${invoice.nit}\n` : "") +
+      (invoice.dteUuid ? `DTE UUID: ${invoice.dteUuid}\n` : "") +
       `--------------------------------\n` +
       `SERVICIOS:\n` +
       invoice.services
@@ -403,10 +739,10 @@ export default function BillingPage() {
       `--------------------------------\n` +
       `Subtotal: $${invoice.subtotal.toLocaleString()}\n` +
       (invoice.discount > 0 ? `Descuento: -$${invoice.discount.toLocaleString()}\n` : "") +
-      `IVA (13%): $${invoice.tax.toLocaleString()}\n` +
-      `${ESC}E1` + // Bold on
+      (docType.hasIVA ? `IVA (13%): $${invoice.tax.toLocaleString()}\n` : `Sin IVA\n`) +
+      `${ESC}E1` +
       `TOTAL: $${invoice.total.toLocaleString()}\n` +
-      `${ESC}E0` + // Bold off
+      `${ESC}E0` +
       `--------------------------------\n` +
       (invoice.insuranceCoverage > 0
         ? `Seguro (${invoice.insuranceCoverage}%): $${invoice.insuranceAmount.toLocaleString()}\n` +
@@ -414,12 +750,15 @@ export default function BillingPage() {
         `--------------------------------\n`
         : "") +
       `Metodo de pago: ${paymentMethod}\n` +
+      (invoice.stripePaymentId ? `Stripe ID: ${invoice.stripePaymentId}\n` : "") +
       `Estado: PAGADO\n` +
       `--------------------------------\n` +
-      `${ESC}a1` + // Center align
+      `${ESC}a1` +
       `Gracias por su visita\n` +
+      (docType.hasIVA ? `Documento valido para credito fiscal\n` : "") +
+      (invoice.dteUuid ? `DTE enviado por email\n` : "") +
       `${ESC}a0`
-    ) // Left align
+    )
   }
 
   const printReceiptFallback = (invoice: Invoice, paymentMethod: string) => {
@@ -448,14 +787,15 @@ export default function BillingPage() {
         </head>
         <body>
           <div class="center bold">
-            <h2>INTERGASTRO</h2>
+            <h2>CLINICA MEDICA</h2>
             <h3>RECIBO DE PAGO</h3>
           </div>
           <div class="line"></div>
           <p><strong>Fecha:</strong> ${format(new Date(), "dd/MM/yyyy HH:mm", { locale: es })}</p>
-          <p><strong>Factura:</strong> ${invoice.id}</p>
+          <p><strong>Documento:</strong> ${invoice.id}</p>
           <p><strong>Paciente:</strong> ${invoice.patientName}</p>
           <p><strong>ID:</strong> ${invoice.patientId}</p>
+          ${invoice.dteUuid ? `<p><strong>DTE UUID:</strong> ${invoice.dteUuid}</p>` : ""}
           <div class="line"></div>
           <p><strong>SERVICIOS:</strong></p>
           ${invoice.services
@@ -470,7 +810,7 @@ export default function BillingPage() {
           <div class="line"></div>
           <p>Subtotal: $${invoice.subtotal.toLocaleString()}</p>
           ${invoice.discount > 0 ? `<p>Descuento: -$${invoice.discount.toLocaleString()}</p>` : ""}
-          <p>ITBIS (13%): $${invoice.tax.toLocaleString()}</p>
+          <p>IVA (13%): $${invoice.tax.toLocaleString()}</p>
           <p class="bold">TOTAL: $${invoice.total.toLocaleString()}</p>
           <div class="line"></div>
           ${
@@ -483,10 +823,12 @@ export default function BillingPage() {
           : ""
       }
           <p><strong>Método de pago:</strong> ${paymentMethod}</p>
+          ${invoice.stripePaymentId ? `<p><strong>Stripe ID:</strong> ${invoice.stripePaymentId}</p>` : ""}
           <p><strong>Estado:</strong> PAGADO</p>
           <div class="line"></div>
           <div class="center">
             <p><strong>Gracias por su visita</strong></p>
+            ${invoice.dteUuid ? `<p><strong>DTE enviado por email</strong></p>` : ""}
           </div>
           <script>
             window.onload = function() {
@@ -534,6 +876,7 @@ export default function BillingPage() {
       services: [{ serviceId: "", quantity: 1, customPrice: 0 }],
       discount: 0,
       notes: "",
+      documentType: "ticket",
     })
   }
 
@@ -553,6 +896,19 @@ export default function BillingPage() {
               </div>
             </div>
             <div className="flex gap-2">
+              {/* Stripe Terminal Connection Status */}
+              <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100">
+                <div className={`w-2 h-2 rounded-full ${stripeTerminalConnected ? "bg-green-500" : "bg-red-500"}`} />
+                <span className="text-xs text-gray-600">
+                  {stripeTerminalConnected ? "Terminal Conectado" : "Terminal Desconectado"}
+                </span>
+              </div>
+              {!stripeTerminalConnected && (
+                <Button onClick={initializeStripeTerminal} variant="outline" size="sm" className="bg-transparent">
+                  <Wifi className="w-4 h-4 mr-2" />
+                  Conectar Terminal
+                </Button>
+              )}
               <Button onClick={() => setIsCreateDialogOpen(true)}>
                 <Plus className="w-4 h-4 mr-2" />
                 <span className="hidden sm:inline">Nueva </span>Factura
@@ -647,6 +1003,12 @@ export default function BillingPage() {
                           <div>
                             <p className="font-medium">{invoice.id}</p>
                             <p className="text-sm text-gray-500">{invoice.patientName}</p>
+                            {invoice.dteUuid && (
+                              <div className="flex items-center gap-1 text-xs text-green-600">
+                                <Shield className="w-3 h-3" />
+                                DTE Generado
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -703,6 +1065,19 @@ export default function BillingPage() {
                         <SelectItem value="month">Este mes</SelectItem>
                       </SelectContent>
                     </Select>
+                    <Select value={documentTypeFilter} onValueChange={setDocumentTypeFilter}>
+                      <SelectTrigger className="w-full sm:w-40">
+                        <SelectValue placeholder="Tipo" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Todos los tipos</SelectItem>
+                        <SelectItem value="ticket">Tickets</SelectItem>
+                        <SelectItem value="factura">Facturas</SelectItem>
+                        <SelectItem value="creditoFiscal">Crédito Fiscal</SelectItem>
+                        <SelectItem value="dteFactura">DTE Factura</SelectItem>
+                        <SelectItem value="dteComprobante">DTE Comprobante</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
               </CardContent>
@@ -715,7 +1090,7 @@ export default function BillingPage() {
                   <table className="w-full">
                     <thead className="bg-gray-50 border-b">
                     <tr>
-                      <th className="p-4 text-left text-sm font-medium text-gray-900">Factura</th>
+                      <th className="p-4 text-left text-sm font-medium text-gray-900">Documento</th>
                       <th className="p-4 text-left text-sm font-medium text-gray-900">Paciente</th>
                       <th className="p-4 text-left text-sm font-medium text-gray-900 hidden md:table-cell">Fecha</th>
                       <th className="p-4 text-left text-sm font-medium text-gray-900 hidden lg:table-cell">
@@ -731,6 +1106,13 @@ export default function BillingPage() {
                       <tr key={invoice.id} className="hover:bg-gray-50">
                         <td className="p-4">
                           <div className="font-medium text-gray-900">{invoice.id}</div>
+                          <div className="text-xs text-gray-500">{DOCUMENT_TYPES[invoice.documentType]?.name}</div>
+                          {invoice.dteUuid && (
+                            <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
+                              <Shield className="w-3 h-3" />
+                              DTE: {invoice.dteStatus}
+                            </div>
+                          )}
                         </td>
                         <td className="p-4">
                           <div className="flex items-center gap-3">
@@ -759,7 +1141,9 @@ export default function BillingPage() {
                             <div className="text-xs text-gray-500">Seguro: {invoice.insuranceCoverage}%</div>
                           )}
                         </td>
-
+                        <td className="p-4">
+                          <Badge variant={getStatusColor(invoice.status)}>{invoice.status}</Badge>
+                        </td>
                         <td className="p-4">
                           <div className="flex items-center gap-2">
                             <Button
@@ -774,17 +1158,32 @@ export default function BillingPage() {
                               <Eye className="w-4 h-4" />
                             </Button>
                             {invoice.status === "Pendiente" && (
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => {
-                                  setProcessingPayment(invoice)
-                                  setIsPaymentDialogOpen(true)
-                                }}
-                                className="h-8 w-8 p-0"
-                              >
-                                <CreditCard className="w-4 h-4" />
-                              </Button>
+                              <>
+                                {stripeTerminalConnected && (
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleProcessStripePayment(invoice)}
+                                    disabled={isProcessingStripePayment}
+                                    className="h-8 w-8 p-0"
+                                    title="Pago con Tarjeta NFC"
+                                  >
+                                    <CreditCard className="w-4 h-4" />
+                                  </Button>
+                                )}
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => {
+                                    setProcessingPayment(invoice)
+                                    setIsPaymentDialogOpen(true)
+                                  }}
+                                  className="h-8 w-8 p-0"
+                                  title="Otros métodos de pago"
+                                >
+                                  <DollarSign className="w-4 h-4" />
+                                </Button>
+                              </>
                             )}
                             <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                               <Download className="w-4 h-4" />
@@ -847,6 +1246,110 @@ export default function BillingPage() {
 
           {/* Services Tab */}
           <TabsContent value="services" className="space-y-6">
+            {/* Stripe Terminal Setup */}
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <CreditCard className="w-5 h-5" />
+                  Configuración Stripe Terminal NFC
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="p-4 bg-blue-50 rounded-lg">
+                    <h4 className="font-medium text-blue-900 mb-2">Estado de Conexión:</h4>
+                    <div className="flex items-center gap-2">
+                      <div
+                        className={`w-3 h-3 rounded-full ${stripeTerminalConnected ? "bg-green-500" : "bg-red-500"}`}
+                      />
+                      <span className="text-sm text-blue-800">
+                        {stripeTerminalConnected ? "Terminal NFC Conectado" : "Terminal NFC Desconectado"}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="p-4 bg-yellow-50 rounded-lg">
+                    <h4 className="font-medium text-yellow-900 mb-2">Dispositivos Compatibles:</h4>
+                    <ul className="text-sm text-yellow-800 space-y-1">
+                      <li>• Stripe Terminal BBPOS WisePOS E</li>
+                      <li>• Stripe Terminal Verifone P400</li>
+                      <li>• Tap to Pay en iPhone/Android</li>
+                      <li>• Cualquier lector NFC compatible con Stripe</li>
+                    </ul>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={initializeStripeTerminal}
+                      disabled={stripeTerminalConnected}
+                      className={stripeTerminalConnected ? "bg-green-600" : ""}
+                    >
+                      <Wifi className="w-4 h-4 mr-2" />
+                      {stripeTerminalConnected ? "Conectado" : "Conectar Terminal"}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        // BACKEND: Test Stripe Terminal connection
+                        alert("Probando conexión con Stripe Terminal...")
+                      }}
+                      className="bg-transparent"
+                    >
+                      <Receipt className="w-4 h-4 mr-2" />
+                      Probar Conexión
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* DTE Configuration */}
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Shield className="w-5 h-5" />
+                  Configuración DTE El Salvador
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="p-4 bg-green-50 rounded-lg">
+                    <h4 className="font-medium text-green-900 mb-2">Estado DTE:</h4>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-green-500" />
+                      <span className="text-sm text-green-800">Conectado al Ministerio de Hacienda</span>
+                    </div>
+                  </div>
+                  <div className="p-4 bg-blue-50 rounded-lg">
+                    <h4 className="font-medium text-blue-900 mb-2">Información de la Clínica:</h4>
+                    <div className="text-sm text-blue-800 space-y-1">
+                      <p>
+                        <strong>NIT:</strong> 0614-123456-001-2
+                      </p>
+                      <p>
+                        <strong>Nombre:</strong> Clínica Médica El Salvador
+                      </p>
+                      <p>
+                        <strong>Actividad Económica:</strong> Servicios de Salud
+                      </p>
+                      <p>
+                        <strong>Ambiente:</strong> Producción
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      // BACKEND: Test DTE connection
+                      alert("Probando conexión con Ministerio de Hacienda...")
+                    }}
+                    className="bg-transparent"
+                  >
+                    <Shield className="w-4 h-4 mr-2" />
+                    Probar Conexión DTE
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Printer Setup Instructions */}
             <Card className="mb-6">
               <CardHeader>
@@ -969,7 +1472,9 @@ export default function BillingPage() {
                           <div className="text-sm text-gray-500">
                             {patient.id} - {patient.insurance}
                           </div>
-                          <div className="text-xs text-gray-400">Cobertura: {patient.coverage}%</div>
+                          <div className="text-xs text-gray-400">
+                            Cobertura: {patient.coverage}% | NIT: {patient.nit || "No registrado"}
+                          </div>
                         </div>
                       ))
                     ) : (
@@ -989,6 +1494,9 @@ export default function BillingPage() {
                         {mockPatients.find((p) => p.id === newInvoice.patientId)?.insurance} - Cobertura:{" "}
                         {mockPatients.find((p) => p.id === newInvoice.patientId)?.coverage}%
                       </p>
+                      <p className="text-xs text-blue-600">
+                        NIT: {mockPatients.find((p) => p.id === newInvoice.patientId)?.nit || "No registrado"}
+                      </p>
                     </div>
                     <Button
                       variant="ghost"
@@ -1001,6 +1509,39 @@ export default function BillingPage() {
                       <X className="w-4 h-4" />
                     </Button>
                   </div>
+                </div>
+              )}
+            </div>
+
+            {/* Document Type Selection */}
+            <div>
+              <Label>Tipo de Documento</Label>
+              <Select
+                value={newInvoice.documentType}
+                onValueChange={(value) => setNewInvoice({ ...newInvoice, documentType: value })}
+              >
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Seleccionar tipo de documento" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ticket">Ticket</SelectItem>
+                  <SelectItem value="dteFactura">Factura </SelectItem>
+                  <SelectItem value="dteComprobante">Credito Fiscal </SelectItem>
+                </SelectContent>
+              </Select>
+              {(newInvoice.documentType === "dteFactura" || newInvoice.documentType === "dteComprobante") && (
+                <div className="mt-2 p-3 bg-green-50 rounded-lg">
+                  <p className="text-sm text-green-800">
+                    <strong>DTE El Salvador:</strong> Este documento incluye IVA (13%) y requiere NIT del paciente. Se
+                    enviará automáticamente al Ministerio de Hacienda después del pago.
+                  </p>
+                </div>
+              )}
+              {(newInvoice.documentType === "factura" || newInvoice.documentType === "creditoFiscal") && (
+                <div className="mt-2 p-3 bg-yellow-50 rounded-lg">
+                  <p className="text-sm text-yellow-800">
+                    <strong>Nota:</strong> Este documento incluye ITBIS (18%) y requiere RNC del paciente.
+                  </p>
                 </div>
               )}
             </div>
@@ -1130,6 +1671,12 @@ export default function BillingPage() {
                       <p className="text-sm text-gray-500">
                         Fecha: {format(new Date(viewingInvoice.date), "dd/MM/yyyy", { locale: es })}
                       </p>
+                      {viewingInvoice.dteUuid && (
+                        <div className="flex items-center gap-2 mt-2">
+                          <Shield className="w-4 h-4 text-green-600" />
+                          <span className="text-sm text-green-600">DTE: {viewingInvoice.dteUuid}</span>
+                        </div>
+                      )}
                     </div>
                     <Badge variant={getStatusColor(viewingInvoice.status)} className="text-sm">
                       {viewingInvoice.status}
@@ -1138,6 +1685,7 @@ export default function BillingPage() {
                   <div>
                     <p className="font-medium">{viewingInvoice.patientName}</p>
                     <p className="text-sm text-gray-500">{viewingInvoice.patientId}</p>
+                    {viewingInvoice.nit && <p className="text-sm text-gray-500">NIT: {viewingInvoice.nit}</p>}
                   </div>
                 </div>
 
@@ -1173,7 +1721,9 @@ export default function BillingPage() {
                       </div>
                     )}
                     <div className="flex justify-between">
-                      <span className="text-gray-600">IVA (13%):</span>
+                      <span className="text-gray-600">
+                        {viewingInvoice.documentType.includes("dte") ? "IVA (13%)" : "ITBIS (18%)"}:
+                      </span>
                       <span>${viewingInvoice.tax.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between font-bold text-lg border-t pt-2">
@@ -1213,6 +1763,31 @@ export default function BillingPage() {
                         <span className="text-gray-600">Fecha de Pago:</span>
                         <span>{format(new Date(viewingInvoice.paymentDate), "dd/MM/yyyy", { locale: es })}</span>
                       </div>
+                      {viewingInvoice.stripePaymentId && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Stripe ID:</span>
+                          <span className="text-xs font-mono">{viewingInvoice.stripePaymentId}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* DTE Information */}
+                {viewingInvoice.dteUuid && (
+                  <div className="border-t pt-4">
+                    <h4 className="font-medium text-gray-900 mb-3">Información DTE</h4>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">UUID DTE:</span>
+                        <span className="text-xs font-mono">{viewingInvoice.dteUuid}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Estado DTE:</span>
+                        <Badge variant={viewingInvoice.dteStatus === "accepted" ? "default" : "secondary"}>
+                          {viewingInvoice.dteStatus}
+                        </Badge>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -1227,14 +1802,20 @@ export default function BillingPage() {
 
                 {/* Actions */}
                 <div className="flex flex-col sm:flex-row gap-2 pt-4 sticky bottom-0 bg-white pb-4">
-                  <Button variant="outline" className="flex-1 bg-transparent">
+                  {/*<Button variant="outline" className="flex-1 bg-transparent">
                     <Download className="w-4 h-4 mr-2" />
                     Descargar PDF
-                  </Button>
+                  </Button>*/}
                   <Button variant="outline" className="flex-1 bg-transparent">
                     <Send className="w-4 h-4 mr-2" />
                     Enviar por Email
                   </Button>
+                  {viewingInvoice.dteXmlUrl && (
+                    <Button variant="outline" className="flex-1 bg-transparent">
+                      <Shield className="w-4 h-4 mr-2" />
+                      Descargar DTE
+                    </Button>
+                  )}
                   {viewingInvoice.status === "Pagada" && (
                     <Button
                       variant="outline"
@@ -1272,14 +1853,36 @@ export default function BillingPage() {
                   </p>
                 )}
               </div>
+
+              {/* Stripe NFC Payment Option */}
+              {stripeTerminalConnected && (
+                <div className="p-4 bg-blue-50 rounded-lg">
+                  <h4 className="font-medium text-blue-900 mb-2">Pago con Tarjeta NFC</h4>
+                  <Button
+                    onClick={() => handleProcessStripePayment(processingPayment)}
+                    disabled={isProcessingStripePayment}
+                    className="w-full"
+                  >
+                    <CreditCard className="w-4 h-4 mr-2" />
+                    {isProcessingStripePayment ? "Procesando..." : "Pagar con Tarjeta NFC"}
+                  </Button>
+                  {isProcessingStripePayment && (
+                    <p className="text-sm text-blue-700 mt-2">
+                      Presente la tarjeta o dispositivo móvil al lector NFC...
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* Traditional Payment Methods */}
               <div>
-                <Label>Método de Pago</Label>
+                <Label>Otros Métodos de Pago</Label>
                 <div className="grid grid-cols-2 gap-2 mt-2">
                   <Button variant="outline" onClick={() => handleProcessPayment("Efectivo")} className="bg-transparent">
                     Efectivo
                   </Button>
-                  <Button variant="outline" onClick={() => handleProcessPayment("Tarjeta")} className="bg-transparent">
-                    Tarjeta
+                  <Button variant="outline" onClick={() => handleProcessPayment("Cheque")} className="bg-transparent">
+                    Cheque
                   </Button>
                   <Button
                     variant="outline"
@@ -1288,8 +1891,8 @@ export default function BillingPage() {
                   >
                     Transferencia
                   </Button>
-                  <Button variant="outline" onClick={() => handleProcessPayment("Cheque")} className="bg-transparent">
-                    Cheque
+                  <Button variant="outline" onClick={() => handleProcessPayment("Otro")} className="bg-transparent">
+                    Otro
                   </Button>
                 </div>
               </div>
@@ -1297,6 +1900,37 @@ export default function BillingPage() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Processing Overlays */}
+      {isProcessingStripePayment && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full mx-4">
+            <div className="text-center">
+              <CreditCard className="w-12 h-12 mx-auto mb-4 text-blue-600 animate-pulse" />
+              <h3 className="text-lg font-semibold mb-2">Procesando Pago</h3>
+              <p className="text-gray-600 mb-4">Presente la tarjeta o dispositivo móvil al lector NFC</p>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="bg-blue-600 h-2 rounded-full animate-pulse" style={{ width: "60%" }}></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isDteProcessing && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full mx-4">
+            <div className="text-center">
+              <Shield className="w-12 h-12 mx-auto mb-4 text-green-600 animate-pulse" />
+              <h3 className="text-lg font-semibold mb-2">Generando DTE</h3>
+              <p className="text-gray-600 mb-4">Enviando documento al Ministerio de Hacienda...</p>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="bg-green-600 h-2 rounded-full animate-pulse" style={{ width: "80%" }}></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
