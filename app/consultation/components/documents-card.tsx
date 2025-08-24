@@ -3,15 +3,36 @@
 import { FileText, Upload, Eye, FileDown } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { documents } from "../mocks/consultation-data"
+import { type Patient } from "../types"
 
-export function DocumentsCard() {
+interface DocumentsCardProps {
+  patientData: Patient
+}
+
+export function DocumentsCard({ patientData }: DocumentsCardProps) {
+  // For now, we'll show a placeholder since the mock data structure might not match
+  // In a real app, this would come from the patient's EHR
+  const documents = [
+    {
+      id: "1",
+      name: "Examen de Sangre - CBC",
+      size: "2.3 MB",
+      uploadedAt: "2024-11-15"
+    },
+    {
+      id: "2",
+      name: "Radiografía de Tórax",
+      size: "5.1 MB",
+      uploadedAt: "2024-10-20"
+    }
+  ]
+
   return (
     <Card className="border-main-200 dark:border-main-800">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-primary dark:text-main-400">
           <FileText className="w-5 h-5" />
-          Attached Documents
+          Attached Documents - {patientData.firstName} {patientData.lastName}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">

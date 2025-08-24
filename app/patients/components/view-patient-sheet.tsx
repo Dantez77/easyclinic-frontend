@@ -34,7 +34,7 @@ export function ViewPatientSheet({ open, onOpenChange, patient }: ViewPatientShe
                 <h3 className="text-lg font-semibold">
                   {patient.firstName} {patient.lastName}
                 </h3>
-                <p className="text-sm text-muted-foreground">{patient.id}</p>
+                <p className="text-sm text-muted-foreground">{patient.patientId}</p>
                 <Badge variant={patient.status === "Activo" ? "default" : "secondary"} className="mt-1">
                   {patient.status}
                 </Badge>
@@ -46,8 +46,8 @@ export function ViewPatientSheet({ open, onOpenChange, patient }: ViewPatientShe
                 <h4 className="font-medium text-foreground mb-2">Información Personal</h4>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Cédula:</span>
-                    <span>{patient.cedula}</span>
+                                          <span className="text-muted-foreground">DUI:</span>
+                    <span>{patient.dui}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Fecha de Nacimiento:</span>
@@ -100,7 +100,7 @@ export function ViewPatientSheet({ open, onOpenChange, patient }: ViewPatientShe
                       {patient.allergies.length > 0 ? (
                         patient.allergies.map((allergy, index) => (
                           <Badge key={index} variant="destructive" className="text-xs">
-                            {allergy}
+                            {allergy.substance}
                           </Badge>
                         ))
                       ) : (
@@ -110,11 +110,11 @@ export function ViewPatientSheet({ open, onOpenChange, patient }: ViewPatientShe
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Seguro:</span>
-                    <span>{patient.insuranceProvider}</span>
+                    <span>{patient.insurance.provider} - {patient.insurance.policyNumber}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Contacto de Emergencia:</span>
-                    <span className="text-right">{patient.emergencyContact}</span>
+                    <span className="text-right">{patient.emergencyContact.name} - {patient.emergencyContact.phone}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Última Visita:</span>

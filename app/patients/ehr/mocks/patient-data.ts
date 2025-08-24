@@ -1,10 +1,10 @@
-// Mock comprehensive patient data
+// Mock comprehensive patient data - Updated for El Salvador
 export const mockPatientEHR = {
   // Basic Information
   id: "EXP-2024-001234",
   firstName: "María Elena",
   lastName: "González",
-  cedula: "001-1234567-8",
+  dui: "12345678-0",
   dateOfBirth: "1985-03-15",
   age: 38,
   gender: "Femenino",
@@ -13,25 +13,25 @@ export const mockPatientEHR = {
   occupation: "Contadora",
 
   // Contact Information
-  phone: "503-7555-0123",
+  phone: "7123-4567",
   email: "maria.gonzalez@email.com",
-  address: "Calle Principal #123, Los Alcarrizos",
-  city: "Santo Domingo",
-  province: "Distrito Nacional",
-  postalCode: "10101",
+  address: "Calle Principal #123, Colonia Escalón",
+  city: "San Salvador",
+  province: "San Salvador",
+  postalCode: "1101",
 
   // Emergency Contact
   emergencyContact: {
     name: "Carlos González",
     relationship: "Esposo",
-    phone: "503-7555-0124",
+    phone: "7123-4568",
     email: "carlos.gonzalez@email.com",
   },
 
   // Insurance Information
   insurance: {
-    provider: "ARS Humano",
-    policyNumber: "AH-123456789",
+    provider: "ISSS",
+    policyNumber: "ISSS-123456789",
     groupNumber: "GRP-001",
     effectiveDate: "2020-01-01",
     expirationDate: "2024-12-31",

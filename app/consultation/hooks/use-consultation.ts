@@ -1,54 +1,20 @@
 import { useState, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
-import { patientData } from "../mocks/consultation-data"
-
-export interface VitalSigns {
-  temperature: string
-  bloodPressure: string
-  heartRate: string
-  respiratoryRate: string
-  oxygenSaturation: string
-  weight: string
-  height: string
-  bmi: string
-}
-
-export interface Prescription {
-  medication: string
-  dosage: string
-  frequency: string
-  duration: string
-  instructions: string
-}
-
-export interface ConsultationForm {
-  chiefComplaint: string
-  symptoms: string[]
-  symptomsNotes: string
-  vitalSigns: VitalSigns
-  diagnosis: string
-  diagnosisStatus: "confirmed" | "suspected" | "ruled-out"
-  prescriptions: Prescription[]
-  selectedTests: string[]
-  labNotes: string
-  labPriority: "normal" | "urgent"
-  lifestyleRecommendations: string
-  returnToWorkNote: string
-  followUpDate: string
-  doctorNotes: string
-  internalNote: boolean
-}
+import { type ConsultationForm, type VitalSigns, type Prescription, type Patient } from "../types"
+import { findPatientByName } from "../utils/patient-utils"
 
 export const useConsultation = () => {
   const searchParams = useSearchParams()
   const patientName = searchParams.get("patient") || "Unknown Patient"
   const appointmentId = searchParams.get("appointmentId")
 
+  const [patientData, setPatientData] = useState<Patient | null>(null)
   const [formData, setFormData] = useState<ConsultationForm>({
     chiefComplaint: "",
     symptoms: [],
     symptomsNotes: "",
     vitalSigns: {
+      date: new Date().toISOString().split('T')[0],
       temperature: "",
       bloodPressure: "",
       heartRate: "",
@@ -60,7 +26,15 @@ export const useConsultation = () => {
     },
     diagnosis: "",
     diagnosisStatus: "suspected",
-    prescriptions: [{ medication: "", dosage: "", frequency: "", duration: "", instructions: "" }],
+    prescriptions: [{ 
+      medication: "", 
+      dosage: "", 
+      frequency: "", 
+      duration: "", 
+      instructions: "",
+      prescribedBy: "Dr. Current Doctor",
+      prescribedAt: new Date().toISOString(),
+    }],
     selectedTests: [],
     labNotes: "",
     labPriority: "normal",
@@ -71,10 +45,16 @@ export const useConsultation = () => {
     internalNote: false,
   })
 
-  // Update patient data based on the patient name from URL
+  // Load patient data based on the patient name from URL
   useEffect(() => {
     if (patientName && patientName !== "Unknown Patient") {
-      patientData.fullName = patientName
+      const patient = findPatientByName(patientName)
+      if (patient) {
+        setPatientData(patient)
+        console.log("Patient loaded:", patient)
+      } else {
+        console.error("Patient not found:", patientName)
+      }
     }
   }, [patientName])
 
@@ -108,21 +88,29 @@ export const useConsultation = () => {
   const addPrescription = () => {
     setFormData(prev => ({
       ...prev,
-      prescriptions: [...prev.prescriptions, { medication: "", dosage: "", frequency: "", duration: "", instructions: "" }]
+      prescriptions: [...prev.prescriptions, { 
+        medication: "", 
+        dosage: "", 
+        frequency: "", 
+        duration: "", 
+        instructions: "",
+        prescribedBy: "Dr. Current Doctor",
+        prescribedAt: new Date().toISOString(),
+      }]
     }))
   }
 
   const removePrescription = (index: number) => {
     setFormData(prev => ({
       ...prev,
-      prescriptions: prev.prescriptions.filter((_, i) => i !== index)
+      prescriptions: prev.prescriptions.filter((_, i) => index !== i)
     }))
   }
 
   const updatePrescription = (index: number, updates: Partial<Prescription>) => {
     setFormData(prev => ({
       ...prev,
-      prescriptions: prev.prescriptions.map((prescription, i) =>
+      prescriptions: prev.prescriptions.map((prescription, i) => 
         i === index ? { ...prescription, ...updates } : prescription
       )
     }))
@@ -145,42 +133,64 @@ export const useConsultation = () => {
   }
 
   const calculateBMI = () => {
-    const weight = Number.parseFloat(formData.vitalSigns.weight)
-    const height = Number.parseFloat(formData.vitalSigns.height) / 100 // Convert cm to m
-    if (weight && height) {
-      const bmi = (weight / (height * height)).toFixed(1)
-      updateVitalSigns({ bmi })
+    const weight = parseFloat(formData.vitalSigns.weight)
+    const height = parseFloat(formData.vitalSigns.height) / 100 // Convert cm to meters
+    
+    if (weight > 0 && height > 0) {
+      const bmi = weight / (height * height)
+      updateVitalSigns({ bmi: bmi.toFixed(1) })
+    } else {
+      updateVitalSigns({ bmi: "" })
     }
   }
 
-  const saveConsultation = async () => {
+  const saveConsultation = async (): Promise<boolean> => {
     try {
-      // Here you would typically save the consultation data to your backend
-      console.log("Saving consultation:", formData)
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      const consultationData = {
+        patientId: patientData?.id,
+        appointmentId,
+        ...formData,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }
+      
+      console.log("Saving consultation:", consultationData)
       alert("Consultation saved successfully!")
       return true
     } catch (error) {
       console.error("Error saving consultation:", error)
-      alert("Error saving consultation")
+      alert("Error saving consultation. Please try again.")
       return false
     }
   }
 
-  const generatePDFReport = () => {
-    // Generate PDF report logic
-    console.log("Generating PDF report...")
-    alert("PDF report generated successfully!")
+  const generatePDFReport = async () => {
+    try {
+      // Simulate PDF generation
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      alert("PDF report generated successfully!")
+    } catch (error) {
+      console.error("Error generating PDF:", error)
+      alert("Error generating PDF report. Please try again.")
+    }
   }
 
-  const sendPrescription = () => {
-    // Send prescription logic
-    console.log("Sending prescription...")
-    alert("Prescription sent successfully!")
+  const sendPrescription = async () => {
+    try {
+      // Simulate sending prescription
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      alert("Prescription sent successfully!")
+    } catch (error) {
+      console.error("Error sending prescription:", error)
+      alert("Error sending prescription. Please try again.")
+    }
   }
 
   return {
-    patientName,
-    appointmentId,
+    patientData,
     formData,
     updateFormData,
     updateVitalSigns,

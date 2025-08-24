@@ -2,13 +2,38 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { medicalHistory } from "../mocks/consultation-data"
+import { type Patient } from "../types"
 
-export function MedicalHistoryCard() {
+interface MedicalHistoryCardProps {
+  patientData: Patient
+}
+
+export function MedicalHistoryCard({ patientData }: MedicalHistoryCardProps) {
+  // For now, we'll show a placeholder since the mock data structure might not match
+  // In a real app, this would come from the patient's EHR
+  const medicalHistory = [
+    {
+      id: "1",
+      title: "Consulta General",
+      doctor: "Dr. Juan Pérez",
+      date: "2024-11-15",
+      status: "Completada",
+      description: "Control de hipertensión y migraña. Medicación ajustada."
+    },
+    {
+      id: "2",
+      title: "Examen Físico",
+      doctor: "Dr. Ana López",
+      date: "2024-10-20",
+      status: "Completada",
+      description: "Examen físico anual. Paciente en buen estado general."
+    }
+  ]
+
   return (
     <Card className="border-main-200 dark:border-main-800">
       <CardHeader>
-        <CardTitle className="text-primary dark:text-main-400">Medical History</CardTitle>
+        <CardTitle className="text-primary dark:text-main-400">Medical History - {patientData.firstName} {patientData.lastName}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">

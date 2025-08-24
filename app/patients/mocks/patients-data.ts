@@ -1,99 +1,232 @@
-// Mock patient data
-export const mockPatients = [
+// Mock patient data using unified structure - Updated for El Salvador
+import { type Patient, type Consultation, type LabTest, type Document } from "../types"
+
+export const mockPatients: Patient[] = [
   {
-    id: "EXP-2024-001234",
+    id: "1",
+    patientId: "EXP-2024-001234",
+    dui: "12345678-0",
     firstName: "María Elena",
     lastName: "González",
-    cedula: "001-1234567-8",
     dateOfBirth: "1985-03-15",
     age: 38,
     gender: "Femenino",
-    phone: "809-555-0123",
+    phone: "7123-4567",
     email: "maria.gonzalez@email.com",
-    address: "Calle Principal #123, Los Alcarrizos",
-    city: "Santo Domingo",
-    province: "Distrito Nacional",
+    address: "Calle Principal #123, Colonia Escalón",
+    city: "San Salvador",
+    province: "San Salvador",
+    postalCode: "1101",
     bloodType: "O+",
-    allergies: ["Penicilina", "Mariscos"],
-    insuranceProvider: "ARS Humano",
-    emergencyContact: "Carlos González - 809-555-0124",
-    lastVisit: "2024-11-15",
+    maritalStatus: "Casado/a",
+    occupation: "Contadora",
+    allergies: [
+      { substance: "Penicilina", severity: "Severa", reaction: "Erupción cutánea", dateIdentified: "2010-05-15" },
+      { substance: "Mariscos", severity: "Moderada", reaction: "Hinchazón", dateIdentified: "2015-08-20" },
+    ],
+    chronicConditions: [
+      { condition: "Hipertensión", diagnosisDate: "2020-03-10", status: "Controlada", notes: "Medicación diaria" },
+      { condition: "Migraña", diagnosisDate: "2018-07-22", status: "Activa", notes: "Episodios ocasionales" },
+    ],
+    currentMedications: [
+      {
+        medication: "Losartán 50mg",
+        dosage: "1 tableta",
+        frequency: "Cada 24 horas",
+        startDate: "2020-03-10",
+        prescribedBy: "Dr. Juan Pérez",
+        indication: "Hipertensión",
+        status: "Activo",
+      },
+      {
+        medication: "Sumatriptán 50mg",
+        dosage: "1 tableta",
+        frequency: "Según necesidad",
+        startDate: "2018-07-22",
+        prescribedBy: "Dr. Ana López",
+        indication: "Migraña",
+        status: "Activo",
+      },
+    ],
+    emergencyContact: {
+      name: "Carlos González",
+      relationship: "Esposo",
+      phone: "7123-4568",
+      email: "carlos.gonzalez@email.com",
+    },
+    insurance: {
+      provider: "ISSS",
+      policyNumber: "ISSS-123456789",
+      groupNumber: "GRP-001",
+      effectiveDate: "2020-01-01",
+      expirationDate: "2024-12-31",
+    },
     status: "Activo",
+    lastVisit: "2024-11-15",
+    createdAt: "2020-01-01",
+    updatedAt: "2024-11-15",
   },
   {
-    id: "EXP-2024-001235",
+    id: "2",
+    patientId: "EXP-2024-001235",
+    dui: "23456789-0",
     firstName: "Juan Carlos",
     lastName: "Rodríguez",
-    cedula: "001-2345678-9",
     dateOfBirth: "1978-07-22",
     age: 45,
     gender: "Masculino",
-    phone: "809-555-0125",
+    phone: "7234-5678",
     email: "juan.rodriguez@email.com",
-    address: "Av. 27 de Febrero #456, Gazcue",
-    city: "Santo Domingo",
-    province: "Distrito Nacional",
+    address: "Av. 25 de Noviembre #456, Colonia San Benito",
+    city: "San Salvador",
+    province: "San Salvador",
+    postalCode: "1102",
     bloodType: "A+",
-    allergies: ["Aspirina"],
-    insuranceProvider: "SeNaSa",
-    emergencyContact: "Ana Rodríguez - 809-555-0126",
-    lastVisit: "2024-11-10",
+    maritalStatus: "Casado/a",
+    occupation: "Ingeniero",
+    allergies: [
+      { substance: "Aspirina", severity: "Moderada", reaction: "Dolor estomacal", dateIdentified: "2012-03-15" },
+    ],
+    chronicConditions: [
+      { condition: "Diabetes Tipo 2", diagnosisDate: "2019-11-20", status: "Controlada", notes: "Dieta y medicación" },
+    ],
+    currentMedications: [
+      {
+        medication: "Metformina 500mg",
+        dosage: "1 tableta",
+        frequency: "Cada 12 horas",
+        startDate: "2019-11-20",
+        prescribedBy: "Dr. María Santos",
+        indication: "Diabetes",
+        status: "Activo",
+      },
+    ],
+    emergencyContact: {
+      name: "Ana Rodríguez",
+      relationship: "Esposa",
+      phone: "7234-5679",
+      email: "ana.rodriguez@email.com",
+    },
+    insurance: {
+      provider: "SeNaSa",
+      policyNumber: "SN-987654321",
+      groupNumber: "GRP-002",
+      effectiveDate: "2019-01-01",
+      expirationDate: "2024-12-31",
+    },
     status: "Activo",
+    lastVisit: "2024-11-10",
+    createdAt: "2019-01-01",
+    updatedAt: "2024-11-10",
   },
   {
-    id: "EXP-2024-001236",
+    id: "3",
+    patientId: "EXP-2024-001236",
+    dui: "34567890-0",
     firstName: "Carmen Rosa",
     lastName: "Martínez",
-    cedula: "001-3456789-0",
     dateOfBirth: "1992-12-08",
     age: 31,
     gender: "Femenino",
-    phone: "809-555-0127",
+    phone: "7345-6789",
     email: "carmen.martinez@email.com",
-    address: "Calle Duarte #789, Santiago",
-    city: "Santiago",
-    province: "Santiago",
+    address: "Calle Los Viveros #789, Colonia La Sultana",
+    city: "Santa Tecla",
+    province: "La Libertad",
+    postalCode: "1501",
     bloodType: "B+",
+    maritalStatus: "Soltero/a",
+    occupation: "Enfermera",
     allergies: [],
-    insuranceProvider: "ARS Palic",
-    emergencyContact: "Pedro Martínez - 809-555-0128",
-    lastVisit: "2024-10-28",
+    chronicConditions: [],
+    currentMedications: [],
+    emergencyContact: {
+      name: "Pedro Martínez",
+      relationship: "Padre",
+      phone: "7345-6790",
+      email: "pedro.martinez@email.com",
+    },
+    insurance: {
+      provider: "ARS Palic",
+      policyNumber: "AP-456789123",
+      groupNumber: "GRP-003",
+      effectiveDate: "2023-01-01",
+      expirationDate: "2024-12-31",
+    },
     status: "Inactivo",
+    lastVisit: "2024-10-28",
+    createdAt: "2023-01-01",
+    updatedAt: "2024-10-28",
   },
   {
-    id: "EXP-2024-001237",
+    id: "4",
+    patientId: "EXP-2024-001237",
+    dui: "45678901-0",
     firstName: "Roberto",
     lastName: "Fernández",
-    cedula: "001-4567890-1",
     dateOfBirth: "1965-05-14",
     age: 58,
     gender: "Masculino",
-    phone: "809-555-0129",
+    phone: "7456-7890",
     email: "roberto.fernandez@email.com",
-    address: "Calle Mella #321, La Vega",
-    city: "La Vega",
-    province: "La Vega",
+    address: "Calle El Calvario #321, Centro Histórico",
+    city: "Santa Ana",
+    province: "Santa Ana",
+    postalCode: "2201",
     bloodType: "AB+",
-    allergies: ["Penicilina", "Látex"],
-    insuranceProvider: "ARS Universal",
-    emergencyContact: "María Fernández - 809-555-0130",
-    lastVisit: "2024-11-12",
+    maritalStatus: "Casado/a",
+    occupation: "Profesor",
+    allergies: [
+      { substance: "Penicilina", severity: "Severa", reaction: "Anafilaxia", dateIdentified: "2005-08-10" },
+      { substance: "Látex", severity: "Moderada", reaction: "Erupción", dateIdentified: "2010-12-03" },
+    ],
+    chronicConditions: [
+      { condition: "Artritis", diagnosisDate: "2015-06-15", status: "Activa", notes: "Tratamiento continuo" },
+      { condition: "Hipertensión", diagnosisDate: "2017-03-22", status: "Controlada", notes: "Medicación diaria" },
+    ],
+    currentMedications: [
+      {
+        medication: "Ibuprofeno 400mg",
+        dosage: "1 tableta",
+        frequency: "Cada 8 horas",
+        startDate: "2015-06-15",
+        prescribedBy: "Dr. Carlos Ruiz",
+        indication: "Artritis",
+        status: "Activo",
+      },
+      {
+        medication: "Amlodipino 5mg",
+        dosage: "1 tableta",
+        frequency: "Cada 24 horas",
+        startDate: "2017-03-22",
+        prescribedBy: "Dr. Carlos Ruiz",
+        indication: "Hipertensión",
+        status: "Activo",
+      },
+    ],
+    emergencyContact: {
+      name: "María Fernández",
+      relationship: "Esposa",
+      phone: "7456-7891",
+      email: "maria.fernandez@email.com",
+    },
+    insurance: {
+      provider: "ARS Universal",
+      policyNumber: "AU-789123456",
+      groupNumber: "GRP-004",
+      effectiveDate: "2017-01-01",
+      expirationDate: "2024-12-31",
+    },
     status: "Activo",
+    lastVisit: "2024-11-12",
+    createdAt: "2017-01-01",
+    updatedAt: "2024-11-12",
   },
 ]
 
-// Mock medical history data
+// Mock medical history data using unified structure
 export const mockMedicalHistory: Record<string, {
-  consultations: Array<{
-    id: string
-    date: string
-    doctor: string
-    reason: string
-    diagnosis: string
-    treatment: string
-    notes: string
-    status: string
-  }>
+  consultations: Consultation[]
   procedures: Array<{
     id: string
     date: string
@@ -103,23 +236,8 @@ export const mockMedicalHistory: Record<string, {
     notes: string
     status: string
   }>
-  labTests: Array<{
-    id: string
-    date: string
-    test: string
-    results: string
-    doctor: string
-    status: string
-    values: Record<string, string>
-  }>
-  documents: Array<{
-    id: string
-    date: string
-    name: string
-    type: string
-    size: string
-    uploadedBy: string
-  }>
+  labTests: LabTest[]
+  documents: Document[]
   appointments: Array<{
     id: string
     date: string
@@ -135,31 +253,76 @@ export const mockMedicalHistory: Record<string, {
         id: "CONS-001",
         date: "2024-11-15",
         doctor: "Dr. Juan Pérez",
+        specialty: "Medicina General",
         reason: "Dolor de cabeza persistente",
+        symptoms: ["Cefalea", "Fotofobia", "Náuseas"],
         diagnosis: "Cefalea tensional",
         treatment: "Acetaminofén 500mg c/8h x 5 días",
         notes: "Paciente refiere mejoría con analgésicos. Recomendar descanso.",
         status: "Completada",
+        prescriptions: [],
+        labTests: [],
+        vitalSigns: {
+          date: "2024-11-15",
+          temperature: "36.5°C",
+          bloodPressure: "125/80",
+          heartRate: "72 bpm",
+          respiratoryRate: "16 rpm",
+          oxygenSaturation: "98%",
+          weight: "65 kg",
+          height: "165 cm",
+          bmi: "23.9",
+        },
       },
       {
         id: "CONS-002",
         date: "2024-10-20",
         doctor: "Dr. Ana López",
+        specialty: "Medicina Interna",
         reason: "Chequeo de rutina",
+        symptoms: [],
         diagnosis: "Paciente sana",
         treatment: "Continuar con estilo de vida saludable",
         notes: "Todos los parámetros dentro de rangos normales.",
         status: "Completada",
+        prescriptions: [],
+        labTests: [],
+        vitalSigns: {
+          date: "2024-10-20",
+          temperature: "36.8°C",
+          bloodPressure: "120/78",
+          heartRate: "68 bpm",
+          respiratoryRate: "15 rpm",
+          oxygenSaturation: "99%",
+          weight: "64.5 kg",
+          height: "165 cm",
+          bmi: "23.7",
+        },
       },
       {
         id: "CONS-003",
         date: "2024-09-15",
         doctor: "Dr. Juan Pérez",
+        specialty: "Medicina General",
         reason: "Seguimiento hipertensión",
+        symptoms: [],
         diagnosis: "Hipertensión controlada",
         treatment: "Losartán 50mg continuar",
         notes: "Presión arterial estable. Continuar medicación actual.",
         status: "Completada",
+        prescriptions: [],
+        labTests: [],
+        vitalSigns: {
+          date: "2024-09-15",
+          temperature: "36.6°C",
+          bloodPressure: "128/82",
+          heartRate: "75 bpm",
+          respiratoryRate: "16 rpm",
+          oxygenSaturation: "98%",
+          weight: "65.2 kg",
+          height: "165 cm",
+          bmi: "24.0",
+        },
       },
     ],
     procedures: [
@@ -178,28 +341,28 @@ export const mockMedicalHistory: Record<string, {
         id: "LAB-001",
         date: "2024-11-10",
         test: "Hemograma completo",
+        orderedBy: "Dr. Ana López",
         results: "Valores normales",
-        doctor: "Dr. Ana López",
         status: "Completado",
         values: {
-          Hemoglobina: "13.5 g/dL",
-          Hematocrito: "40.2%",
-          Leucocitos: "7,200/μL",
-          Plaquetas: "280,000/μL",
+          Hemoglobina: { value: "13.5", unit: "g/dL", reference: "12.0-15.5", status: "Normal" },
+          Hematocrito: { value: "40.2", unit: "%", reference: "36-46", status: "Normal" },
+          Leucocitos: { value: "7200", unit: "/μL", reference: "4500-11000", status: "Normal" },
+          Plaquetas: { value: "280000", unit: "/μL", reference: "150000-450000", status: "Normal" },
         },
       },
       {
         id: "LAB-002",
         date: "2024-09-20",
         test: "Química sanguínea",
+        orderedBy: "Dr. Juan Pérez",
         results: "Glucosa ligeramente elevada",
-        doctor: "Dr. Juan Pérez",
         status: "Completado",
         values: {
-          Glucosa: "110 mg/dL",
-          Creatinina: "0.9 mg/dL",
-          Colesterol: "180 mg/dL",
-          Triglicéridos: "150 mg/dL",
+          Glucosa: { value: "110", unit: "mg/dL", reference: "70-100", status: "Elevado" },
+          Creatinina: { value: "0.9", unit: "mg/dL", reference: "0.6-1.2", status: "Normal" },
+          "Colesterol Total": { value: "180", unit: "mg/dL", reference: "<200", status: "Normal" },
+          Triglicéridos: { value: "150", unit: "mg/dL", reference: "<150", status: "Límite" },
         },
       },
     ],
@@ -251,5 +414,4 @@ export const mockMedicalHistory: Record<string, {
 }
 
 // Type definitions
-export type Patient = (typeof mockPatients)[0]
-export type MedicalHistory = (typeof mockMedicalHistory)[string]
+export type { Patient, Consultation, LabTest, Document }

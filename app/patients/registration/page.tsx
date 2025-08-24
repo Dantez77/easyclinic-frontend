@@ -32,45 +32,26 @@ import {
   User,
   Home,
   Users,
+  CreditCard,
 } from "lucide-react"
-
-const bloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]
-const insuranceProviders = [
-  "Seguro Social Dominicano",
-  "ARS Humano",
-  "ARS Palic",
-  "ARS Universal",
-  "ARS Futuro",
-  "SeNaSa",
-  "Seguro Privado",
-  "Sin Seguro",
-]
-
-const commonAllergies = [
-  "Penicilina",
-  "Aspirina",
-  "Mariscos",
-  "Nueces",
-  "Látex",
-  "Polen",
-  "Polvo",
-  "Huevos",
-  "Leche",
-  "Soja",
-]
-
-const commonConditions = [
-  "Hipertensión",
-  "Diabetes",
-  "Asma",
-  "Artritis",
-  "Migraña",
-  "Depresión",
-  "Ansiedad",
-  "Colesterol Alto",
-  "Enfermedad Cardíaca",
-  "Osteoporosis",
-]
+import { 
+  PROVINCES, 
+  BLOOD_TYPES, 
+  INSURANCE_PROVIDERS, 
+  COMMON_ALLERGIES, 
+  COMMON_CONDITIONS,
+  type PatientRegistrationForm 
+} from "../types"
+import { 
+  validateDUI, 
+  validateNIT, 
+  validatePhone, 
+  validateEmail, 
+  formatDUI, 
+  formatNIT, 
+  formatPhone,
+  calculateAge 
+} from "@/lib/validation-utils"
 
 export default function PatientRegistrationPage() {
   const [dateOfBirth, setDateOfBirth] = useState<Date>()
@@ -80,12 +61,14 @@ export default function PatientRegistrationPage() {
   const [customConditions, setCustomConditions] = useState<string[]>([])
   const [newAllergy, setNewAllergy] = useState("")
   const [newCondition, setNewCondition] = useState("")
+  const [errors, setErrors] = useState<Record<string, string>>({})
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<PatientRegistrationForm>({
     // Personal Information
     firstName: "",
     lastName: "",
     dui: "",
+    nit: "",
     gender: "",
     bloodType: "",
     maritalStatus: "",
@@ -96,7 +79,7 @@ export default function PatientRegistrationPage() {
     email: "",
     address: "",
     city: "",
-    departamento: "",
+    province: "",
     postalCode: "",
 
     // Emergency Contact
@@ -111,6 +94,8 @@ export default function PatientRegistrationPage() {
     groupNumber: "",
 
     // Additional Information
+    allergies: [],
+    chronicConditions: [],
     referredBy: "",
     notes: "",
   })
@@ -137,30 +122,126 @@ export default function PatientRegistrationPage() {
     setCustomConditions(customConditions.filter((c) => c !== condition))
   }
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault()
+      if (e.currentTarget.id === "newAllergy") {
+        addCustomAllergy()
+      } else if (e.currentTarget.id === "newCondition") {
+        addCustomCondition()
+      }
+    }
   }
 
-  const calculateAge = (birthDate: Date) => {
-    const today = new Date()
-    const age = today.getFullYear() - birthDate.getFullYear()
-    const monthDiff = today.getMonth() - birthDate.getMonth()
-
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      return age - 1
+  const handleInputChange = (field: keyof PatientRegistrationForm, value: string) => {
+    setFormData((prev: PatientRegistrationForm) => ({ ...prev, [field]: value }))
+    
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors((prev: Record<string, string>) => ({ ...prev, [field]: "" }))
     }
-    return age
+    
+    // Auto-format certain fields
+    if (field === 'dui') {
+      const formatted = formatDUI(value)
+      if (formatted !== value) {
+        setFormData((prev: PatientRegistrationForm) => ({ ...prev, [field]: formatted }))
+      }
+    } else if (field === 'nit' && value) {
+      const formatted = formatNIT(value)
+      if (formatted !== value) {
+        setFormData((prev: PatientRegistrationForm) => ({ ...prev, [field]: formatted }))
+      }
+    } else if (field === 'phone') {
+      const formatted = formatPhone(value)
+      if (formatted !== value) {
+        setFormData((prev: PatientRegistrationForm) => ({ ...prev, [field]: formatted }))
+      }
+    }
+  }
+
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {}
+    
+    // Required field validations
+    if (!formData.firstName.trim()) newErrors.firstName = "Los nombres son requeridos"
+    if (!formData.lastName.trim()) newErrors.lastName = "Los apellidos son requeridos"
+    if (!formData.dui.trim()) newErrors.dui = "El DUI es requerido"
+    if (!formData.gender) newErrors.gender = "El género es requerido"
+    if (!formData.phone.trim()) newErrors.phone = "El teléfono es requerido"
+    if (!formData.address.trim()) newErrors.address = "La dirección es requerida"
+    if (!formData.city.trim()) newErrors.city = "La ciudad es requerida"
+    if (!formData.province) newErrors.province = "La provincia es requerida"
+    if (!formData.emergencyName.trim()) newErrors.emergencyName = "El nombre del contacto de emergencia es requerido"
+    if (!formData.emergencyPhone.trim()) newErrors.emergencyPhone = "El teléfono de emergencia es requerido"
+    
+    // Format validations
+    if (formData.dui) {
+      const duiValidation = validateDUI(formData.dui)
+      if (!duiValidation.isValid) {
+        newErrors.dui = duiValidation.error!
+      }
+    }
+    
+    if (formData.nit) {
+      const nitValidation = validateNIT(formData.nit)
+      if (!nitValidation.isValid) {
+        newErrors.nit = nitValidation.error!
+      }
+    }
+    
+    if (formData.phone) {
+      const phoneValidation = validatePhone(formData.phone)
+      if (!phoneValidation.isValid) {
+        newErrors.phone = phoneValidation.error!
+      }
+    }
+    
+    if (formData.email) {
+      const emailValidation = validateEmail(formData.email)
+      if (!emailValidation.isValid) {
+        newErrors.email = emailValidation.error!
+      }
+    }
+    
+    if (formData.emergencyPhone) {
+      const emergencyPhoneValidation = validatePhone(formData.emergencyPhone)
+      if (!emergencyPhoneValidation.isValid) {
+        newErrors.emergencyPhone = emergencyPhoneValidation.error!
+      }
+    }
+    
+    if (formData.emergencyEmail) {
+      const emergencyEmailValidation = validateEmail(formData.emergencyEmail)
+      if (!emergencyEmailValidation.isValid) {
+        newErrors.emergencyEmail = emergencyEmailValidation.error!
+      }
+    }
+    
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // Here you would typically send the data to your backend
-    console.log("Patient Registration Data:", {
+    
+    if (!validateForm()) {
+      return
+    }
+    
+    // Combine selected and custom allergies/conditions
+    const allAllergies = [...selectedAllergies, ...customAllergies]
+    const allConditions = [...selectedConditions, ...customConditions]
+    
+    // Create the complete patient data
+    const patientData = {
       ...formData,
-      dateOfBirth,
-      selectedAllergies: [...selectedAllergies, ...customAllergies],
-      selectedConditions: [...selectedConditions, ...customConditions],
-    })
+      allergies: allAllergies,
+      chronicConditions: allConditions,
+    }
+    
+    // Here you would typically send the data to your backend
+    console.log("Patient Registration Data:", patientData)
     alert("Paciente registrado exitosamente!")
   }
 
@@ -216,8 +297,11 @@ export default function PatientRegistrationPage() {
                     onChange={(e) => handleInputChange("firstName", e.target.value)}
                     placeholder="Nombres del paciente"
                     required
-                    className="mt-1"
+                    className={`mt-1 ${errors.firstName ? 'border-red-500' : ''}`}
                   />
+                  {errors.firstName && (
+                    <p className="text-sm text-red-600 mt-1">{errors.firstName}</p>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="lastName" className="text-sm font-medium">
@@ -229,8 +313,11 @@ export default function PatientRegistrationPage() {
                     onChange={(e) => handleInputChange("lastName", e.target.value)}
                     placeholder="Apellidos del paciente"
                     required
-                    className="mt-1"
+                    className={`mt-1 ${errors.lastName ? 'border-red-500' : ''}`}
                   />
+                  {errors.lastName && (
+                    <p className="text-sm text-red-600 mt-1">{errors.lastName}</p>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="dui" className="text-sm font-medium">
@@ -242,19 +329,39 @@ export default function PatientRegistrationPage() {
                     onChange={(e) => handleInputChange("dui", e.target.value)}
                     placeholder="00000000-0"
                     required
-                    className="mt-1"
+                    className={`mt-1 ${errors.dui ? 'border-red-500' : ''}`}
                   />
+                  {errors.dui && (
+                    <p className="text-sm text-red-600 mt-1">{errors.dui}</p>
+                  )}
+                  <p className="text-xs text-muted-foreground mt-1">Documento Único de Identidad</p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="nit" className="text-sm font-medium">
+                    NIT (Opcional)
+                  </Label>
+                  <Input
+                    id="nit"
+                    value={formData.nit}
+                    onChange={(e) => handleInputChange("nit", e.target.value)}
+                    placeholder="0000-000000-000-0"
+                    className={`mt-1 ${errors.nit ? 'border-red-500' : ''}`}
+                  />
+                  {errors.nit && (
+                    <p className="text-sm text-red-600 mt-1">{errors.nit}</p>
+                  )}
+                  <p className="text-xs text-muted-foreground mt-1">Número de Identificación Tributaria</p>
+                </div>
                 <div>
                   <Label className="text-sm font-medium">Fecha de Nacimiento *</Label>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
                         variant="outline"
-                        className="w-full justify-start text-left font-normal mt-1 bg-transparent"
+                        className={`w-full justify-start text-left font-normal mt-1 bg-transparent ${errors.dateOfBirth ? 'border-red-500' : ''}`}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {dateOfBirth ? (
@@ -274,23 +381,31 @@ export default function PatientRegistrationPage() {
                       />
                     </PopoverContent>
                   </Popover>
-                  {dateOfBirth && <p className="text-xs text-muted-foreground mt-1">Edad: {calculateAge(dateOfBirth)} años</p>}
+                  {dateOfBirth && <p className="text-xs text-muted-foreground mt-1">Edad: {calculateAge(dateOfBirth.toISOString())} años</p>}
+                  {errors.dateOfBirth && (
+                    <p className="text-sm text-red-600 mt-1">{errors.dateOfBirth}</p>
+                  )}
                 </div>
 
                 <div>
                   <Label className="text-sm font-medium">Género *</Label>
                   <Select value={formData.gender} onValueChange={(value) => handleInputChange("gender", value)}>
-                    <SelectTrigger className="mt-1">
+                    <SelectTrigger className={`mt-1 ${errors.gender ? 'border-red-500' : ''}`}>
                       <SelectValue placeholder="Seleccionar género" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="masculino">Masculino</SelectItem>
-                      <SelectItem value="femenino">Femenino</SelectItem>
-                      <SelectItem value="otro">Otro</SelectItem>
+                      <SelectItem value="Masculino">Masculino</SelectItem>
+                      <SelectItem value="Femenino">Femenino</SelectItem>
+                      <SelectItem value="Otro">Otro</SelectItem>
                     </SelectContent>
                   </Select>
+                  {errors.gender && (
+                    <p className="text-sm text-red-600 mt-1">{errors.gender}</p>
+                  )}
                 </div>
+              </div>
 
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label className="text-sm font-medium">Tipo de Sangre</Label>
                   <Select value={formData.bloodType} onValueChange={(value) => handleInputChange("bloodType", value)}>
@@ -298,7 +413,7 @@ export default function PatientRegistrationPage() {
                       <SelectValue placeholder="Seleccionar tipo" />
                     </SelectTrigger>
                     <SelectContent>
-                      {bloodTypes.map((type) => (
+                      {BLOOD_TYPES.map((type) => (
                         <SelectItem key={type} value={type}>
                           {type}
                         </SelectItem>
@@ -317,11 +432,11 @@ export default function PatientRegistrationPage() {
                       <SelectValue placeholder="Seleccionar estado" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="soltero">Soltero/a</SelectItem>
-                      <SelectItem value="casado">Casado/a</SelectItem>
-                      <SelectItem value="divorciado">Divorciado/a</SelectItem>
-                      <SelectItem value="viudo">Viudo/a</SelectItem>
-                      <SelectItem value="union-libre">Unión Libre</SelectItem>
+                      <SelectItem value="Soltero/a">Soltero/a</SelectItem>
+                      <SelectItem value="Casado/a">Casado/a</SelectItem>
+                      <SelectItem value="Divorciado/a">Divorciado/a</SelectItem>
+                      <SelectItem value="Viudo/a">Viudo/a</SelectItem>
+                      <SelectItem value="Unión Libre">Unión Libre</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -362,11 +477,15 @@ export default function PatientRegistrationPage() {
                       id="phone"
                       value={formData.phone}
                       onChange={(e) => handleInputChange("phone", e.target.value)}
-                      placeholder="503-0000-0000"
+                      placeholder="7123-4567"
                       required
-                      className="pl-10"
+                      className={`pl-10 ${errors.phone ? 'border-red-500' : ''}`}
                     />
                   </div>
+                  {errors.phone && (
+                    <p className="text-sm text-red-600 mt-1">{errors.phone}</p>
+                  )}
+                  <p className="text-xs text-muted-foreground mt-1">Formato: 0000-0000</p>
                 </div>
                 <div>
                   <Label htmlFor="email" className="text-sm font-medium">
@@ -380,9 +499,12 @@ export default function PatientRegistrationPage() {
                       value={formData.email}
                       onChange={(e) => handleInputChange("email", e.target.value)}
                       placeholder="correo@ejemplo.com"
-                      className="pl-10"
+                      className={`pl-10 ${errors.email ? 'border-red-500' : ''}`}
                     />
                   </div>
+                  {errors.email && (
+                    <p className="text-sm text-red-600 mt-1">{errors.email}</p>
+                  )}
                 </div>
               </div>
 
@@ -398,9 +520,12 @@ export default function PatientRegistrationPage() {
                     onChange={(e) => handleInputChange("address", e.target.value)}
                     placeholder="Calle, número, sector, referencias..."
                     required
-                    className="pl-10 min-h-[80px]"
+                    className={`pl-10 min-h-[80px] ${errors.address ? 'border-red-500' : ''}`}
                   />
                 </div>
+                {errors.address && (
+                  <p className="text-sm text-red-600 mt-1">{errors.address}</p>
+                )}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -414,21 +539,31 @@ export default function PatientRegistrationPage() {
                     onChange={(e) => handleInputChange("city", e.target.value)}
                     placeholder="Ciudad"
                     required
-                    className="mt-1"
+                    className={`mt-1 ${errors.city ? 'border-red-500' : ''}`}
                   />
+                  {errors.city && (
+                    <p className="text-sm text-red-600 mt-1">{errors.city}</p>
+                  )}
                 </div>
                 <div>
-                  <Label htmlFor="departamento" className="text-sm font-medium">
-                    Departamento *
+                  <Label className="text-sm font-medium">
+                    Provincia *
                   </Label>
-                  <Input
-                    id="departamento"
-                    value={formData.departamento}
-                    onChange={(e) => handleInputChange("departamento", e.target.value)}
-                    placeholder="Departamento"
-                    required
-                    className="mt-1"
-                  />
+                  <Select value={formData.province} onValueChange={(value) => handleInputChange("province", value)}>
+                    <SelectTrigger className={`mt-1 ${errors.province ? 'border-red-500' : ''}`}>
+                      <SelectValue placeholder="Seleccionar provincia" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PROVINCES.map((province) => (
+                        <SelectItem key={province} value={province}>
+                          {province}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {errors.province && (
+                    <p className="text-sm text-red-600 mt-1">{errors.province}</p>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="postalCode" className="text-sm font-medium">
@@ -438,9 +573,10 @@ export default function PatientRegistrationPage() {
                     id="postalCode"
                     value={formData.postalCode}
                     onChange={(e) => handleInputChange("postalCode", e.target.value)}
-                    placeholder="00000"
+                    placeholder="1101"
                     className="mt-1"
                   />
+                  <p className="text-xs text-muted-foreground mt-1">Opcional en El Salvador</p>
                 </div>
               </div>
             </CardContent>
@@ -466,8 +602,11 @@ export default function PatientRegistrationPage() {
                     onChange={(e) => handleInputChange("emergencyName", e.target.value)}
                     placeholder="Nombre del contacto de emergencia"
                     required
-                    className="mt-1"
+                    className={`mt-1 ${errors.emergencyName ? 'border-red-500' : ''}`}
                   />
+                  {errors.emergencyName && (
+                    <p className="text-sm text-red-600 mt-1">{errors.emergencyName}</p>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="emergencyRelationship" className="text-sm font-medium">
@@ -481,13 +620,13 @@ export default function PatientRegistrationPage() {
                       <SelectValue placeholder="Seleccionar parentesco" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="esposo">Esposo/a</SelectItem>
-                      <SelectItem value="padre">Padre</SelectItem>
-                      <SelectItem value="madre">Madre</SelectItem>
-                      <SelectItem value="hijo">Hijo/a</SelectItem>
-                      <SelectItem value="hermano">Hermano/a</SelectItem>
-                      <SelectItem value="amigo">Amigo/a</SelectItem>
-                      <SelectItem value="otro">Otro</SelectItem>
+                      <SelectItem value="Esposo/a">Esposo/a</SelectItem>
+                      <SelectItem value="Padre">Padre</SelectItem>
+                      <SelectItem value="Madre">Madre</SelectItem>
+                      <SelectItem value="Hijo/a">Hijo/a</SelectItem>
+                      <SelectItem value="Hermano/a">Hermano/a</SelectItem>
+                      <SelectItem value="Amigo/a">Amigo/a</SelectItem>
+                      <SelectItem value="Otro">Otro</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -504,11 +643,14 @@ export default function PatientRegistrationPage() {
                       id="emergencyPhone"
                       value={formData.emergencyPhone}
                       onChange={(e) => handleInputChange("emergencyPhone", e.target.value)}
-                      placeholder="809-000-0000"
+                      placeholder="7123-4567"
                       required
-                      className="pl-10"
+                      className={`pl-10 ${errors.emergencyPhone ? 'border-red-500' : ''}`}
                     />
                   </div>
+                  {errors.emergencyPhone && (
+                    <p className="text-sm text-red-600 mt-1">{errors.emergencyPhone}</p>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="emergencyEmail" className="text-sm font-medium">
@@ -522,9 +664,12 @@ export default function PatientRegistrationPage() {
                       value={formData.emergencyEmail}
                       onChange={(e) => handleInputChange("emergencyEmail", e.target.value)}
                       placeholder="correo@ejemplo.com"
-                      className="pl-10"
+                      className={`pl-10 ${errors.emergencyEmail ? 'border-red-500' : ''}`}
                     />
                   </div>
+                  {errors.emergencyEmail && (
+                    <p className="text-sm text-red-600 mt-1">{errors.emergencyEmail}</p>
+                  )}
                 </div>
               </div>
             </CardContent>
@@ -550,7 +695,7 @@ export default function PatientRegistrationPage() {
                       <SelectValue placeholder="Seleccionar proveedor" />
                     </SelectTrigger>
                     <SelectContent>
-                      {insuranceProviders.map((provider) => (
+                      {INSURANCE_PROVIDERS.map((provider) => (
                         <SelectItem key={provider} value={provider}>
                           {provider}
                         </SelectItem>
@@ -599,7 +744,7 @@ export default function PatientRegistrationPage() {
               <div>
                 <Label className="text-sm font-medium mb-3 block">Alergias Conocidas</Label>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-4">
-                  {commonAllergies.map((allergy, index) => (
+                  {COMMON_ALLERGIES.map((allergy, index) => (
                     <div key={index} className="flex items-center space-x-2">
                       <Checkbox
                         id={`allergy-${index}`}
@@ -621,11 +766,12 @@ export default function PatientRegistrationPage() {
 
                 <div className="flex gap-2 mb-3">
                   <Input
+                    id="newAllergy"
                     value={newAllergy}
                     onChange={(e) => setNewAllergy(e.target.value)}
                     placeholder="Agregar otra alergia..."
                     className="flex-1"
-                    onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addCustomAllergy())}
+                    onKeyPress={handleKeyPress}
                   />
                   <Button
                     type="button"
@@ -656,7 +802,7 @@ export default function PatientRegistrationPage() {
               <div>
                 <Label className="text-sm font-medium mb-3 block">Condiciones Médicas Crónicas</Label>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-4">
-                  {commonConditions.map((condition, index) => (
+                  {COMMON_CONDITIONS.map((condition, index) => (
                     <div key={index} className="flex items-center space-x-2">
                       <Checkbox
                         id={`condition-${index}`}
@@ -678,11 +824,12 @@ export default function PatientRegistrationPage() {
 
                 <div className="flex gap-2 mb-3">
                   <Input
+                    id="newCondition"
                     value={newCondition}
                     onChange={(e) => setNewCondition(e.target.value)}
                     placeholder="Agregar otra condición..."
                     className="flex-1"
-                    onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addCustomCondition())}
+                    onKeyPress={handleKeyPress}
                   />
                   <Button
                     type="button"

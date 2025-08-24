@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -13,18 +14,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Appointment } from "../mocks/appointments-data"
-
-interface AppointmentFormData {
-  patientName: string
-  patientPhone: string
-  patientEmail: string
-  doctor: string
-  date: string
-  time: string
-  type: string
-  notes: string
-}
+import { Search, User, Phone, Mail } from "lucide-react"
+import { type AppointmentFormData, type Patient, APPOINTMENT_TYPES, TIME_SLOTS } from "../types"
 
 interface AppointmentBookingDialogProps {
   isOpen: boolean
@@ -36,6 +27,7 @@ interface AppointmentBookingDialogProps {
   appointmentTypes: string[]
   onSave: () => void
   isEditing: boolean
+  patients: Patient[]
 }
 
 export function AppointmentBookingDialog({
@@ -48,13 +40,47 @@ export function AppointmentBookingDialog({
   appointmentTypes,
   onSave,
   isEditing,
+  patients,
 }: AppointmentBookingDialogProps) {
+  const [searchQuery, setSearchQuery] = useState("")
+  const [searchResults, setSearchResults] = useState<Patient[]>([])
+  const [showSearchResults, setShowSearchResults] = useState(false)
+
   const isFormValid = 
-    formData.patientName &&
+    formData.patientId &&
     formData.doctor &&
     formData.date &&
     formData.time &&
     formData.type
+
+  const handlePatientSearch = (query: string) => {
+    setSearchQuery(query)
+    if (query.length >= 2) {
+      const results = patients.filter(patient => 
+        patient.firstName.toLowerCase().includes(query.toLowerCase()) ||
+        patient.lastName.toLowerCase().includes(query.toLowerCase()) ||
+        patient.dui.includes(query) ||
+        patient.patientId.toLowerCase().includes(query.toLowerCase())
+      )
+      setSearchResults(results)
+      setShowSearchResults(true)
+    } else {
+      setSearchResults([])
+      setShowSearchResults(false)
+    }
+  }
+
+  const selectPatient = (patient: Patient) => {
+    onFormDataChange({
+      ...formData,
+      patientId: patient.id,
+      patientName: `${patient.firstName} ${patient.lastName}`,
+      patientPhone: patient.phone,
+      patientEmail: patient.email,
+    })
+    setSearchQuery(`${patient.firstName} ${patient.lastName}`)
+    setShowSearchResults(false)
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -67,14 +93,61 @@ export function AppointmentBookingDialog({
         </DialogHeader>
 
         <div className="grid grid-cols-2 gap-4">
+          {/* Patient Search */}
+          <div className="space-y-2 col-span-2">
+            <Label htmlFor="patientSearch">Search Patient *</Label>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                id="patientSearch"
+                value={searchQuery}
+                onChange={(e) => handlePatientSearch(e.target.value)}
+                placeholder="Search by name, cédula, or patient ID..."
+                className="pl-10 border-main-200 dark:border-main-800"
+              />
+              {showSearchResults && searchResults.length > 0 && (
+                <div className="absolute top-full left-0 right-0 bg-background border border-main-200 dark:border-main-800 rounded-md shadow-lg z-50 max-h-48 overflow-y-auto">
+                  {searchResults.map((patient) => (
+                    <div
+                      key={patient.id}
+                      className="p-3 hover:bg-main-50 dark:hover:bg-main-950 cursor-pointer border-b border-main-100 dark:border-main-800 last:border-b-0"
+                      onClick={() => selectPatient(patient)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                          <User className="h-4 w-4 text-primary" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="font-medium">{patient.firstName} {patient.lastName}</div>
+                          <div className="text-sm text-muted-foreground flex items-center gap-4">
+                            <span className="flex items-center gap-1">
+                              <Phone className="h-3 w-3" />
+                              {patient.phone}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Mail className="h-3 w-3" />
+                              {patient.email}
+                            </span>
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            ID: {patient.patientId} | DUI: {patient.dui}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
           <div className="space-y-2">
-            <Label htmlFor="patientName">Patient Name *</Label>
+            <Label htmlFor="patientName">Patient Name</Label>
             <Input
               id="patientName"
               value={formData.patientName}
-              onChange={(e) => onFormDataChange({ ...formData, patientName: e.target.value })}
-              placeholder="Enter patient name"
-              className="border-main-200 dark:border-main-800"
+              disabled
+              className="border-main-200 dark:border-main-800 bg-muted"
             />
           </div>
 
@@ -83,9 +156,8 @@ export function AppointmentBookingDialog({
             <Input
               id="patientPhone"
               value={formData.patientPhone}
-              onChange={(e) => onFormDataChange({ ...formData, patientPhone: e.target.value })}
-              placeholder="(555) 123-4567"
-              className="border-main-200 dark:border-main-800"
+              disabled
+              className="border-main-200 dark:border-main-800 bg-muted"
             />
           </div>
 
@@ -93,11 +165,9 @@ export function AppointmentBookingDialog({
             <Label htmlFor="patientEmail">Email Address</Label>
             <Input
               id="patientEmail"
-              type="email"
               value={formData.patientEmail}
-              onChange={(e) => onFormDataChange({ ...formData, patientEmail: e.target.value })}
-              placeholder="patient@email.com"
-              className="border-main-200 dark:border-main-800"
+              disabled
+              className="border-main-200 dark:border-main-800 bg-muted"
             />
           </div>
 

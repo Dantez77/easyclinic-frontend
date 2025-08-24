@@ -1,4 +1,4 @@
-// Mock billing data
+// Mock billing data - Updated for El Salvador
 export const mockInvoices = [
   {
     id: "FAC-2024-001",
@@ -11,17 +11,17 @@ export const mockInvoices = [
       { description: "Electrocardiograma", quantity: 1, unitPrice: 800, total: 800 },
     ],
     subtotal: 2300,
-    tax: 414, // 18% ITBIS
+    tax: 299, // 13% IVA (El Salvador)
     discount: 0,
-    total: 2714,
+    total: 2599,
     status: "Pagada",
     paymentMethod: "Efectivo",
     paymentDate: "2024-11-15",
     insuranceCoverage: 70,
-    insuranceAmount: 1899.8,
-    patientAmount: 814.2,
+    insuranceAmount: 1819.3,
+    patientAmount: 779.7,
     notes: "Pago completo recibido",
-    documentType: "factura",
+    documentType: "dteFactura",
     // BACKEND: Add these fields for Stripe + DTE integration
     stripePaymentId: "pi_1234567890",
     stripeReceiptUrl: "https://stripe.com/receipt/123",
@@ -41,68 +41,66 @@ export const mockInvoices = [
       { description: "Exámenes de Laboratorio", quantity: 1, unitPrice: 1200, total: 1200 },
     ],
     subtotal: 3700,
-    tax: 666,
+    tax: 481, // 13% IVA (El Salvador)
     discount: 200,
-    total: 4166,
+    total: 3981,
     status: "Pendiente",
     paymentMethod: "",
     paymentDate: "",
     insuranceCoverage: 80,
-    insuranceAmount: 3332.8,
-    patientAmount: 833.2,
+    insuranceAmount: 3184.8,
+    patientAmount: 796.2,
     notes: "Esperando aprobación del seguro",
-    documentType: "factura",
+    documentType: "dteFactura",
   },
   {
     id: "FAC-2024-003",
     patientId: "EXP-2024-001236",
     patientName: "Carmen Rosa Martínez",
-    date: "2024-10-28",
-    dueDate: "2024-11-28",
-    services: [{ description: "Consulta Médica General", quantity: 1, unitPrice: 1500, total: 1500 }],
-    subtotal: 1500,
-    tax: 270,
+    date: "2024-11-05",
+    dueDate: "2024-12-05",
+    services: [
+      { description: "Consulta Médica General", quantity: 1, unitPrice: 1500, total: 1500 },
+      { description: "Radiografía de Tórax", quantity: 1, unitPrice: 900, total: 900 },
+    ],
+    subtotal: 2400,
+    tax: 312, // 13% IVA (El Salvador)
     discount: 0,
-    total: 1770,
-    status: "Vencida",
-    paymentMethod: "",
-    paymentDate: "",
+    total: 2712,
+    status: "Pagada",
+    paymentMethod: "Tarjeta",
+    paymentDate: "2024-11-05",
     insuranceCoverage: 0,
     insuranceAmount: 0,
-    patientAmount: 1770,
+    patientAmount: 2712,
     notes: "Paciente sin seguro médico",
-    documentType: "factura",
+    documentType: "dteComprobante",
   },
 ]
 
 export const DOCUMENT_TYPES = {
-  ticket: { name: "Ticket", requiresRNC: false, hasITBIS: false },
-  factura: { name: "Factura", requiresRNC: true, hasITBIS: true },
-  creditoFiscal: { name: "Crédito Fiscal", requiresRNC: true, hasITBIS: true },
-  // BACKEND: Add DTE types for El Salvador
+  ticket: { name: "Ticket", requiresNIT: false, hasIVA: false },
   dteFactura: { name: "DTE Factura", requiresNIT: true, hasIVA: true },
   dteComprobante: { name: "DTE Comprobante", requiresNIT: false, hasIVA: true },
 }
 
 export const mockServices = [
   { id: "SRV-001", name: "Consulta Médica General", price: 1500, category: "Consultas" },
-  { id: "SRV-002", name: "Consulta Especializada - Gastroenterología", price: 2500, category: "Consultas" },
-  { id: "SRV-003", name: "Endoscopia Digestiva Alta", price: 5500, category: "Procedimientos" },
-  { id: "SRV-004", name: "Colonoscopia", price: 7000, category: "Procedimientos" },
-  { id: "SRV-005", name: "Ecografía Abdominal", price: 1800, category: "Imagenología" },
-  { id: "SRV-006", name: "Prueba de H. Pylori (aliento/sangre)", price: 1200, category: "Laboratorio" },
-  { id: "SRV-007", name: "Perfil Hepático", price: 1400, category: "Laboratorio" },
-  { id: "SRV-008", name: "CPRE (Colangiopancreatografía Endoscópica Retrógrada)", price: 9000, category: "Procedimientos" },
-];
-
+  { id: "SRV-002", name: "Consulta Especializada - Cardiología", price: 2500, category: "Consultas" },
+  { id: "SRV-003", name: "Electrocardiograma", price: 800, category: "Diagnóstico" },
+  { id: "SRV-004", name: "Exámenes de Laboratorio", price: 1200, category: "Laboratorio" },
+  { id: "SRV-005", name: "Radiografía de Tórax", price: 900, category: "Diagnóstico" },
+  { id: "SRV-006", name: "Ecografía Abdominal", price: 1800, category: "Diagnóstico" },
+  { id: "SRV-007", name: "Vacuna Influenza", price: 500, category: "Vacunas" },
+  { id: "SRV-008", name: "Sutura Simple", price: 1200, category: "Procedimientos" },
+]
 
 export const mockPatients = [
   {
     id: "EXP-2024-001234",
     name: "María Elena González",
-    insurance: "ARS Humano",
+    insurance: "ISSS",
     coverage: 70,
-    rnc: "101234567",
     // BACKEND: Add NIT for El Salvador DTE
     nit: "0614-123456-001-2",
     email: "maria.gonzalez@email.com",
@@ -113,7 +111,6 @@ export const mockPatients = [
     name: "Juan Carlos Rodríguez", 
     insurance: "SeNaSa", 
     coverage: 80, 
-    rnc: "101234568",
     nit: "0614-567890-001-3",
     email: "juan.rodriguez@email.com",
     phone: "+503-7234-5678",
@@ -123,7 +120,6 @@ export const mockPatients = [
     name: "Carmen Rosa Martínez", 
     insurance: "Sin Seguro", 
     coverage: 0, 
-    rnc: "",
     nit: "", // No NIT - will trigger validation warning for DTE documents
     email: "carmen.martinez@email.com",
     phone: "+503-7345-6789",
@@ -133,7 +129,6 @@ export const mockPatients = [
     name: "Roberto Fernández", 
     insurance: "ARS Universal", 
     coverage: 75, 
-    rnc: "101234569",
     nit: "",  // No NIT - will trigger validation warning for DTE documents
     email: "roberto.fernandez@email.com",
     phone: "+503-7456-7890",

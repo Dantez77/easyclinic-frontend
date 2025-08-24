@@ -11,6 +11,7 @@ import {
   timeSlots,
   type Appointment 
 } from "./mocks/appointments-data"
+import { mockPatients } from "../patients/mocks/patients-data"
 
 // Import custom hook
 import { useAppointments } from "./hooks/use-appointments"
@@ -56,6 +57,7 @@ export default function AppointmentsPage() {
 
   // Form state
   const [formData, setFormData] = React.useState({
+    patientId: "",
     patientName: "",
     patientPhone: "",
     patientEmail: "",
@@ -72,8 +74,11 @@ export default function AppointmentsPage() {
       duration: 30,
       status: "pending",
       patientHistory: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     })
     setFormData({
+      patientId: "",
       patientName: "",
       patientPhone: "",
       patientEmail: "",
@@ -88,6 +93,7 @@ export default function AppointmentsPage() {
 
   const handleEditAppointment = (appointment: Appointment) => {
     setFormData({
+      patientId: appointment.patientId,
       patientName: appointment.patientName,
       patientPhone: appointment.patientPhone,
       patientEmail: appointment.patientEmail,
@@ -104,7 +110,10 @@ export default function AppointmentsPage() {
 
   const handleUpdateAppointment = () => {
     if (editingAppointment) {
-      updateAppointment(editingAppointment.id, formData)
+      updateAppointment(editingAppointment.id, {
+        ...formData,
+        updatedAt: new Date().toISOString(),
+      })
       setEditingAppointment(null)
     } else {
       addAppointment({
@@ -112,9 +121,12 @@ export default function AppointmentsPage() {
         duration: 30,
         status: "pending",
         patientHistory: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       })
     }
     setFormData({
+      patientId: "",
       patientName: "",
       patientPhone: "",
       patientEmail: "",
@@ -219,6 +231,7 @@ export default function AppointmentsPage() {
         appointmentTypes={appointmentTypes}
         onSave={isEditing ? handleUpdateAppointment : handleBookAppointment}
         isEditing={isEditing}
+        patients={mockPatients}
       />
 
       {/* Appointment Details Dialog */}

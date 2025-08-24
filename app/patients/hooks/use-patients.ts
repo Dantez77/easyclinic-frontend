@@ -23,7 +23,7 @@ export const usePatients = () => {
       const matchesSearch =
         patient.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         patient.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        patient.cedula.includes(searchTerm) ||
+        patient.dui.includes(searchTerm) ||
         patient.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
         patient.phone.includes(searchTerm)
 
@@ -94,9 +94,9 @@ export const usePatients = () => {
     // Mock export functionality
     const csvContent =
       "data:text/csv;charset=utf-8," +
-      "ID,Nombre,Apellido,Cédula,Teléfono,Email,Estado\n" +
+              "ID,Nombre,Apellido,DUI,Teléfono,Email,Estado\n" +
       filteredPatients
-        .map((p) => `${p.id},${p.firstName},${p.lastName},${p.cedula},${p.phone},${p.email},${p.status}`)
+        .map((p) => `${p.id},${p.firstName},${p.lastName},${p.dui},${p.phone},${p.email},${p.status}`)
         .join("\n")
 
     const encodedUri = encodeURI(csvContent)

@@ -34,18 +34,8 @@ export const navigationRoutes: NavigationRoute[] = [
     aliases: { en: ["Appointments", "Visits"], es: ["Citas", "Atención"] },
   },
   {
-    path: "/patient-ehr",
-    labels: { en: "Patient EHR", es: "Historia Clínica" },
-    aliases: { en: ["Records", "Medical History"], es: ["Expediente", "Historial Médico"] },
-  },
-  {
-    path: "/patient-management",
-    labels: { en: "Patient Management", es: "Gestión de Pacientes" },
-    aliases: { en: ["Patients", "Profiles"], es: ["Pacientes", "Perfiles"] },
-  },
-  {
     path: "/patients",
     labels: { en: "Patients", es: "Pacientes" },
-    aliases: { en: ["Patients", "Profiles"], es: ["Pacientes", "Perfiles"] },
+    aliases: { en: ["Patients", "Profiles", "Records", "Medical History"], es: ["Pacientes", "Gestión", "Perfiles", "Expediente", "Historial Médico"] },
   },
 ]

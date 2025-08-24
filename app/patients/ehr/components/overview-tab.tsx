@@ -35,8 +35,8 @@ export function OverviewTab({ patientData }: OverviewTabProps) {
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Cédula:</span>
-                  <span>{patientData.cedula}</span>
+                                      <span className="text-muted-foreground">DUI:</span>
+                  <span>{patientData.dui}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Fecha de Nacimiento:</span>

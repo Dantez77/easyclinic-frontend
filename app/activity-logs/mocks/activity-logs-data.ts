@@ -1,53 +1,50 @@
-// Mock activity logs data
-export const mockActivityLogs = [
+// Mock activity logs data - Updated for El Salvador
+import { type ActivityLog } from "../types"
+
+export const mockActivityLogs: ActivityLog[] = [
   {
     id: "LOG-001",
-    timestamp: "2024-11-15 14:30:25",
-    module: "Consulta Médica",
-    action: "Consulta Completada",
-    description: "Consulta médica completada para paciente María Elena González",
+    timestamp: "2024-11-15 15:30:22",
+    module: "Sistema",
+    action: "Inicio de Sesión",
+    description: "Usuario inició sesión en el sistema",
     user: "Dr. Juan Pérez",
     userRole: "Médico",
-    patientId: "EXP-2024-001234",
-    patientName: "María Elena González",
+    patientId: null,
+    patientName: null,
     ipAddress: "192.168.1.45",
     userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
     severity: "info",
-    category: "clinical",
+    category: "security",
     details: {
-      consultationId: "CONS-001",
-      diagnosis: "Cefalea tensional",
-      treatment: "Acetaminofén 500mg c/8h x 5 días",
-      duration: "45 minutos",
+      loginMethod: "Credenciales",
+      sessionId: "sess_abc123def456",
+      location: "Consultorio 1",
     },
-    changes: [
-      { field: "Estado", before: "En Progreso", after: "Completada" },
-      { field: "Diagnóstico", before: "", after: "Cefalea tensional" },
-      { field: "Tratamiento", before: "", after: "Acetaminofén 500mg c/8h x 5 días" },
-    ],
+    changes: [],
   },
   {
     id: "LOG-002",
     timestamp: "2024-11-15 14:15:10",
-    module: "Registro de Pacientes",
+    module: "Gestión de Pacientes",
     action: "Paciente Registrado",
     description: "Nuevo paciente registrado en el sistema",
     user: "Recepcionista Ana",
     userRole: "Recepcionista",
     patientId: "EXP-2024-001238",
-    patientName: "Carlos Alberto Mendoza",
+    patientName: "Ana María López",
     ipAddress: "192.168.1.23",
     userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
     severity: "info",
     category: "administrative",
     details: {
       registrationMethod: "Manual",
-      insuranceProvider: "ARS Humano",
-      emergencyContact: "María Mendoza - 809-555-0199",
+      insuranceProvider: "ISSS",
+      emergencyContact: "María Mendoza - 7567-8902",
     },
     changes: [
       { field: "Estado", before: "", after: "Activo" },
-      { field: "Seguro", before: "", after: "ARS Humano" },
+      { field: "Seguro", before: "", after: "ISSS" },
     ],
   },
   {
@@ -87,7 +84,7 @@ export const mockActivityLogs = [
     category: "financial",
     details: {
       invoiceId: "FAC-2024-002",
-      amount: 4166.0,
+      amount: 3981.0,
       paymentMethod: "Tarjeta NFC",
       stripePaymentId: "pi_1234567890",
       dteGenerated: true,
@@ -138,7 +135,7 @@ export const mockActivityLogs = [
       updatedFields: ["Teléfono", "Email"],
     },
     changes: [
-      { field: "Teléfono", before: "809-555-0127", after: "809-555-0128" },
+      { field: "Teléfono", before: "7345-6789", after: "7345-6790" },
       { field: "Email", before: "carmen.martinez@email.com", after: "carmen.martinez@gmail.com" },
     ],
   },

@@ -1,10 +1,13 @@
-// Mock data for appointments
-export const mockAppointments = [
+// Mock data for appointments using unified structure - Updated for El Salvador
+import { type Appointment, APPOINTMENT_TYPES, TIME_SLOTS } from "../types"
+
+export const mockAppointments: Appointment[] = [
   {
     id: "1",
-    patientName: "John Smith",
-    patientPhone: "(555) 123-4567",
-    patientEmail: "john.smith@email.com",
+    patientId: "EXP-2024-001234",
+    patientName: "María Elena González",
+    patientPhone: "7123-4567",
+    patientEmail: "maria.gonzalez@email.com",
     doctor: "Dr. Sarah Johnson",
     date: "2024-01-20",
     time: "09:00",
@@ -13,12 +16,15 @@ export const mockAppointments = [
     status: "confirmed",
     notes: "Regular checkup and blood pressure monitoring",
     patientHistory: ["Previous visit: 2023-12-15", "Hypertension management"],
+    createdAt: "2024-01-15",
+    updatedAt: "2024-01-20",
   },
   {
     id: "2",
-    patientName: "Emily Davis",
-    patientPhone: "(555) 987-6543",
-    patientEmail: "emily.davis@email.com",
+    patientId: "EXP-2024-001235",
+    patientName: "Juan Carlos Rodríguez",
+    patientPhone: "7234-5678",
+    patientEmail: "juan.rodriguez@email.com",
     doctor: "Dr. Michael Chen",
     date: "2024-01-20",
     time: "10:30",
@@ -27,12 +33,15 @@ export const mockAppointments = [
     status: "pending",
     notes: "Neurological assessment follow-up",
     patientHistory: ["Previous visit: 2024-01-05", "Migraine treatment"],
+    createdAt: "2024-01-16",
+    updatedAt: "2024-01-16",
   },
   {
     id: "3",
-    patientName: "Robert Wilson",
-    patientPhone: "(555) 456-7890",
-    patientEmail: "robert.wilson@email.com",
+    patientId: "EXP-2024-001236",
+    patientName: "Carmen Rosa Martínez",
+    patientPhone: "7345-6789",
+    patientEmail: "carmen.martinez@email.com",
     doctor: "Dr. Emily Rodriguez",
     date: "2024-01-20",
     time: "14:00",
@@ -41,12 +50,15 @@ export const mockAppointments = [
     status: "confirmed",
     notes: "Pediatric vaccination - MMR booster",
     patientHistory: ["Previous visit: 2023-11-20", "Annual checkup"],
+    createdAt: "2024-01-17",
+    updatedAt: "2024-01-20",
   },
   {
     id: "4",
-    patientName: "Sarah Brown",
-    patientPhone: "(555) 321-0987",
-    patientEmail: "sarah.brown@email.com",
+    patientId: "EXP-2024-001237",
+    patientName: "Roberto Fernández",
+    patientPhone: "7456-7890",
+    patientEmail: "roberto.fernandez@email.com",
     doctor: "Dr. Sarah Johnson",
     date: "2024-01-21",
     time: "11:00",
@@ -55,12 +67,15 @@ export const mockAppointments = [
     status: "cancelled",
     notes: "Cancelled due to patient illness",
     patientHistory: ["Previous visit: 2023-10-15", "Cardiac screening"],
+    createdAt: "2024-01-18",
+    updatedAt: "2024-01-21",
   },
   {
     id: "5",
-    patientName: "Michael Johnson",
-    patientPhone: "(555) 555-1234",
-    patientEmail: "michael.j@email.com",
+    patientId: "EXP-2024-001238",
+    patientName: "Ana María López",
+    patientPhone: "7567-8901",
+    patientEmail: "ana.lopez@email.com",
     doctor: "Dr. Emily Rodriguez",
     date: "2024-01-22",
     time: "15:30",
@@ -69,34 +84,15 @@ export const mockAppointments = [
     status: "confirmed",
     notes: "Annual pediatric checkup",
     patientHistory: ["Previous visit: 2023-01-20", "Growth assessment"],
+    createdAt: "2024-01-19",
+    updatedAt: "2024-01-22",
   },
 ]
 
 export const doctors = ["Dr. Sarah Johnson", "Dr. Michael Chen", "Dr. Emily Rodriguez"]
 
-export const appointmentTypes = ["Consultation", "Follow-up", "Procedure", "Emergency", "Screening"]
+export const appointmentTypes = APPOINTMENT_TYPES
 
-export const timeSlots = [
-  "08:00",
-  "08:30",
-  "09:00",
-  "09:30",
-  "10:00",
-  "10:30",
-  "11:00",
-  "11:30",
-  "12:00",
-  "12:30",
-  "13:00",
-  "13:30",
-  "14:00",
-  "14:30",
-  "15:00",
-  "15:30",
-  "16:00",
-  "16:30",
-  "17:00",
-  "17:30",
-]
+export const timeSlots = TIME_SLOTS
 
-export type Appointment = (typeof mockAppointments)[0]
+export type { Appointment }

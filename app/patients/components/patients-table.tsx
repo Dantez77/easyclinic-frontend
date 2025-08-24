@@ -82,7 +82,7 @@ export function PatientsTable({
                         <div className="font-medium text-foreground">
                           {patient.firstName} {patient.lastName}
                         </div>
-                        <div className="text-sm text-muted-foreground">{patient.id}</div>
+                        <div className="text-sm text-muted-foreground">{patient.patientId}</div>
                         <div className="text-sm text-muted-foreground md:hidden">{patient.phone}</div>
                       </div>
                     </div>

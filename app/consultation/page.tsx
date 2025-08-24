@@ -25,6 +25,7 @@ import { ActionButtons } from "./components/action-buttons"
 
 export default function PatientConsultationPage() {
   const {
+    patientData,
     formData,
     updateFormData,
     updateVitalSigns,
@@ -68,12 +69,24 @@ export default function PatientConsultationPage() {
     }
   }
 
+  // Show loading state if patient data is not yet loaded
+  if (!patientData) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-lg text-muted-foreground">Loading patient data...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <>
       <ConsultationHeader onBack={handleBack} />
 
       <div className="flex flex-col lg:flex-row h-[calc(100vh-4rem)] bg-background">
-        <PatientSummarySidebar />
+        <PatientSummarySidebar patientData={patientData} />
 
         {/* Main Content */}
         <div className="flex-1 flex flex-col min-h-0">
@@ -185,11 +198,11 @@ export default function PatientConsultationPage() {
               </TabsContent>
 
               <TabsContent value="history" className="mt-6">
-                <MedicalHistoryCard />
+                <MedicalHistoryCard patientData={patientData} />
               </TabsContent>
 
               <TabsContent value="documents" className="mt-6">
-                <DocumentsCard />
+                <DocumentsCard patientData={patientData} />
               </TabsContent>
 
               <TabsContent value="notes" className="mt-6">
