@@ -97,7 +97,7 @@ export default function BillingPage() {
   // BACKEND PROCESS: Create Invoice/Order
   const handleCreateInvoice = async () => {
     const selectedPatient = mockPatients.find((p) => p.id === newInvoice.patientId)
-    const docType = DOCUMENT_TYPES[newInvoice.documentType]
+    const docType = DOCUMENT_TYPES[newInvoice.documentType as keyof typeof DOCUMENT_TYPES]
 
     // Validate patient selection
     if (!selectedPatient) {
@@ -105,14 +105,9 @@ export default function BillingPage() {
       return
     }
 
-    // Check NIT/RNC requirement
+    // Check NIT requirement for DTE documents
     if (docType.requiresNIT && !selectedPatient?.nit) {
       alert(`Este tipo de documento (${docType.name}) requiere que el paciente tenga NIT registrado.\n\nPaciente: ${selectedPatient.name}\nNIT actual: ${selectedPatient.nit || 'No registrado'}`)
-      return
-    }
-
-    if (docType.requiresRNC && !selectedPatient?.rnc) {
-      alert(`Este tipo de documento (${docType.name}) requiere que el paciente tenga RNC registrado.\n\nPaciente: ${selectedPatient.name}\nRNC actual: ${selectedPatient.rnc || 'No registrado'}`)
       return
     }
 
@@ -137,9 +132,17 @@ export default function BillingPage() {
     const discountAmount = (subtotal * newInvoice.discount) / 100
     const taxableAmount = subtotal - discountAmount
 
-    // Apply IVA only for DTE documents
-    const tax = docType.hasIVA ? taxableAmount * 0.13 : 0 // 13% IVA in El Salvador
-    const total = taxableAmount + tax
+    // In El Salvador, IVA is included in the displayed price
+    // We need to extract the IVA amount from the total price
+    let tax = 0
+    let total = taxableAmount
+    
+    if (docType.hasIVA) {
+      // Calculate IVA from the total price (IVA is 13% of the final price)
+      // Formula: IVA = Total * (13/113) = Total * 0.115044
+      tax = Math.round(taxableAmount * 0.115044) // 13% IVA included in price
+      // Note: 0.115044 = 13/113, which extracts IVA from IVA-inclusive price
+    }
 
     const insuranceCoverage = selectedPatient?.coverage || 0
     const insuranceAmount = (total * insuranceCoverage) / 100

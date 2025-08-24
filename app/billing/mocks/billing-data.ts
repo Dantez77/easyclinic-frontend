@@ -1,4 +1,4 @@
-// Mock billing data - Updated for El Salvador
+// Mock billing data - Updated for El Salvador (IVA-inclusive pricing)
 export const mockInvoices = [
   {
     id: "FAC-2024-001",
@@ -11,17 +11,18 @@ export const mockInvoices = [
       { description: "Electrocardiograma", quantity: 1, unitPrice: 800, total: 800 },
     ],
     subtotal: 2300,
-    tax: 299, // 13% IVA (El Salvador)
+    tax: 265, // IVA extraído del precio total (2300 * 0.115044)
     discount: 0,
-    total: 2599,
+    total: 2300, // Precio final = precio mostrado (IVA incluido)
     status: "Pagada",
     paymentMethod: "Efectivo",
     paymentDate: "2024-11-15",
     insuranceCoverage: 70,
-    insuranceAmount: 1819.3,
-    patientAmount: 779.7,
+    insuranceAmount: 1610,
+    patientAmount: 690,
     notes: "Pago completo recibido",
     documentType: "dteFactura",
+    nit: "1234-567890-001-2",
     // BACKEND: Add these fields for Stripe + DTE integration
     stripePaymentId: "pi_1234567890",
     stripeReceiptUrl: "https://stripe.com/receipt/123",
@@ -41,17 +42,18 @@ export const mockInvoices = [
       { description: "Exámenes de Laboratorio", quantity: 1, unitPrice: 1200, total: 1200 },
     ],
     subtotal: 3700,
-    tax: 481, // 13% IVA (El Salvador)
+    tax: 426, // IVA extraído del precio total (3700 * 0.115044)
     discount: 200,
-    total: 3981,
+    total: 3500, // Precio final después del descuento (IVA incluido)
     status: "Pendiente",
     paymentMethod: "",
     paymentDate: "",
     insuranceCoverage: 80,
-    insuranceAmount: 3184.8,
-    patientAmount: 796.2,
+    insuranceAmount: 2800,
+    patientAmount: 700,
     notes: "Esperando aprobación del seguro",
     documentType: "dteFactura",
+    nit: "2345-678901-002-3",
   },
   {
     id: "FAC-2024-003",
@@ -64,17 +66,18 @@ export const mockInvoices = [
       { description: "Radiografía de Tórax", quantity: 1, unitPrice: 900, total: 900 },
     ],
     subtotal: 2400,
-    tax: 312, // 13% IVA (El Salvador)
+    tax: 276, // IVA extraído del precio total (2400 * 0.115044)
     discount: 0,
-    total: 2712,
+    total: 2400, // Precio final = precio mostrado (IVA incluido)
     status: "Pagada",
     paymentMethod: "Tarjeta",
     paymentDate: "2024-11-05",
     insuranceCoverage: 0,
     insuranceAmount: 0,
-    patientAmount: 2712,
+    patientAmount: 2400,
     notes: "Paciente sin seguro médico",
     documentType: "dteComprobante",
+    nit: "",
   },
 ]
 
@@ -85,15 +88,16 @@ export const DOCUMENT_TYPES = {
 }
 
 export const mockServices = [
-  { id: "SRV-001", name: "Consulta Médica General", price: 1500, category: "Consultas" },
-  { id: "SRV-002", name: "Consulta Especializada - Cardiología", price: 2500, category: "Consultas" },
-  { id: "SRV-003", name: "Electrocardiograma", price: 800, category: "Diagnóstico" },
-  { id: "SRV-004", name: "Exámenes de Laboratorio", price: 1200, category: "Laboratorio" },
-  { id: "SRV-005", name: "Radiografía de Tórax", price: 900, category: "Diagnóstico" },
-  { id: "SRV-006", name: "Ecografía Abdominal", price: 1800, category: "Diagnóstico" },
-  { id: "SRV-007", name: "Vacuna Influenza", price: 500, category: "Vacunas" },
-  { id: "SRV-008", name: "Sutura Simple", price: 1200, category: "Procedimientos" },
+  { id: "SRV-001", name: "Consulta Médica General en Gastroenterología", price: 1500, category: "Consultas" },
+  { id: "SRV-002", name: "Consulta Especializada - Hepatología", price: 2500, category: "Consultas" },
+  { id: "SRV-003", name: "Endoscopia Digestiva Alta", price: 4500, category: "Procedimientos" },
+  { id: "SRV-004", name: "Colonoscopia", price: 5000, category: "Procedimientos" },
+  { id: "SRV-005", name: "Pruebas de Función Hepática", price: 1200, category: "Laboratorio" },
+  { id: "SRV-006", name: "Ecografía Abdominal - Hígado y Vías Biliares", price: 1800, category: "Diagnóstico" },
+  { id: "SRV-007", name: "Test de Helicobacter Pylori (Aliento o Sangre)", price: 900, category: "Laboratorio" },
+  { id: "SRV-008", name: "Polipectomía Endoscópica", price: 3500, category: "Procedimientos" },
 ]
+
 
 export const mockPatients = [
   {

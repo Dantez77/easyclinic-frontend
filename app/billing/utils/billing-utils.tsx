@@ -31,15 +31,17 @@ export function getStatusIcon(status: string) {
   }
 }
 
-export function generateDocumentNumber(documentType: string, currentCount: number) {
-  const prefix =
-    {
-      ticket: "TKT",
-      factura: "FAC",
-      creditoFiscal: "CF",
-      dteFactura: "DTE-FAC",
-      dteComprobante: "DTE-CCF",
-    }[documentType] || "DOC"
-
-  return `${prefix}-2024-${String(currentCount + 1).padStart(3, "0")}`
+export const generateDocumentNumber = (documentType: string, sequence: number): string => {
+  // In El Salvador, IVA is included in the displayed price
+  // When generating document numbers, we use the standard format
+  // but the pricing calculations handle IVA extraction from total price
+  
+  const prefix = documentType === "dteFactura" ? "FAC" : 
+                 documentType === "dteComprobante" ? "COM" : 
+                 documentType === "ticket" ? "TKT" : "DOC"
+  
+  const year = new Date().getFullYear()
+  const sequenceStr = String(sequence).padStart(6, "0")
+  
+  return `${prefix}-${year}-${sequenceStr}`
 }

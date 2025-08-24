@@ -41,7 +41,7 @@ export const generateReceiptContent = (invoice: Invoice, paymentMethod: string) 
   const now = new Date()
   const ESC = "\x1B"
   const GS = "\x1D"
-  const docType = DOCUMENT_TYPES[invoice.documentType]
+  const docType = DOCUMENT_TYPES[invoice.documentType as keyof typeof DOCUMENT_TYPES]
 
   let header = ""
   if (invoice.documentType === "ticket") {
@@ -82,7 +82,7 @@ export const generateReceiptContent = (invoice: Invoice, paymentMethod: string) 
     `--------------------------------\n` +
     `Subtotal: $${invoice.subtotal.toLocaleString()}\n` +
     (invoice.discount > 0 ? `Descuento: -$${invoice.discount.toLocaleString()}\n` : "") +
-    (docType.hasIVA ? `IVA (13%): $${invoice.tax.toLocaleString()}\n` : `Sin IVA\n`) +
+    (docType.hasIVA ? `IVA (13% incluido): $${invoice.tax.toLocaleString()}\n` : `Sin IVA\n`) +
     `${ESC}E1` +
     `TOTAL: $${invoice.total.toLocaleString()}\n` +
     `${ESC}E0` +
@@ -153,7 +153,7 @@ export const printReceiptFallback = (invoice: Invoice, paymentMethod: string) =>
         <div class="line"></div>
         <p>Subtotal: $${invoice.subtotal.toLocaleString()}</p>
         ${invoice.discount > 0 ? `<p>Descuento: -$${invoice.discount.toLocaleString()}</p>` : ""}
-        <p>IVA (13%): $${invoice.tax.toLocaleString()}</p>
+        <p>IVA (13% incluido): $${invoice.tax.toLocaleString()}</p>
         <p class="bold">TOTAL: $${invoice.total.toLocaleString()}</p>
         <div class="line"></div>
         ${
