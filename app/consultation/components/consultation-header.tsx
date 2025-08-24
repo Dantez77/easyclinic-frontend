@@ -2,7 +2,6 @@
 
 import { ArrowLeft, Calendar } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { ThemeToggle } from "./theme-toggle"
 
 interface ConsultationHeaderProps {
   onBack: () => void
@@ -22,9 +21,6 @@ export function ConsultationHeader({ onBack }: ConsultationHeaderProps) {
             <span className="hidden sm:inline">Back to Appointments</span>
             <span className="sm:hidden">Back</span>
           </Button>
-          <h1 className="text-lg lg:text-xl font-semibold text-primary dark:text-main-400 hidden md:block">
-            Patient Consultation
-          </h1>
         </div>
 
         <div className="flex items-center gap-2 lg:gap-4">
@@ -32,7 +28,6 @@ export function ConsultationHeader({ onBack }: ConsultationHeaderProps) {
             <Calendar className="w-3 h-3 lg:w-4 lg:h-4" />
             <span className="hidden sm:inline">{new Date().toLocaleDateString()}</span>
           </div>
-          <ThemeToggle />
         </div>
       </div>
     </header>

@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/sidebar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useLanguage } from "@/lib/language-context"
+import { preloadRoute } from "@/lib/navigation-routes"
 import Link from "next/link"
 
 const navigationItems = [
@@ -53,6 +54,13 @@ const navigationItems = [
 export function AppSidebar() {
   const { t } = useLanguage()
 
+  // Preload routes on hover for better performance
+  const handleRouteHover = React.useCallback((href: string) => {
+    if (href.startsWith('/') && href !== '/') {
+      preloadRoute(href)
+    }
+  }, [])
+
   return (
     <Sidebar 
       className="border-r border-main-200 dark:border-main-800 bg-background"
@@ -65,6 +73,7 @@ export function AppSidebar() {
             width={40} 
             height={40}
             className="h-10 w-10"
+            priority // Prioritize logo loading
           />
           <div>
             <h2 className="text-lg font-semibold">
@@ -94,7 +103,12 @@ export function AppSidebar() {
                     asChild
                     className="hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/30 transition-colors">
                     {/* Use Next.js Link to prevent full reloads */}
-                    <Link href={item.href} className="flex items-center gap-3">
+                    <Link 
+                      href={item.href} 
+                      className="flex items-center gap-3"
+                      onMouseEnter={() => handleRouteHover(item.href)}
+                      prefetch={item.href.startsWith('/') && item.href !== '/'} // Enable prefetching for internal routes
+                    >
                       <item.icon className="h-4 w-4 text-primary dark:text-main-400" />
                       <span>{t(item.key)}</span>
                     </Link>
