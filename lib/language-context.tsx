@@ -46,7 +46,7 @@ const getTranslations = (lang: Language) => {
     'doctors.title': 'Meet Our Expert Doctors',
     'doctors.subtitle': 'Our team of highly qualified medical professionals is dedicated to providing you with the best possible care.',
     'doctors.experience': 'experience',
-    'doctors.book': 'Book Consultation',
+    'doctors.knowMore': 'Know More',
     
     // Services Section
     'services.title': 'Our Medical Services',
@@ -668,7 +668,7 @@ const getTranslations = (lang: Language) => {
     'doctors.title': 'Conoce a Nuestros Doctores Expertos',
     'doctors.subtitle': 'Nuestro equipo de profesionales médicos altamente calificados está dedicado a proporcionarte la mejor atención posible.',
     'doctors.experience': 'años de experiencia',
-    'doctors.book': 'Reservar Consulta',
+    'doctors.knowMore': 'Conocer Más',
     
     // Services Section
     'services.title': 'Nuestros Servicios Médicos',

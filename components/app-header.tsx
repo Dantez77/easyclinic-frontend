@@ -10,6 +10,7 @@ import { useTheme } from "next-themes"
 import { useLanguage } from "@/lib/language-context"
 import { useNavSearch } from "@/hooks/useNavSearch"
 import { NavSearchResults } from "@/components/nav-search-results"
+import { useAuthContext } from "@/lib/auth-context"
 
 interface AppHeaderProps {
   searchQuery: string
@@ -33,6 +34,7 @@ function ThemeToggle() {
 
 export function AppHeader({ searchQuery, onSearchChange }: AppHeaderProps) {
   const { language, setLanguage, t } = useLanguage()
+  const { isAuthenticated, user, logout } = useAuthContext()
   const results = useNavSearch(searchQuery, language)
   const [showResults, setShowResults] = React.useState(false)
 
@@ -92,10 +94,12 @@ export function AppHeader({ searchQuery, onSearchChange }: AppHeaderProps) {
           {/* Theme Toggle */}
           <ThemeToggle />
 
-          {/* Login Button */}
-          <Button onClick={() => (window.location.href = "/login")}>
-            Login
-          </Button>
+          {/* Authentication Section */}
+          {!isAuthenticated && (
+            <Button onClick={() => (window.location.href = "/login")}>
+              Login
+            </Button>
+          )}
         </div>
       </div>
     </header>

@@ -185,7 +185,7 @@ export default function HomePage() {
                   {/* Push button to bottom */}
                   <div className="flex-1" />
                   <Button className="w-full bg-primary hover:bg-main-800 text-white">
-                    {t("doctors.book")}
+                    {t("doctors.knowMore")}
                   </Button>
                 </CardContent>
               </Card>

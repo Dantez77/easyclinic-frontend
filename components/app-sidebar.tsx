@@ -33,16 +33,22 @@ import {
   SidebarFooter,
 } from "@/components/ui/sidebar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Button } from "@/components/ui/button"
 import { useLanguage } from "@/lib/language-context"
 import { preloadRoute } from "@/lib/navigation-routes"
+import { useAuthContext } from "@/lib/auth-context"
 import Link from "next/link"
 
-const navigationItems = [
+const publicNavigationItems = [
   { key: "nav.home", icon: Heart, href: "/" },
   { key: "nav.doctors", icon: Users, href: "/#doctors" },
   { key: "nav.services", icon: Stethoscope, href: "/#services" },
   { key: "nav.news", icon: Award, href: "/#news" },
   { key: "nav.contact", icon: Phone, href: "/#contact" },
+]
+
+const authenticatedNavigationItems = [
+  { key: "nav.home", icon: Heart, href: "/" },
   { key: "nav.messages", icon: MessageSquare, href: "/messages" },
   { key: "nav.appointments", icon: Calendar, href: "/appointments" },
   { key: "nav.patients", icon: UserCheck, href: "/patients" },
@@ -53,6 +59,7 @@ const navigationItems = [
 
 export function AppSidebar() {
   const { t } = useLanguage()
+  const { isAuthenticated, user, logout } = useAuthContext()
 
   // Preload routes on hover for better performance
   const handleRouteHover = React.useCallback((href: string) => {
@@ -97,7 +104,7 @@ export function AppSidebar() {
           <SidebarGroupLabel className="text-primary dark:text-main-400">Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navigationItems.map((item) => (
+              {(isAuthenticated ? authenticatedNavigationItems : publicNavigationItems).map((item) => (
                 <SidebarMenuItem key={item.key}>
                   <SidebarMenuButton
                     asChild
@@ -120,7 +127,9 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel className="text-primary dark:text-main-400">Quick Contact</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-primary dark:text-main-400">
+            {isAuthenticated ? "Quick Contact" : "Contact Information"}
+          </SidebarGroupLabel>
           <SidebarGroupContent className="space-y-2">
             <div className="flex items-center gap-2 text-sm">
               <Phone className="h-4 w-4 text-primary dark:text-main-400" />
@@ -134,57 +143,75 @@ export function AppSidebar() {
               <Clock className="h-4 w-4 text-primary dark:text-main-400" />
               <span>{t("quick.contact.hours")}</span>
             </div>
+            
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter className="border-t border-main-200 dark:border-main-800 p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white">
-              <User className="h-4 w-4" />
+        {isAuthenticated ? (
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white">
+                <User className="h-4 w-4" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium truncate">
+                  {user?.firstName} {user?.lastName}
+                </p>
+                <p className="text-xs text-muted-foreground truncate">
+                  {user?.roles?.[0]?.name || 'User'}
+                </p>
+              </div>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">Dr. Quesada</p>
-              <p className="text-xs text-muted-foreground truncate">Administrator</p>
-            </div>
-          </div>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="flex h-8 w-8 items-center justify-center rounded-md hover:bg-main-50 dark:hover:bg-main-950 transition-colors">
-                <MoreVertical className="h-4 w-4 text-primary dark:text-main-400" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem asChild>
-                <Link href="/profile" className="flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  Profile
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/settings" className="flex items-center gap-2">
-                  <Settings className="h-4 w-4" />
-                  Settings
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/tools" className="flex items-center gap-2">
-                  <Wrench className="h-4 w-4" />
-                  Tools
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={() => window.location.href = '/login'}
-                className="flex items-center gap-2 text-red-600 dark:text-red-400 cursor-pointer"
-              >
-                <LogOut className="h-4 w-4" />
-                Logout
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex h-8 w-8 items-center justify-center rounded-md hover:bg-main-50 dark:hover:bg-main-950 transition-colors">
+                  <MoreVertical className="h-4 w-4 text-primary dark:text-main-400" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem asChild>
+                  <Link href="/profile" className="flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/settings" className="flex items-center gap-2">
+                    <Settings className="h-4 w-4" />
+                    Settings
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/tools" className="flex items-center gap-2">
+                    <Wrench className="h-4 w-4" />
+                    Tools
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={logout}
+                  className="flex items-center gap-2 text-red-600 dark:text-red-400 cursor-pointer"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        ) : (
+          <div className="flex items-center justify-center">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => (window.location.href = "/login")}
+              className="w-full"
+            >
+              Login to Access
+            </Button>
+          </div>
+        )}
       </SidebarFooter>
     </Sidebar>
   )

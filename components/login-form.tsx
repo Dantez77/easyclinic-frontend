@@ -6,26 +6,31 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useRouter } from "next/navigation"
+import { useAuthContext } from "@/lib/auth-context"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Loader2 } from "lucide-react"
 
 export function LoginForm() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const router = useRouter()
+  const [error, setError] = useState("")
+  const { login, isLoading } = useAuthContext()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle login logic here
-    console.log("Login attempt:", { email, password })
-    // For now, just redirect to main page
-    router.push("/")
+    setError("")
+    
+    const result = await login({ email, password })
+    
+    if (!result.success) {
+      setError(result.error || "Login failed")
+    }
   }
 
   const handleGoogleLogin = () => {
     // Handle Google login logic here
     console.log("Google login attempt")
-    // For now, just redirect to main page
-    router.push("/")
+    setError("Google login not implemented yet")
   }
 
   return (
@@ -34,6 +39,12 @@ export function LoginForm() {
         <CardTitle className="text-2xl font-bold text-white">Login</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        {error && (
+          <Alert variant="destructive">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+        
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <label htmlFor="email" className="text-sm font-medium text-gray-300">
@@ -65,8 +76,19 @@ export function LoginForm() {
             />
           </div>
 
-          <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-medium">
-            Ingresar
+          <Button 
+            type="submit" 
+            className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-medium"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Ingresando...
+              </>
+            ) : (
+              "Ingresar"
+            )}
           </Button>
         </form>
 
@@ -74,6 +96,7 @@ export function LoginForm() {
           variant="outline"
           onClick={handleGoogleLogin}
           className="w-full bg-background text-foreground border-border hover:bg-accent font-medium"
+          disabled={isLoading}
         >
           <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
             <path

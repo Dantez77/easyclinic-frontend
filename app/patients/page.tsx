@@ -1,5 +1,6 @@
 "use client"
 
+import { ProtectedRoute } from "@/components/protected-route"
 import { usePatients } from "./hooks/use-patients"
 import { PatientsHeader } from "./components/patients-header"
 import { PatientsFilters } from "./components/patients-filters"
@@ -59,7 +60,8 @@ export default function PatientsPage() {
   } = usePatients()
 
   return (
-    <div className="min-h-screen bg-background">
+    <ProtectedRoute>
+      <div className="min-h-screen bg-background">
       <PatientsHeader patientCount={filteredPatients.length} onExport={handleExport} />
 
       <div className="max-w-7xl mx-auto p-4 lg:p-6">
@@ -117,6 +119,7 @@ export default function PatientsPage() {
         onHistoryTabChange={setHistoryActiveTab}
         patients={patients}
       />
-    </div>
+      </div>
+    </ProtectedRoute>
   )
 }
