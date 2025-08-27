@@ -136,24 +136,43 @@ export default function HomePage() {
         <div className="container px-4">
           {/* Section header */}
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-primary dark:text-main-400 mb-4">{t('doctors.title')}</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">{t('doctors.subtitle')}</p>
+            <h2 className="text-3xl font-bold text-primary dark:text-main-400 mb-4">
+              {t("doctors.title")}
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              {t("doctors.subtitle")}
+            </p>
           </div>
 
           {/* Doctors cards */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
             {doctors.map((doctor, index) => (
-              <Card key={index} className="border-main-200 dark:border-main-800 hover:shadow-lg transition-shadow">
+              <Card
+                key={index}
+                className="flex flex-col h-full border-main-200 dark:border-main-800 hover:shadow-lg transition-shadow"
+              >
                 <CardHeader className="text-center">
-                  <img src={doctor.image || "/placeholder.svg"} alt={doctor.name} className="w-32 h-32 rounded-full mx-auto mb-4 object-cover" />
-                  <CardTitle className="text-primary dark:text-main-400">{doctor.name}</CardTitle>
-                  <CardDescription className="text-lg font-medium">{doctor.specialty}</CardDescription>
+                  <img
+                    src={doctor.image || "/placeholder.svg"}
+                    alt={doctor.name}
+                    className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
+                  />
+                  <CardTitle className="text-primary dark:text-main-400">
+                    {doctor.name}
+                  </CardTitle>
+                  <CardDescription className="text-lg font-medium">
+                    {doctor.specialty}
+                  </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-3">
+
+                {/* Make content take remaining space */}
+                <CardContent className="flex flex-col flex-1 space-y-3">
                   {/* Experience */}
                   <div className="flex items-center gap-2">
                     <Award className="h-4 w-4 text-primary dark:text-main-400" />
-                    <span className="text-sm">{doctor.experience} {t('doctors.experience')}</span>
+                    <span className="text-sm">
+                {doctor.experience} {t("doctors.experience")}
+              </span>
                   </div>
                   {/* Education */}
                   <div className="flex items-center gap-2">
@@ -162,14 +181,19 @@ export default function HomePage() {
                   </div>
                   {/* Bio */}
                   <p className="text-sm text-muted-foreground">{doctor.bio}</p>
-                  {/* Book appointment button */}
-                  <Button className="w-full bg-primary hover:bg-main-800 text-white">{t('doctors.book')}</Button>
+
+                  {/* Push button to bottom */}
+                  <div className="flex-1" />
+                  <Button className="w-full bg-primary hover:bg-main-800 text-white">
+                    {t("doctors.book")}
+                  </Button>
                 </CardContent>
               </Card>
             ))}
           </div>
         </div>
       </section>
+
 
       {/* -------------------- Services Section -------------------- */}
       <section id="services" className="py-16 bg-main-50 dark:bg-main-950/20">

@@ -39,7 +39,7 @@ const getTranslations = (lang: Language) => {
     // Hero Section
     'hero.title': 'Your Health, Our Priority',
     'hero.subtitle': 'Providing exceptional medical care with compassion and expertise. Our team of experienced doctors is here to serve you and your family.',
-    'hero.cta.primary': 'Schedule Appointment',
+    'hero.cta.primary': 'Contact Us',
     'hero.cta.secondary': 'Learn More',
     
     // Doctors Section
@@ -503,7 +503,7 @@ const getTranslations = (lang: Language) => {
     // Hero Section
     'hero.title': 'Tu Salud, Nuestra Prioridad',
     'hero.subtitle': 'Proporcionando atención médica excepcional con compasión y experiencia. Nuestro equipo de doctores experimentados está aquí para servirte a ti y a tu familia.',
-    'hero.cta.primary': 'Agendar Cita',
+    'hero.cta.primary': 'Contactanos',
     'hero.cta.secondary': 'Saber Más',
     
     // Doctors Section
