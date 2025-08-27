@@ -16,6 +16,16 @@ export interface LoginRequest {
   password: string;
 }
 
+export interface RegisterRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  birthDate: string;
+  roles: number[];
+  password: string;
+}
+
 export interface LoginResponse {
   token: string;
   user: User;
@@ -115,6 +125,13 @@ class ApiClient {
     return response;
   }
 
+  async register(userData: RegisterRequest): Promise<ApiResponse<User>> {
+    return this.request<User>(API_ENDPOINTS.auth.register, {
+      method: 'POST',
+      body: JSON.stringify(userData),
+    });
+  }
+
   async logout(): Promise<void> {
     try {
       await this.request(API_ENDPOINTS.auth.logout, { method: 'POST' });
@@ -159,4 +176,5 @@ export const authApi = {
   login: (credentials: LoginRequest) => apiClient.login(credentials),
   logout: () => apiClient.logout(),
   getCurrentUser: () => apiClient.getCurrentUser(),
+  register: (userData: RegisterRequest) => apiClient.register(userData),
 };

@@ -13,78 +13,113 @@ import { Separator } from "@/components/ui/separator"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { useLanguage } from "@/lib/language-context"
+import { useToast } from "@/hooks/use-toast"
+import { authApi, User, Role } from "@/lib/api"
 
-// User interface
-interface User {
-  id: string
-  name: string
-  email: string
-  roles: string[]
-  status: 'active' | 'inactive'
-  lastLogin?: string
-  avatar?: string
-}
+// Using imported User and Role types from API
 
-// Mock users data
+// Mock users data (will be replaced with API calls)
 const mockUsers: User[] = [
   {
     id: "1",
-    name: "Dr. Roberto Martínez",
+    firstName: "Roberto",
+    lastName: "Martínez",
     email: "roberto@clinica.com",
-    roles: ["Administrator", "Doctor"],
-    status: "active",
-    lastLogin: "2024-01-15 10:30",
-    avatar: "RM"
+    phone: "7777-7777",
+    birthDate: "1980-05-15",
+    roles: [{ id: 1, name: "Administrator", description: "Full system access", active: true }],
+    active: true
   },
   {
     id: "2",
-    name: "Dra. María González",
+    firstName: "María",
+    lastName: "González",
     email: "maria@clinica.com",
-    roles: ["Doctor"],
-    status: "active",
-    lastLogin: "2024-01-15 09:15",
-    avatar: "MG"
+    phone: "7777-7778",
+    birthDate: "1985-08-22",
+    roles: [{ id: 2, name: "Doctor", description: "Medical staff access", active: true }],
+    active: true
   },
   {
     id: "3",
-    name: "Ana Rodríguez",
+    firstName: "Ana",
+    lastName: "Rodríguez",
     email: "ana@clinica.com",
-    roles: ["Secretary"],
-    status: "active",
-    lastLogin: "2024-01-15 08:45",
-    avatar: "AR"
+    phone: "7777-7779",
+    birthDate: "1990-03-10",
+    roles: [{ id: 3, name: "Secretary", description: "Administrative access", active: true }],
+    active: true
   }
+]
+
+// Available roles for selection
+const availableRoles = [
+  { id: 1, name: "Administrator", description: "Full system access", active: true },
+  { id: 2, name: "Doctor", description: "Medical staff access", active: true },
+  { id: 3, name: "Secretary", description: "Administrative access", active: true }
 ]
 
 export function UsersRolesSection() {
   const { t } = useLanguage()
+  const { toast } = useToast()
   const [users, setUsers] = useState<User[]>(mockUsers)
   const [isAddUserOpen, setIsAddUserOpen] = useState(false)
   const [isEditUserOpen, setIsEditUserOpen] = useState(false)
   const [isPasswordResetOpen, setIsPasswordResetOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  
   const [newUser, setNewUser] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
-    roles: [] as string[],
+    phone: '',
+    birthDate: '',
+    roles: [] as number[],
     password: ''
   })
+  
   const [showPassword, setShowPassword] = useState(false)
   const [resetPassword, setResetPassword] = useState('')
 
-  const handleAddUser = () => {
-    if (newUser.name && newUser.email && newUser.roles.length > 0 && newUser.password) {
-      const user: User = {
-        id: Date.now().toString(),
-        name: newUser.name,
-        email: newUser.email,
-        roles: newUser.roles,
-        status: 'active',
-        avatar: newUser.name.split(' ').map(n => n[0]).join('').toUpperCase()
+  const handleAddUser = async () => {
+    if (newUser.firstName && newUser.lastName && newUser.email && newUser.roles.length > 0 && newUser.password) {
+      setIsLoading(true)
+      
+      // Debug: Log the request payload
+      console.log('Sending user data:', newUser)
+      
+      try {
+        const response = await authApi.register(newUser)
+
+        if (response.data) {
+          const createdUser = response.data
+          
+          // Add the new user to the local state
+          setUsers([...users, createdUser])
+          
+          // Reset form
+          setNewUser({ firstName: '', lastName: '', email: '', phone: '', birthDate: '', roles: [], password: '' })
+          setIsAddUserOpen(false)
+          
+          toast({
+            title: t("settings.users.form.success"),
+            description: `${createdUser.firstName} ${createdUser.lastName} has been created successfully.`,
+          })
+        } else {
+          console.error('API Error Response:', response)
+          throw new Error(response.error || 'Failed to create user')
+        }
+      } catch (error) {
+        console.error('Error creating user:', error)
+        toast({
+          title: t("settings.users.form.error"),
+          description: error instanceof Error ? error.message : 'An unexpected error occurred',
+          variant: "destructive",
+        })
+      } finally {
+        setIsLoading(false)
       }
-      setUsers([...users, user])
-      setNewUser({ name: '', email: '', roles: [], password: '' })
-      setIsAddUserOpen(false)
     }
   }
 
@@ -120,28 +155,28 @@ export function UsersRolesSection() {
     }
   }
 
-  const handleRoleToggle = (role: string) => {
+  const handleRoleToggle = (roleId: number) => {
     setNewUser(prev => ({
       ...prev,
-      roles: prev.roles.includes(role)
-        ? prev.roles.filter(r => r !== role)
-        : [...prev.roles, role]
+      roles: prev.roles.includes(roleId)
+        ? prev.roles.filter(r => r !== roleId)
+        : [...prev.roles, roleId]
     }))
   }
 
-  const handleEditRoleToggle = (role: string) => {
+  const handleEditRoleToggle = (roleId: number) => {
     if (selectedUser) {
       setSelectedUser({
         ...selectedUser,
-        roles: selectedUser.roles.includes(role)
-          ? selectedUser.roles.filter(r => r !== role)
-          : [...selectedUser.roles, role]
+        roles: selectedUser.roles.some(r => r.id === roleId)
+          ? selectedUser.roles.filter(r => r.id !== roleId)
+          : [...selectedUser.roles, availableRoles.find(r => r.id === roleId)!]
       })
     }
   }
 
-  const getRoleBadgeVariant = (role: string) => {
-    switch (role) {
+  const getRoleBadgeVariant = (roleName: string) => {
+    switch (roleName) {
       case 'Administrator': return 'default'
       case 'Doctor': return 'secondary'
       case 'Secretary': return 'outline'
@@ -163,7 +198,7 @@ export function UsersRolesSection() {
               {t("settings.users.addUser")}
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
               <DialogTitle>{t("settings.users.addUser")}</DialogTitle>
               <DialogDescription>
@@ -171,76 +206,86 @@ export function UsersRolesSection() {
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right">
-                  {t("settings.users.form.name")}
-                </Label>
-                <Input
-                  id="name"
-                  value={newUser.name}
-                  onChange={(e) => setNewUser({...newUser, name: e.target.value})}
-                  className="col-span-3"
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="firstName">{t("settings.users.form.firstName")}</Label>
+                  <Input
+                    id="firstName"
+                    value={newUser.firstName}
+                    onChange={(e) => setNewUser({...newUser, firstName: e.target.value})}
+                    placeholder="Juan"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">{t("settings.users.form.lastName")}</Label>
+                  <Input
+                    id="lastName"
+                    value={newUser.lastName}
+                    onChange={(e) => setNewUser({...newUser, lastName: e.target.value})}
+                    placeholder="Pérez"
+                  />
+                </div>
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="email" className="text-right">
-                  {t("settings.users.form.email")}
-                </Label>
+              
+              <div className="space-y-2">
+                <Label htmlFor="email">{t("settings.users.form.email")}</Label>
                 <Input
                   id="email"
                   type="email"
                   value={newUser.email}
                   onChange={(e) => setNewUser({...newUser, email: e.target.value})}
-                  className="col-span-3"
+                  placeholder="juan.perez@example.com"
                 />
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="role" className="text-right">
-                  {t("settings.users.form.roles")}
-                </Label>
-                <div className="col-span-3 space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id="role-admin"
-                      checked={newUser.roles.includes('Administrator')}
-                      onChange={() => handleRoleToggle('Administrator')}
-                      className="rounded border-gray-300"
-                    />
-                    <Label htmlFor="role-admin">{t("settings.users.roles.admin.title")}</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id="role-doctor"
-                      checked={newUser.roles.includes('Doctor')}
-                      onChange={() => handleRoleToggle('Doctor')}
-                      className="rounded border-gray-300"
-                    />
-                    <Label htmlFor="role-doctor">{t("settings.users.roles.doctor.title")}</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id="role-secretary"
-                      checked={newUser.roles.includes('Secretary')}
-                      onChange={() => handleRoleToggle('Secretary')}
-                      className="rounded border-gray-300"
-                    />
-                    <Label htmlFor="role-secretary">{t("settings.users.roles.secretary.title")}</Label>
-                  </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="phone">{t("settings.users.form.phone")}</Label>
+                  <Input
+                    id="phone"
+                    value={newUser.phone}
+                    onChange={(e) => setNewUser({...newUser, phone: e.target.value})}
+                    placeholder="123456789"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="birthDate">{t("settings.users.form.birthDate")}</Label>
+                  <Input
+                    id="birthDate"
+                    type="date"
+                    value={newUser.birthDate}
+                    onChange={(e) => setNewUser({...newUser, birthDate: e.target.value})}
+                  />
                 </div>
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="password" className="text-right">
-                  {t("settings.users.form.password")}
-                </Label>
-                <div className="col-span-3 relative">
+
+              <div className="space-y-2">
+                <Label>{t("settings.users.form.roles")}</Label>
+                <div className="space-y-2">
+                  {availableRoles.map((role) => (
+                    <div key={role.id} className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        id={`role-${role.id}`}
+                        checked={newUser.roles.includes(role.id)}
+                        onChange={() => handleRoleToggle(role.id)}
+                        className="rounded border-gray-300"
+                      />
+                                             <Label htmlFor={`role-${role.id}`}>{role.name}</Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password">{t("settings.users.form.password")}</Label>
+                <div className="relative">
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
                     value={newUser.password}
                     onChange={(e) => setNewUser({...newUser, password: e.target.value})}
+                    placeholder="Enter password"
                   />
                   <Button
                     type="button"
@@ -259,8 +304,12 @@ export function UsersRolesSection() {
               </div>
             </div>
             <DialogFooter>
-              <Button type="submit" onClick={handleAddUser}>
-                {t("settings.users.addUser")}
+              <Button 
+                type="submit" 
+                onClick={handleAddUser}
+                disabled={isLoading}
+              >
+                {isLoading ? t("settings.users.form.loading") : t("settings.users.form.submit")}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -278,23 +327,21 @@ export function UsersRolesSection() {
               <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg border-main-200 dark:border-main-800">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-medium text-primary">{user.avatar}</span>
+                    <span className="text-sm font-medium text-primary">
+                      {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+                    </span>
                   </div>
                   <div>
-                    <p className="font-medium">{user.name}</p>
+                    <p className="font-medium">{user.firstName} {user.lastName}</p>
                     <p className="text-sm text-muted-foreground">{user.email}</p>
-                    {user.lastLogin && (
-                      <p className="text-xs text-muted-foreground">
-                        {t("settings.users.lastLogin")}: {user.lastLogin}
-                      </p>
-                    )}
+                    <p className="text-xs text-muted-foreground">{user.phone}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="flex flex-wrap gap-1">
                     {user.roles.map((role) => (
-                      <Badge key={role} variant={getRoleBadgeVariant(role)}>
-                        {role}
+                      <Badge key={role.id} variant={getRoleBadgeVariant(role.name)}>
+                        {role.name}
                       </Badge>
                     ))}
                   </div>
@@ -323,7 +370,7 @@ export function UsersRolesSection() {
                         <AlertDialogHeader>
                           <AlertDialogTitle>{t("settings.users.deleteUser.title")}</AlertDialogTitle>
                           <AlertDialogDescription>
-                            {t("settings.users.deleteUser.description")} {user.name}?
+                            {t("settings.users.deleteUser.description")} {user.firstName} {user.lastName}?
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
@@ -356,72 +403,45 @@ export function UsersRolesSection() {
           </DialogHeader>
           {selectedUser && (
             <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="edit-name" className="text-right">
-                  {t("settings.users.form.name")}
-                </Label>
-                <Input
-                  id="edit-name"
-                  value={selectedUser.name}
-                  onChange={(e) => setSelectedUser({...selectedUser, name: e.target.value})}
-                  className="col-span-3"
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-firstName">{t("settings.users.form.firstName")}</Label>
+                  <Input
+                    id="edit-firstName"
+                    value={selectedUser.firstName}
+                    onChange={(e) => setSelectedUser({...selectedUser, firstName: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-lastName">{t("settings.users.form.lastName")}</Label>
+                  <Input
+                    id="edit-lastName"
+                    value={selectedUser.lastName}
+                    onChange={(e) => setSelectedUser({...selectedUser, lastName: e.target.value})}
+                  />
+                </div>
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="edit-email" className="text-right">
-                  {t("settings.users.form.email")}
-                </Label>
+              <div className="space-y-2">
+                <Label htmlFor="edit-email">{t("settings.users.form.email")}</Label>
                 <Input
                   id="edit-email"
                   type="email"
                   value={selectedUser.email}
                   onChange={(e) => setSelectedUser({...selectedUser, email: e.target.value})}
-                  className="col-span-3"
                 />
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="edit-role" className="text-right">
-                  {t("settings.users.form.roles")}
-                </Label>
-                <div className="col-span-3 space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id="edit-role-admin"
-                      checked={selectedUser.roles.includes('Administrator')}
-                      onChange={() => handleEditRoleToggle('Administrator')}
-                      className="rounded border-gray-300"
-                    />
-                    <Label htmlFor="edit-role-admin">{t("settings.users.roles.admin.title")}</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id="edit-role-doctor"
-                      checked={selectedUser.roles.includes('Doctor')}
-                      onChange={() => handleEditRoleToggle('Doctor')}
-                      className="rounded border-gray-300"
-                    />
-                    <Label htmlFor="edit-role-doctor">{t("settings.users.roles.doctor.title")}</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id="edit-role-secretary"
-                      checked={selectedUser.roles.includes('Secretary')}
-                      onChange={() => handleEditRoleToggle('Secretary')}
-                      className="rounded border-gray-300"
-                    />
-                    <Label htmlFor="edit-role-secretary">{t("settings.users.roles.secretary.title")}</Label>
-                  </div>
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-phone">{t("settings.users.form.phone")}</Label>
+                <Input
+                  id="edit-phone"
+                  value={selectedUser.phone}
+                  onChange={(e) => setSelectedUser({...selectedUser, phone: e.target.value})}
+                />
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="edit-status" className="text-right">
-                  {t("settings.users.form.status")}
-                </Label>
-                <Select value={selectedUser.status} onValueChange={(value: 'active' | 'inactive') => setSelectedUser({...selectedUser, status: value})}>
-                  <SelectTrigger className="col-span-3">
+              <div className="space-y-2">
+                <Label htmlFor="edit-status">{t("settings.users.form.status")}</Label>
+                <Select value={selectedUser.active ? "active" : "inactive"} onValueChange={(value: 'active' | 'inactive') => setSelectedUser({...selectedUser, active: value === 'active'})}>
+                  <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -446,15 +466,13 @@ export function UsersRolesSection() {
           <DialogHeader>
             <DialogTitle>{t("settings.users.passwordReset.title")}</DialogTitle>
             <DialogDescription>
-              {t("settings.users.passwordReset.description")} {selectedUser?.name}
+              {t("settings.users.passwordReset.description")} {selectedUser?.firstName} {selectedUser?.lastName}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="new-password" className="text-right">
-                {t("settings.users.passwordReset.newPassword")}
-              </Label>
-              <div className="col-span-3 relative">
+            <div className="space-y-2">
+              <Label htmlFor="new-password">{t("settings.users.passwordReset.newPassword")}</Label>
+              <div className="relative">
                 <Input
                   id="new-password"
                   type={showPassword ? "text" : "password"}
