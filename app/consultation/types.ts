@@ -87,6 +87,50 @@ export interface Prescription {
   prescribedAt: string
 }
 
+// New interfaces for antecedentes and AI functionality
+export interface MedicalAntecedents {
+  personalHistory: string[]
+  familyHistory: string[]
+  surgicalHistory: string[]
+  obstetricHistory?: string
+  lifestyleFactors: {
+    smoking: "none" | "former" | "current"
+    alcohol: "none" | "occasional" | "moderate" | "heavy"
+    diet: string
+    exercise: string
+    occupation: string
+    other: string
+  }
+  socialHistory: string
+}
+
+export interface AIDiagnosis {
+  suggestedDiagnoses: SuggestedDiagnosis[]
+  recommendedSteps: string[]
+  confidence: number
+  reasoning: string
+  disclaimer: string
+  generatedAt: string
+}
+
+export interface SuggestedDiagnosis {
+  condition: string
+  probability: number
+  reasoning: string
+  icd10Code?: string
+}
+
+export interface FinalDiagnosis {
+  primaryDiagnosis: string
+  secondaryDiagnoses: string[]
+  differentialDiagnoses: string[]
+  icd10Codes: string[]
+  clinicalImpression: string
+  treatmentPlan: string
+  followUpPlan: string
+  notes: string
+}
+
 export interface Consultation {
   id: string
   date: string
@@ -120,6 +164,10 @@ export interface ConsultationForm {
   followUpDate: string
   doctorNotes: string
   internalNote: boolean
+  // New fields for antecedentes and AI functionality
+  medicalAntecedents: MedicalAntecedents
+  finalDiagnosis: FinalDiagnosis
+  aiDiagnosis?: AIDiagnosis
 }
 
 export interface LabTest {
@@ -145,4 +193,42 @@ export interface Document {
   size: string
   uploadedBy: string
   url?: string
+}
+
+// AI Consultation Data Structure (matching the JSON sample format)
+export interface AIConsultationInput {
+  id_paciente: string
+  datos_demograficos: {
+    edad: number
+    sexo: string
+  }
+  motivo_consulta: string
+  sintomas: string[]
+  signos_vitales: {
+    temperatura_c: number
+    presion_arterial: string
+    frecuencia_cardiaca_lpm: number
+    frecuencia_respiratoria_rpm: number
+  }
+  resultados_laboratorio?: Record<string, any>
+  imagen?: Record<string, string>
+  antecedentes_medicos: string[]
+  antecedentes_familiares: string[]
+  estilo_vida: {
+    tabaquismo: string
+    alcohol: string
+    dieta: string
+  }
+  medicamentos: string[]
+}
+
+export interface AIConsultationOutput {
+  id_paciente: string
+  prediagnosticos_sugeridos: {
+    condicion: string
+    probabilidad: number
+    razonamiento: string
+  }[]
+  pasos_recomendados: string[]
+  aviso: string
 }
