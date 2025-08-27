@@ -1,5 +1,6 @@
 import { LoginForm } from "@/components/login-form"
 import * as React from "react";
+import Image from "next/image";
 
 export default function LoginPage() {
   return (
@@ -31,26 +32,18 @@ export default function LoginPage() {
       <div className="flex-1 bg-card flex flex-col items-center justify-center p-8">
         <div className="text-center">
           {/* InterGastro Logo */}
-          <div className="mb-8">
-            <div className="w-24 h-24 mx-auto mb-4 bg-blue-600 rounded-full flex items-center justify-center">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
-                <div className="w-12 h-12 bg-blue-600 rounded-full relative">
-                  <div className="absolute inset-2 bg-white rounded-full">
-                    <div className="absolute top-1 left-1 w-3 h-3 bg-blue-600 rounded-full"></div>
-                    <div className="absolute bottom-1 right-1 w-2 h-2 bg-blue-600 rounded-full"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div>
-                <span className="font-bold text-[#1E5A96] text-2xl">
-                  Inter
-                </span>
-              <span className="font-bold text-[#4A90E2] text-2xl">
-                  Gastro
-                </span>
-            </div>
+          <div className="flex items-center gap-3">
+            <Image
+              src="/logo2.png"
+              alt="InterGastro Logo"
+              width={300}
+              height={300}
+              className="h-41 w-41"
+              priority // Prioritize logo loading
+            />
+
           </div>
+
 
           {/* Welcome Text */}
           <h2 className="text-4xl font-light text-white">Bienvenido</h2>
