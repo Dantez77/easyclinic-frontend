@@ -30,7 +30,7 @@ export function MedicalOrdersCard({
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-primary dark:text-main-400">
           <TestTube className="w-5 h-5" />
-          Medical Orders / Tests
+          Órdenes Médicas / Exámenes
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -49,23 +49,23 @@ export function MedicalOrdersCard({
           ))}
         </div>
         <div>
-          <Label>Lab Notes</Label>
+          <Label>Notas del Laboratorio</Label>
           <Textarea
-            placeholder="Special instructions for lab personnel..."
+            placeholder="Instrucciones especiales para el personal del laboratorio..."
             className="border-main-200 dark:border-main-800"
             value={labNotes}
             onChange={(e) => onLabNotesChange(e.target.value)}
           />
         </div>
         <div>
-          <Label>Priority</Label>
+          <Label>Prioridad</Label>
           <Select value={labPriority} onValueChange={(value: "normal" | "urgent") => onLabPriorityChange(value)}>
             <SelectTrigger className="w-48 border-main-200 dark:border-main-800">
-              <SelectValue placeholder="Select priority" />
+              <SelectValue placeholder="Seleccionar prioridad" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="normal">Normal</SelectItem>
-              <SelectItem value="urgent">Urgent</SelectItem>
+              <SelectItem value="urgent">Urgente</SelectItem>
             </SelectContent>
           </Select>
         </div>

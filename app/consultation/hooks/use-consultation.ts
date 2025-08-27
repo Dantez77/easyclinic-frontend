@@ -2,10 +2,12 @@ import { useState, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 import { type ConsultationForm, type VitalSigns, type Prescription, type Patient, type MedicalAntecedents, type FinalDiagnosis, type AIDiagnosis, type AIConsultationInput, type AIConsultationOutput } from "../types"
 import { findPatientByName } from "../utils/patient-utils"
+import { useLanguage } from "@/lib/language-context"
 
 export const useConsultation = () => {
+  const { t } = useLanguage()
   const searchParams = useSearchParams()
-  const patientName = searchParams.get("patient") || "Unknown Patient"
+  const patientName = searchParams.get("patient") || t('consultation.errors.patientNotFound')
   const appointmentId = searchParams.get("appointmentId")
 
   const [patientData, setPatientData] = useState<Patient | null>(null)
@@ -76,7 +78,7 @@ export const useConsultation = () => {
 
   // Load patient data based on the patient name from URL
   useEffect(() => {
-    if (patientName && patientName !== "Unknown Patient") {
+    if (patientName && patientName !== t('consultation.errors.patientNotFound')) {
       const patient = findPatientByName(patientName)
       if (patient) {
         setPatientData(patient)
@@ -85,7 +87,7 @@ export const useConsultation = () => {
         console.error("Patient not found:", patientName)
       }
     }
-  }, [patientName])
+  }, [patientName, t])
 
   const updateFormData = (updates: Partial<ConsultationForm>) => {
     setFormData(prev => ({ ...prev, ...updates }))
@@ -190,7 +192,7 @@ export const useConsultation = () => {
   // Transform consultation data to AI API format
   const transformToAIConsultationInput = (): AIConsultationInput => {
     if (!patientData) {
-      throw new Error("Patient data not available")
+      throw new Error(t('consultation.errors.patientNotFound'))
     }
 
     return {
@@ -223,7 +225,7 @@ export const useConsultation = () => {
   // Generate AI diagnosis
   const generateAIDiagnosis = async (): Promise<void> => {
     if (!patientData) {
-      alert("Patient data not available")
+      alert(t('consultation.errors.patientNotFound'))
       return
     }
 
@@ -259,7 +261,7 @@ export const useConsultation = () => {
       console.log("AI Diagnosis generated:", aiDiagnosis)
     } catch (error) {
       console.error("Error generating AI diagnosis:", error)
-      alert("Error generating AI diagnosis. Please try again.")
+      alert(t('consultation.errors.aiGeneration'))
     } finally {
       setIsGeneratingAI(false)
     }
@@ -303,11 +305,11 @@ export const useConsultation = () => {
       }
       
       console.log("Saving consultation:", consultationData)
-      alert("Consultation saved successfully!")
+      alert(t('consultation.success.save'))
       return true
     } catch (error) {
       console.error("Error saving consultation:", error)
-      alert("Error saving consultation. Please try again.")
+      alert(t('consultation.errors.save'))
       return false
     }
   }
@@ -316,10 +318,10 @@ export const useConsultation = () => {
     try {
       // Simulate PDF generation
       await new Promise(resolve => setTimeout(resolve, 2000))
-      alert("PDF report generated successfully!")
+      alert(t('consultation.success.pdf'))
     } catch (error) {
       console.error("Error generating PDF:", error)
-      alert("Error generating PDF report. Please try again.")
+      alert(t('consultation.errors.pdf'))
     }
   }
 
@@ -327,10 +329,10 @@ export const useConsultation = () => {
     try {
       // Simulate sending prescription
       await new Promise(resolve => setTimeout(resolve, 1000))
-      alert("Prescription sent successfully!")
+      alert(t('consultation.success.prescription'))
     } catch (error) {
       console.error("Error sending prescription:", error)
-      alert("Error sending prescription. Please try again.")
+      alert(t('consultation.errors.prescription'))
     }
   }
 

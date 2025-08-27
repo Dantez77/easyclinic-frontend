@@ -12,9 +12,8 @@ interface PatientSummarySidebarProps {
 
 export function PatientSummarySidebar({ patientData }: PatientSummarySidebarProps) {
   return (
-    <div className="w-full lg:w-80 bg-card border-b lg:border-b-0 lg:border-r border-main-200 dark:border-main-800 flex flex-col h-screen">
-      {/* Header - Fixed height */}
-      <div className="p-4 lg:p-6 border-b border-main-200 dark:border-main-800 flex-shrink-0">
+    <div className="w-full lg:w-80 bg-card border-b lg:border-b-0 lg:border-r border-main-200 dark:border-main-800 flex flex-col max-h-64 lg:max-h-none">
+      <div className="p-4 lg:p-6 border-b border-main-200 dark:border-main-800">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 lg:w-12 lg:h-12 bg-main-100 dark:bg-main-900 rounded-full flex items-center justify-center">
             <User className="w-5 h-5 lg:w-6 lg:h-6 text-primary dark:text-main-400" />
@@ -28,28 +27,27 @@ export function PatientSummarySidebar({ patientData }: PatientSummarySidebarProp
         </div>
       </div>
 
-      {/* Scrollable content - Takes remaining height */}
-      <ScrollArea className="flex-1 p-4 lg:p-6 min-h-0">
+      <ScrollArea className="flex-1 p-4 lg:p-6">
         <div className="space-y-4 lg:space-y-6">
           <div>
             <h3 className="text-sm font-medium text-primary dark:text-main-400 mb-2 lg:mb-3">
-              Personal Information
+              Información Personal
             </h3>
             <div className="grid grid-cols-2 lg:grid-cols-1 gap-2 text-xs lg:text-sm">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">DOB:</span>
+                <span className="text-muted-foreground">Fecha Nac:</span>
                 <span>{patientData.dateOfBirth}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Age:</span>
+                <span className="text-muted-foreground">Edad:</span>
                 <span>{patientData.age}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Gender:</span>
+                <span className="text-muted-foreground">Género:</span>
                 <span>{patientData.gender}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Blood:</span>
+                <span className="text-muted-foreground">Sangre:</span>
                 <Badge variant="outline" className="text-xs">
                   {patientData.bloodType}
                 </Badge>
@@ -60,7 +58,7 @@ export function PatientSummarySidebar({ patientData }: PatientSummarySidebarProp
           <Separator />
 
           <div>
-            <h3 className="text-sm font-medium text-primary dark:text-main-400 mb-2 lg:mb-3">Allergies</h3>
+            <h3 className="text-sm font-medium text-primary dark:text-main-400 mb-2 lg:mb-3">Alergias</h3>
             <div className="flex flex-wrap gap-1 lg:gap-2">
               {patientData.allergies.map((allergy, index) => (
                 <Badge key={index} variant="destructive" className="text-xs">
@@ -73,7 +71,7 @@ export function PatientSummarySidebar({ patientData }: PatientSummarySidebarProp
           <div className="hidden lg:block">
             <Separator />
             <div>
-              <h3 className="text-sm font-medium text-primary dark:text-main-400 mb-3">Insurance</h3>
+              <h3 className="text-sm font-medium text-primary dark:text-main-400 mb-3">Seguro</h3>
               <p className="text-sm text-muted-foreground">
                 {patientData.insurance.provider} - {patientData.insurance.policyNumber}
               </p>
@@ -82,7 +80,7 @@ export function PatientSummarySidebar({ patientData }: PatientSummarySidebarProp
             <Separator />
 
             <div>
-              <h3 className="text-sm font-medium text-primary dark:text-main-400 mb-3">Emergency Contact</h3>
+              <h3 className="text-sm font-medium text-primary dark:text-main-400 mb-3">Contacto de Emergencia</h3>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Phone className="w-4 h-4" />
                 <span className="text-xs">

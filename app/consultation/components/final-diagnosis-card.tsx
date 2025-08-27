@@ -62,15 +62,15 @@ export function FinalDiagnosisCard({ finalDiagnosis, onFinalDiagnosisChange }: F
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-primary dark:text-main-400">
           <Stethoscope className="w-5 h-5" />
-          Final Diagnosis & Treatment Plan
+          Diagnóstico Final y Plan de Tratamiento
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Primary Diagnosis */}
         <div className="space-y-3">
-          <Label className="text-sm font-medium">Primary Diagnosis</Label>
+          <Label className="text-sm font-medium">Diagnóstico Primario</Label>
           <Input
-            placeholder="Enter primary diagnosis..."
+            placeholder="Ingrese diagnóstico primario..."
             className="border-main-200 dark:border-main-800"
             value={finalDiagnosis.primaryDiagnosis}
             onChange={(e) => onFinalDiagnosisChange({ primaryDiagnosis: e.target.value })}
@@ -79,7 +79,7 @@ export function FinalDiagnosisCard({ finalDiagnosis, onFinalDiagnosisChange }: F
 
         {/* Secondary Diagnoses */}
         <div className="space-y-3">
-          <Label className="text-sm font-medium">Secondary Diagnoses</Label>
+          <Label className="text-sm font-medium">Diagnósticos Secundarios</Label>
           <div className="space-y-2">
             {finalDiagnosis.secondaryDiagnoses.map((diagnosis, index) => (
               <div key={index} className="flex items-center gap-2">
@@ -98,7 +98,7 @@ export function FinalDiagnosisCard({ finalDiagnosis, onFinalDiagnosisChange }: F
             ))}
             <div className="flex gap-2">
               <Input
-                placeholder="Add secondary diagnosis..."
+                placeholder="Agregar diagnóstico secundario..."
                 className="flex-1 border-main-200 dark:border-main-800"
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') {
@@ -116,7 +116,7 @@ export function FinalDiagnosisCard({ finalDiagnosis, onFinalDiagnosisChange }: F
                   input.value = ''
                 }}
               >
-                Add
+                Agregar
               </Button>
             </div>
           </div>
@@ -124,7 +124,7 @@ export function FinalDiagnosisCard({ finalDiagnosis, onFinalDiagnosisChange }: F
 
         {/* Differential Diagnoses */}
         <div className="space-y-3">
-          <Label className="text-sm font-medium">Differential Diagnoses</Label>
+          <Label className="text-sm font-medium">Diagnósticos Diferenciales</Label>
           <div className="space-y-2">
             {finalDiagnosis.differentialDiagnoses.map((diagnosis, index) => (
               <div key={index} className="flex items-center gap-2">
@@ -143,7 +143,7 @@ export function FinalDiagnosisCard({ finalDiagnosis, onFinalDiagnosisChange }: F
             ))}
             <div className="flex gap-2">
               <Input
-                placeholder="Add differential diagnosis..."
+                placeholder="Agregar diagnóstico diferencial..."
                 className="flex-1 border-main-200 dark:border-main-800"
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') {
@@ -161,7 +161,7 @@ export function FinalDiagnosisCard({ finalDiagnosis, onFinalDiagnosisChange }: F
                   input.value = ''
                 }}
               >
-                Add
+                Agregar
               </Button>
             </div>
           </div>
@@ -169,7 +169,7 @@ export function FinalDiagnosisCard({ finalDiagnosis, onFinalDiagnosisChange }: F
 
         {/* ICD-10 Codes */}
         <div className="space-y-3">
-          <Label className="text-sm font-medium">ICD-10 Codes</Label>
+          <Label className="text-sm font-medium">Códigos ICD-10</Label>
           <div className="space-y-2">
             {finalDiagnosis.icd10Codes.map((code, index) => (
               <div key={index} className="flex items-center gap-2">
@@ -188,7 +188,7 @@ export function FinalDiagnosisCard({ finalDiagnosis, onFinalDiagnosisChange }: F
             ))}
             <div className="flex gap-2">
               <Input
-                placeholder="Add ICD-10 code..."
+                placeholder="Agregar código ICD-10..."
                 className="flex-1 border-main-200 dark:border-main-800 font-mono"
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') {
@@ -206,7 +206,7 @@ export function FinalDiagnosisCard({ finalDiagnosis, onFinalDiagnosisChange }: F
                   input.value = ''
                 }}
               >
-                Add
+                Agregar
               </Button>
             </div>
           </div>
@@ -214,9 +214,9 @@ export function FinalDiagnosisCard({ finalDiagnosis, onFinalDiagnosisChange }: F
 
         {/* Clinical Impression */}
         <div className="space-y-3">
-          <Label className="text-sm font-medium">Clinical Impression</Label>
+          <Label className="text-sm font-medium">Impresión Clínica</Label>
           <Textarea
-            placeholder="Detailed clinical impression and reasoning..."
+            placeholder="Impresión clínica detallada y razonamiento..."
             className="min-h-[100px] border-main-200 dark:border-main-800"
             value={finalDiagnosis.clinicalImpression}
             onChange={(e) => onFinalDiagnosisChange({ clinicalImpression: e.target.value })}
@@ -225,9 +225,9 @@ export function FinalDiagnosisCard({ finalDiagnosis, onFinalDiagnosisChange }: F
 
         {/* Treatment Plan */}
         <div className="space-y-3">
-          <Label className="text-sm font-medium">Treatment Plan</Label>
+          <Label className="text-sm font-medium">Plan de Tratamiento</Label>
           <Textarea
-            placeholder="Detailed treatment plan including medications, procedures, and recommendations..."
+            placeholder="Plan de tratamiento detallado incluyendo medicamentos, procedimientos y recomendaciones..."
             className="min-h-[100px] border-main-200 dark:border-main-800"
             value={finalDiagnosis.treatmentPlan}
             onChange={(e) => onFinalDiagnosisChange({ treatmentPlan: e.target.value })}
@@ -236,9 +236,9 @@ export function FinalDiagnosisCard({ finalDiagnosis, onFinalDiagnosisChange }: F
 
         {/* Follow-up Plan */}
         <div className="space-y-3">
-          <Label className="text-sm font-medium">Follow-up Plan</Label>
+          <Label className="text-sm font-medium">Plan de Seguimiento</Label>
           <Textarea
-            placeholder="Follow-up schedule, monitoring requirements, and next steps..."
+            placeholder="Programa de seguimiento, requisitos de monitoreo y próximos pasos..."
             className="min-h-[80px] border-main-200 dark:border-main-800"
             value={finalDiagnosis.followUpPlan}
             onChange={(e) => onFinalDiagnosisChange({ followUpPlan: e.target.value })}
@@ -247,9 +247,9 @@ export function FinalDiagnosisCard({ finalDiagnosis, onFinalDiagnosisChange }: F
 
         {/* Additional Notes */}
         <div className="space-y-3">
-          <Label className="text-sm font-medium">Additional Notes</Label>
+          <Label className="text-sm font-medium">Notas Adicionales</Label>
           <Textarea
-            placeholder="Any additional clinical notes or observations..."
+            placeholder="Cualquier nota clínica adicional u observaciones..."
             className="min-h-[80px] border-main-200 dark:border-main-800"
             value={finalDiagnosis.notes}
             onChange={(e) => onFinalDiagnosisChange({ notes: e.target.value })}

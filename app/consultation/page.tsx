@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 
 // Import custom hook
 import { useConsultation } from "./hooks/use-consultation"
+import { useLanguage } from "@/lib/language-context"
 
 // Import components
 import { ConsultationHeader } from "./components/consultation-header"
@@ -22,13 +23,20 @@ import { MedicalHistoryCard } from "./components/medical-history-card"
 import { DocumentsCard } from "./components/documents-card"
 import { DoctorNotesCard } from "./components/doctor-notes-card"
 import { ActionButtons } from "./components/action-buttons"
+import { MedicalAntecedentsCard } from "./components/medical-antecedents-card"
+import { FinalDiagnosisCard } from "./components/final-diagnosis-card"
+import { AIDiagnosisCard } from "./components/ai-diagnosis-card"
 
 export default function PatientConsultationPage() {
+  const { t } = useLanguage()
   const {
     patientData,
     formData,
+    isGeneratingAI,
     updateFormData,
     updateVitalSigns,
+    updateMedicalAntecedents,
+    updateFinalDiagnosis,
     addSymptom,
     removeSymptom,
     addPrescription,
@@ -37,6 +45,7 @@ export default function PatientConsultationPage() {
     addTest,
     removeTest,
     calculateBMI,
+    generateAIDiagnosis,
     saveConsultation,
     generatePDFReport,
     sendPrescription,
@@ -75,7 +84,7 @@ export default function PatientConsultationPage() {
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-lg text-muted-foreground">Loading patient data...</p>
+          <p className="text-lg text-muted-foreground">{t('consultation.loading')}</p>
         </div>
       </div>
     )
@@ -93,18 +102,21 @@ export default function PatientConsultationPage() {
           {/* Content Tabs */}
           <div className="flex-1 p-6">
             <Tabs defaultValue="consultation" className="h-full">
-              <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
+              <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5">
                 <TabsTrigger value="consultation" className="text-xs lg:text-sm">
-                  Consultation
+                  {t('consultation.tabs.consultation')}
+                </TabsTrigger>
+                <TabsTrigger value="antecedents" className="text-xs lg:text-sm">
+                  {t('consultation.tabs.antecedents')}
+                </TabsTrigger>
+                <TabsTrigger value="diagnosis" className="text-xs lg:text-sm">
+                  {t('consultation.tabs.diagnosis')}
                 </TabsTrigger>
                 <TabsTrigger value="history" className="text-xs lg:text-sm">
-                  History
+                  {t('consultation.tabs.history')}
                 </TabsTrigger>
                 <TabsTrigger value="documents" className="text-xs lg:text-sm">
-                  Documents
-                </TabsTrigger>
-                <TabsTrigger value="notes" className="text-xs lg:text-sm">
-                  Notes
+                  {t('consultation.tabs.documents')}
                 </TabsTrigger>
               </TabsList>
 
@@ -131,13 +143,13 @@ export default function PatientConsultationPage() {
 
                     {/* Clinical Diagnosis */}
                     <div className="border-main-200 dark:border-main-800 border rounded-lg p-6">
-                      <h3 className="text-primary dark:text-main-400 font-semibold mb-4">Clinical Diagnosis</h3>
+                      <h3 className="text-primary dark:text-main-400 font-semibold mb-4">{t('consultation.clinicalDiagnosis.title')}</h3>
                       <div className="space-y-4">
                         <div>
-                          <Label htmlFor="diagnosis">Search Diagnosis (ICD-10)</Label>
+                          <Label htmlFor="diagnosis">{t('consultation.clinicalDiagnosis.search')}</Label>
                           <Input
                             id="diagnosis"
-                            placeholder="Type to search diagnoses..."
+                            placeholder={t('consultation.clinicalDiagnosis.searchPlaceholder')}
                             className="border-main-200 dark:border-main-800"
                             value={formData.diagnosis}
                             onChange={(e) => updateFormData({ diagnosis: e.target.value })}
@@ -149,21 +161,21 @@ export default function PatientConsultationPage() {
                             className="cursor-pointer"
                             onClick={() => updateFormData({ diagnosisStatus: "confirmed" })}
                           >
-                            Confirmed
+                            {t('consultation.clinicalDiagnosis.confirmed')}
                           </Badge>
                           <Badge 
                             variant={formData.diagnosisStatus === "suspected" ? "default" : "secondary"}
                             className="cursor-pointer"
                             onClick={() => updateFormData({ diagnosisStatus: "suspected" })}
                           >
-                            Suspected
+                            {t('consultation.clinicalDiagnosis.suspected')}
                           </Badge>
                           <Badge 
                             variant={formData.diagnosisStatus === "ruled-out" ? "default" : "secondary"}
                             className="cursor-pointer"
                             onClick={() => updateFormData({ diagnosisStatus: "ruled-out" })}
                           >
-                            Ruled Out
+                            {t('consultation.clinicalDiagnosis.ruledOut')}
                           </Badge>
                         </div>
                       </div>
@@ -193,6 +205,35 @@ export default function PatientConsultationPage() {
                       onReturnToWorkNoteChange={(value) => updateFormData({ returnToWorkNote: value })}
                       onFollowUpDateChange={(value) => updateFormData({ followUpDate: value })}
                     />
+
+                    {/* AI Diagnosis Card */}
+                    <AIDiagnosisCard
+                      aiDiagnosis={formData.aiDiagnosis}
+                      isLoading={isGeneratingAI}
+                      onGenerateAIDiagnosis={generateAIDiagnosis}
+                    />
+                  </div>
+                </ScrollArea>
+              </TabsContent>
+
+              <TabsContent value="antecedents" className="mt-6">
+                <ScrollArea className="h-full">
+                  <div className="space-y-8 pb-8">
+                    <MedicalAntecedentsCard
+                      antecedents={formData.medicalAntecedents}
+                      onAntecedentsChange={updateMedicalAntecedents}
+                    />
+                  </div>
+                </ScrollArea>
+              </TabsContent>
+
+              <TabsContent value="diagnosis" className="mt-6">
+                <ScrollArea className="h-full">
+                  <div className="space-y-8 pb-8">
+                    <FinalDiagnosisCard
+                      finalDiagnosis={formData.finalDiagnosis}
+                      onFinalDiagnosisChange={updateFinalDiagnosis}
+                    />
                   </div>
                 </ScrollArea>
               </TabsContent>
@@ -202,16 +243,18 @@ export default function PatientConsultationPage() {
               </TabsContent>
 
               <TabsContent value="documents" className="mt-6">
-                <DocumentsCard patientData={patientData} />
-              </TabsContent>
-
-              <TabsContent value="notes" className="mt-6">
-                <DoctorNotesCard
-                  doctorNotes={formData.doctorNotes}
-                  internalNote={formData.internalNote}
-                  onDoctorNotesChange={(value) => updateFormData({ doctorNotes: value })}
-                  onInternalNoteChange={(checked) => updateFormData({ internalNote: checked })}
-                />
+                <ScrollArea className="h-full">
+                  <div className="space-y-8 pb-8">
+                    <DocumentsCard patientData={patientData} />
+                    
+                    <DoctorNotesCard
+                      doctorNotes={formData.doctorNotes}
+                      internalNote={formData.internalNote}
+                      onDoctorNotesChange={(value) => updateFormData({ doctorNotes: value })}
+                      onInternalNoteChange={(checked) => updateFormData({ internalNote: checked })}
+                    />
+                  </div>
+                </ScrollArea>
               </TabsContent>
             </Tabs>
           </div>

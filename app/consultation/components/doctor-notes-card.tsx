@@ -21,12 +21,12 @@ export function DoctorNotesCard({
   return (
     <Card className="border-main-200 dark:border-main-800">
       <CardHeader>
-        <CardTitle className="text-primary dark:text-main-400">Doctor's Notes</CardTitle>
+        <CardTitle className="text-primary dark:text-main-400">Notas del Doctor</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           <Textarea
-            placeholder="Write your private notes about the patient and consultation..."
+            placeholder="Escriba sus notas privadas sobre el paciente y la consulta..."
             className="min-h-[200px] border-main-200 dark:border-main-800"
             value={doctorNotes}
             onChange={(e) => onDoctorNotesChange(e.target.value)}
@@ -38,7 +38,7 @@ export function DoctorNotesCard({
               onCheckedChange={(checked) => onInternalNoteChange(checked as boolean)}
             />
             <Label htmlFor="internal-only" className="text-sm">
-              Mark as internal note (not visible to patient)
+              Marcar como nota interna (no visible para el paciente)
             </Label>
           </div>
         </div>

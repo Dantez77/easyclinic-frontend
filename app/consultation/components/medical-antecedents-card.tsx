@@ -64,13 +64,13 @@ export function MedicalAntecedentsCard({ antecedents, onAntecedentsChange }: Med
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-primary dark:text-main-400">
           <History className="w-5 h-5" />
-          Medical Antecedents
+          Antecedentes Médicos
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Personal Medical History */}
         <div className="space-y-3">
-          <Label className="text-sm font-medium">Personal Medical History</Label>
+          <Label className="text-sm font-medium">Historial Médico Personal</Label>
           <div className="space-y-2">
             {antecedents.personalHistory.map((history, index) => (
               <div key={index} className="flex items-center gap-2">
@@ -89,7 +89,7 @@ export function MedicalAntecedentsCard({ antecedents, onAntecedentsChange }: Med
             ))}
             <div className="flex gap-2">
               <Input
-                placeholder="Add medical condition..."
+                placeholder="Agregar condición médica..."
                 className="flex-1 border-main-200 dark:border-main-800"
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') {
@@ -107,7 +107,7 @@ export function MedicalAntecedentsCard({ antecedents, onAntecedentsChange }: Med
                   input.value = ''
                 }}
               >
-                Add
+                Agregar
               </Button>
             </div>
           </div>
@@ -115,7 +115,7 @@ export function MedicalAntecedentsCard({ antecedents, onAntecedentsChange }: Med
 
         {/* Family History */}
         <div className="space-y-3">
-          <Label className="text-sm font-medium">Family History</Label>
+          <Label className="text-sm font-medium">Historial Familiar</Label>
           <div className="space-y-2">
             {antecedents.familyHistory.map((history, index) => (
               <div key={index} className="flex items-center gap-2">
@@ -134,7 +134,7 @@ export function MedicalAntecedentsCard({ antecedents, onAntecedentsChange }: Med
             ))}
             <div className="flex gap-2">
               <Input
-                placeholder="Add family condition..."
+                placeholder="Agregar condición familiar..."
                 className="flex-1 border-main-200 dark:border-main-800"
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') {
@@ -152,7 +152,7 @@ export function MedicalAntecedentsCard({ antecedents, onAntecedentsChange }: Med
                   input.value = ''
                 }}
               >
-                Add
+                Agregar
               </Button>
             </div>
           </div>
@@ -160,7 +160,7 @@ export function MedicalAntecedentsCard({ antecedents, onAntecedentsChange }: Med
 
         {/* Surgical History */}
         <div className="space-y-3">
-          <Label className="text-sm font-medium">Surgical History</Label>
+          <Label className="text-sm font-medium">Historial Quirúrgico</Label>
           <div className="space-y-2">
             {antecedents.surgicalHistory.map((surgery, index) => (
               <div key={index} className="flex items-center gap-2">
@@ -179,7 +179,7 @@ export function MedicalAntecedentsCard({ antecedents, onAntecedentsChange }: Med
             ))}
             <div className="flex gap-2">
               <Input
-                placeholder="Add surgical procedure..."
+                placeholder="Agregar procedimiento quirúrgico..."
                 className="flex-1 border-main-200 dark:border-main-800"
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') {
@@ -197,7 +197,7 @@ export function MedicalAntecedentsCard({ antecedents, onAntecedentsChange }: Med
                   input.value = ''
                 }}
               >
-                Add
+                Agregar
               </Button>
             </div>
           </div>
@@ -205,9 +205,9 @@ export function MedicalAntecedentsCard({ antecedents, onAntecedentsChange }: Med
 
         {/* Obstetric History (for female patients) */}
         <div className="space-y-3">
-          <Label className="text-sm font-medium">Obstetric History</Label>
+          <Label className="text-sm font-medium">Historial Obstétrico</Label>
           <Textarea
-            placeholder="Pregnancies, deliveries, complications..."
+            placeholder="Embarazos, partos, complicaciones..."
             className="border-main-200 dark:border-main-800"
             value={antecedents.obstetricHistory || ''}
             onChange={(e) => onAntecedentsChange({ obstetricHistory: e.target.value })}
@@ -216,10 +216,10 @@ export function MedicalAntecedentsCard({ antecedents, onAntecedentsChange }: Med
 
         {/* Lifestyle Factors */}
         <div className="space-y-4">
-          <Label className="text-sm font-medium">Lifestyle Factors</Label>
+          <Label className="text-sm font-medium">Factores de Estilo de Vida</Label>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div>
-              <Label className="text-xs text-muted-foreground">Smoking</Label>
+              <Label className="text-xs text-muted-foreground">Tabaquismo</Label>
               <Select
                 value={antecedents.lifestyleFactors.smoking}
                 onValueChange={(value: "none" | "former" | "current") =>
@@ -232,9 +232,9 @@ export function MedicalAntecedentsCard({ antecedents, onAntecedentsChange }: Med
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">None</SelectItem>
-                  <SelectItem value="former">Former</SelectItem>
-                  <SelectItem value="current">Current</SelectItem>
+                  <SelectItem value="none">Ninguno</SelectItem>
+                  <SelectItem value="former">Ex-fumador</SelectItem>
+                  <SelectItem value="current">Fumador actual</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -253,18 +253,18 @@ export function MedicalAntecedentsCard({ antecedents, onAntecedentsChange }: Med
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">None</SelectItem>
-                  <SelectItem value="occasional">Occasional</SelectItem>
-                  <SelectItem value="moderate">Moderate</SelectItem>
-                  <SelectItem value="heavy">Heavy</SelectItem>
+                  <SelectItem value="none">Ninguno</SelectItem>
+                  <SelectItem value="occasional">Ocasional</SelectItem>
+                  <SelectItem value="moderate">Moderado</SelectItem>
+                  <SelectItem value="heavy">Excesivo</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div>
-              <Label className="text-xs text-muted-foreground">Diet</Label>
+              <Label className="text-xs text-muted-foreground">Dieta</Label>
               <Input
-                placeholder="Dietary habits..."
+                placeholder="Hábitos dietéticos..."
                 className="border-main-200 dark:border-main-800"
                 value={antecedents.lifestyleFactors.diet}
                 onChange={(e) =>
@@ -276,9 +276,9 @@ export function MedicalAntecedentsCard({ antecedents, onAntecedentsChange }: Med
             </div>
 
             <div>
-              <Label className="text-xs text-muted-foreground">Exercise</Label>
+              <Label className="text-xs text-muted-foreground">Ejercicio</Label>
               <Input
-                placeholder="Physical activity..."
+                placeholder="Actividad física..."
                 className="border-main-200 dark:border-main-800"
                 value={antecedents.lifestyleFactors.exercise}
                 onChange={(e) =>
@@ -291,9 +291,9 @@ export function MedicalAntecedentsCard({ antecedents, onAntecedentsChange }: Med
           </div>
 
           <div>
-            <Label className="text-xs text-muted-foreground">Occupation</Label>
+            <Label className="text-xs text-muted-foreground">Ocupación</Label>
             <Input
-              placeholder="Current occupation..."
+              placeholder="Ocupación actual..."
               className="border-main-200 dark:border-main-800"
               value={antecedents.lifestyleFactors.occupation}
               onChange={(e) =>
@@ -305,9 +305,9 @@ export function MedicalAntecedentsCard({ antecedents, onAntecedentsChange }: Med
           </div>
 
           <div>
-            <Label className="text-xs text-muted-foreground">Other Lifestyle Factors</Label>
+            <Label className="text-xs text-muted-foreground">Otros Factores de Estilo de Vida</Label>
             <Textarea
-              placeholder="Other relevant lifestyle information..."
+              placeholder="Otra información relevante del estilo de vida..."
               className="border-main-200 dark:border-main-800"
               value={antecedents.lifestyleFactors.other}
               onChange={(e) =>
@@ -321,9 +321,9 @@ export function MedicalAntecedentsCard({ antecedents, onAntecedentsChange }: Med
 
         {/* Social History */}
         <div className="space-y-3">
-          <Label className="text-sm font-medium">Social History</Label>
+          <Label className="text-sm font-medium">Historial Social</Label>
           <Textarea
-            placeholder="Living situation, support systems, social factors..."
+            placeholder="Situación de vivienda, sistemas de apoyo, factores sociales..."
             className="border-main-200 dark:border-main-800"
             value={antecedents.socialHistory}
             onChange={(e) => onAntecedentsChange({ socialHistory: e.target.value })}

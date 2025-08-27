@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { VitalSigns } from "../hooks/use-consultation"
+import { useLanguage } from "@/lib/language-context"
 
 interface VitalSignsCardProps {
   vitalSigns: VitalSigns
@@ -13,18 +14,20 @@ interface VitalSignsCardProps {
 }
 
 export function VitalSignsCard({ vitalSigns, onVitalSignsChange, onCalculateBMI }: VitalSignsCardProps) {
+  const { t } = useLanguage()
+  
   return (
     <Card className="border-main-200 dark:border-main-800">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-primary dark:text-main-400">
           <Thermometer className="w-5 h-5" />
-          Vital Signs
+          {t('consultation.vitalSigns.title')}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
           <div>
-            <Label htmlFor="temperature">Temperature (°F)</Label>
+            <Label htmlFor="temperature">{t('consultation.vitalSigns.temperature')}</Label>
             <Input
               id="temperature"
               type="number"
@@ -35,7 +38,7 @@ export function VitalSignsCard({ vitalSigns, onVitalSignsChange, onCalculateBMI 
             />
           </div>
           <div>
-            <Label htmlFor="bloodPressure">Blood Pressure</Label>
+            <Label htmlFor="bloodPressure">{t('consultation.vitalSigns.bloodPressure')}</Label>
             <Input
               id="bloodPressure"
               placeholder="120/80"
@@ -45,7 +48,7 @@ export function VitalSignsCard({ vitalSigns, onVitalSignsChange, onCalculateBMI 
             />
           </div>
           <div>
-            <Label htmlFor="heartRate">Heart Rate</Label>
+            <Label htmlFor="heartRate">{t('consultation.vitalSigns.heartRate')}</Label>
             <Input
               id="heartRate"
               type="number"
@@ -55,7 +58,7 @@ export function VitalSignsCard({ vitalSigns, onVitalSignsChange, onCalculateBMI 
             />
           </div>
           <div>
-            <Label htmlFor="respiratoryRate">Respiratory Rate</Label>
+            <Label htmlFor="respiratoryRate">{t('consultation.vitalSigns.respiratoryRate')}</Label>
             <Input
               id="respiratoryRate"
               type="number"
@@ -65,7 +68,7 @@ export function VitalSignsCard({ vitalSigns, onVitalSignsChange, onCalculateBMI 
             />
           </div>
           <div>
-            <Label htmlFor="oxygenSaturation">Oxygen Saturation (%)</Label>
+            <Label htmlFor="oxygenSaturation">{t('consultation.vitalSigns.oxygenSaturation')}</Label>
             <Input
               id="oxygenSaturation"
               type="number"
@@ -75,7 +78,7 @@ export function VitalSignsCard({ vitalSigns, onVitalSignsChange, onCalculateBMI 
             />
           </div>
           <div>
-            <Label htmlFor="weight">Weight (lbs)</Label>
+            <Label htmlFor="weight">{t('consultation.vitalSigns.weight')}</Label>
             <Input
               id="weight"
               type="number"
@@ -87,7 +90,7 @@ export function VitalSignsCard({ vitalSigns, onVitalSignsChange, onCalculateBMI 
             />
           </div>
           <div>
-            <Label htmlFor="height">Height (in)</Label>
+            <Label htmlFor="height">{t('consultation.vitalSigns.height')}</Label>
             <Input
               id="height"
               type="number"
@@ -98,7 +101,7 @@ export function VitalSignsCard({ vitalSigns, onVitalSignsChange, onCalculateBMI 
             />
           </div>
           <div>
-            <Label htmlFor="bmi">BMI</Label>
+            <Label htmlFor="bmi">{t('consultation.vitalSigns.bmi')}</Label>
             <Input 
               id="bmi" 
               value={vitalSigns.bmi} 

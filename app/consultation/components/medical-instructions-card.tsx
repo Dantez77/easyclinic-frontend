@@ -27,14 +27,14 @@ export function MedicalInstructionsCard({
     <Card className="border-main-200 dark:border-main-800">
       <CardHeader>
         <CardTitle className="text-primary dark:text-main-400">
-          General Medical Instructions
+          Instrucciones Médicas Generales
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <Label>Lifestyle Recommendations</Label>
+          <Label>Recomendaciones de Estilo de Vida</Label>
           <Textarea
-            placeholder="Diet, physical activity, general recommendations..."
+            placeholder="Dieta, actividad física, recomendaciones generales..."
             className="border-main-200 dark:border-main-800"
             value={lifestyleRecommendations}
             onChange={(e) => onLifestyleRecommendationsChange(e.target.value)}
@@ -42,21 +42,21 @@ export function MedicalInstructionsCard({
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
-            <Label>Return to Work/School Note</Label>
+            <Label>Nota de Retorno al Trabajo/Escuela</Label>
             <Select value={returnToWorkNote} onValueChange={onReturnToWorkNoteChange}>
               <SelectTrigger className="border-main-200 dark:border-main-800">
-                <SelectValue placeholder="Select option" />
+                <SelectValue placeholder="Seleccionar opción" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="immediate">Immediate</SelectItem>
-                <SelectItem value="3-days">3 days</SelectItem>
-                <SelectItem value="1-week">1 week</SelectItem>
-                <SelectItem value="2-weeks">2 weeks</SelectItem>
+                <SelectItem value="immediate">Inmediato</SelectItem>
+                <SelectItem value="3-days">3 días</SelectItem>
+                <SelectItem value="1-week">1 semana</SelectItem>
+                <SelectItem value="2-weeks">2 semanas</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div>
-            <Label>Next Follow-up Appointment</Label>
+            <Label>Próxima Cita de Seguimiento</Label>
             <Input 
               type="date" 
               className="border-main-200 dark:border-main-800"

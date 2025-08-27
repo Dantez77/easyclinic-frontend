@@ -33,7 +33,7 @@ export function MedicalHistoryCard({ patientData }: MedicalHistoryCardProps) {
   return (
     <Card className="border-main-200 dark:border-main-800">
       <CardHeader>
-        <CardTitle className="text-primary dark:text-main-400">Medical History - {patientData.firstName} {patientData.lastName}</CardTitle>
+        <CardTitle className="text-primary dark:text-main-400">Historial Médico - {patientData.firstName} {patientData.lastName}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
