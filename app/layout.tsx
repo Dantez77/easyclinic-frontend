@@ -5,6 +5,7 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { LanguageProvider } from "@/lib/language-context"
 import { AuthProvider } from "@/lib/auth-context"
+import { RouteGuard } from "@/components/route-guard"
 import { AppLayout } from "@/components/app-layout"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -31,9 +32,11 @@ export default function RootLayout({
         >
           <LanguageProvider>
             <AuthProvider>
-              <AppLayout>
-                {children}
-              </AppLayout>
+              <RouteGuard>
+                <AppLayout>
+                  {children}
+                </AppLayout>
+              </RouteGuard>
             </AuthProvider>
           </LanguageProvider>
         </ThemeProvider>
