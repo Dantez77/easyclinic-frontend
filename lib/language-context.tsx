@@ -340,6 +340,31 @@ const getTranslations = (lang: Language) => {
       'settings.integrations.status.disconnected': 'Disconnected',
       'settings.integrations.connect': 'Connect',
       'settings.integrations.configure': 'Configure',
+
+      // Messages
+      'messages.title': 'Contact Form Submissions',
+      'messages.subtitle': 'Manage and review patient inquiries and contact requests',
+      'messages.search.placeholder': 'Search by name, email, or message...',
+      'messages.filter.all': 'All Messages',
+      'messages.filter.new': 'New Only',
+      'messages.filter.reviewed': 'Reviewed Only',
+      'messages.status.new': 'New',
+      'messages.status.reviewed': 'Reviewed',
+      'messages.sections.new': 'New Messages',
+      'messages.sections.reviewed': 'Reviewed Messages',
+      'messages.actions.viewDetails': 'View Details',
+      'messages.actions.markReviewed': 'Mark Reviewed',
+      'messages.noResults': 'No messages found matching your criteria.',
+      'messages.clearFilters': 'Clear Filters',
+      'messages.modal.title': 'Message Details',
+      'messages.modal.contact.email': 'Email:',
+      'messages.modal.contact.phone': 'Phone:',
+      'messages.modal.message': 'Message:',
+      'messages.dateFormat.short': 'short',
+      'messages.dateFormat.long': 'long',
+      'messages.placeholder.noMessage': 'No message',
+      'messages.placeholder.noEmail': 'No email',
+      'messages.placeholder.noPhone': 'No phone',
     }
   } else {
     return {
@@ -667,6 +692,31 @@ const getTranslations = (lang: Language) => {
       'settings.integrations.status.disconnected': 'Desconectado',
       'settings.integrations.connect': 'Conectar',
       'settings.integrations.configure': 'Configurar',
+
+      // Messages
+      'messages.title': 'Envíos del Formulario de Contacto',
+      'messages.subtitle': 'Gestiona y revisa las consultas y solicitudes de contacto de los pacientes',
+      'messages.search.placeholder': 'Buscar por nombre, email o mensaje...',
+      'messages.filter.all': 'Todos los Mensajes',
+      'messages.filter.new': 'Solo Nuevos',
+      'messages.filter.reviewed': 'Solo Revisados',
+      'messages.status.new': 'Nuevo',
+      'messages.status.reviewed': 'Revisado',
+      'messages.sections.new': 'Mensajes Nuevos',
+      'messages.sections.reviewed': 'Mensajes Revisados',
+      'messages.actions.viewDetails': 'Ver Detalles',
+      'messages.actions.markReviewed': 'Marcar Revisado',
+      'messages.noResults': 'No se encontraron mensajes que coincidan con tus criterios.',
+      'messages.clearFilters': 'Limpiar Filtros',
+      'messages.modal.title': 'Detalles del Mensaje',
+      'messages.modal.contact.email': 'Correo:',
+      'messages.modal.contact.phone': 'Teléfono:',
+      'messages.modal.message': 'Mensaje:',
+      'messages.dateFormat.short': 'corta',
+      'messages.dateFormat.long': 'larga',
+      'messages.placeholder.noMessage': 'Sin mensaje',
+      'messages.placeholder.noEmail': 'Sin correo',
+      'messages.placeholder.noPhone': 'Sin teléfono',
     }
   }
 }
