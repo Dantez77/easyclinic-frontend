@@ -39,6 +39,12 @@ export const navigationRoutes: NavigationRoute[] = [
     preload: true, // Preload consultation as it's commonly accessed
   },
   {
+    path: "/tools",
+    labels: { en: "Tools", es: "Herramientas" },
+    aliases: { en: ["Medical Orders", "Medications", "Complaints", "Symptoms", "Configuration"], es: ["Órdenes Médicas", "Medicamentos", "Quejas", "Síntomas", "Configuración"] },
+    preload: false, // Less commonly accessed
+  },
+  {
     path: "/patients",
     labels: { en: "Patients", es: "Pacientes" },
     aliases: { en: ["Patients", "Profiles", "Records", "Medical History"], es: ["Pacientes", "Gestión", "Perfiles", "Expediente", "Historial Médico"] },
