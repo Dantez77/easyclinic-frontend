@@ -5,6 +5,7 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { LanguageProvider } from "@/lib/language-context"
 import { AuthProvider } from "@/lib/auth-context"
+import { PermissionsProvider } from "@/lib/permissions-context"
 import { RouteGuard } from "@/components/route-guard"
 import { AppLayout } from "@/components/app-layout"
 
@@ -32,11 +33,13 @@ export default function RootLayout({
         >
           <LanguageProvider>
             <AuthProvider>
-              <RouteGuard>
-                <AppLayout>
-                  {children}
-                </AppLayout>
-              </RouteGuard>
+              <PermissionsProvider>
+                <RouteGuard>
+                  <AppLayout>
+                    {children}
+                  </AppLayout>
+                </RouteGuard>
+              </PermissionsProvider>
             </AuthProvider>
           </LanguageProvider>
         </ThemeProvider>

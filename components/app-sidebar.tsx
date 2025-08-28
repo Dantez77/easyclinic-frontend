@@ -37,6 +37,7 @@ import { Button } from "@/components/ui/button"
 import { useLanguage } from "@/lib/language-context"
 import { preloadRoute } from "@/lib/navigation-routes"
 import { useAuthContext } from "@/lib/auth-context"
+import { usePermissions } from "@/lib/permissions-context"
 import Link from "next/link"
 
 const publicNavigationItems = [
@@ -47,19 +48,36 @@ const publicNavigationItems = [
   { key: "nav.contact", icon: Phone, href: "/#contact" },
 ]
 
+// Navigation items with their required permissions
 const authenticatedNavigationItems = [
-  { key: "nav.home", icon: Heart, href: "/" },
-  { key: "nav.messages", icon: MessageSquare, href: "/messages" },
-  { key: "nav.appointments", icon: Calendar, href: "/appointments" },
-  { key: "nav.patients", icon: UserCheck, href: "/patients" },
-  { key: "nav.billing", icon: Receipt, href: "/billing" },
-  { key: "nav.inventory", icon: Package, href: "/inventory" },
-  { key: "nav.activityLogs", icon: ScrollText, href: "/activity-logs" },
+  { key: "nav.home", icon: Heart, href: "/", permission: null },
+  { key: "nav.messages", icon: MessageSquare, href: "/messages", permission: "access_messages" },
+  { key: "nav.appointments", icon: Calendar, href: "/appointments", permission: "access_appointments" },
+  { key: "nav.patients", icon: UserCheck, href: "/patients", permission: "access_patients" },
+  { key: "nav.billing", icon: Receipt, href: "/billing", permission: "access_billing" },
+  { key: "nav.inventory", icon: Package, href: "/inventory", permission: "access_inventory" },
+  { key: "nav.activityLogs", icon: ScrollText, href: "/activity-logs", permission: "access_activity_logs" },
 ]
 
 export function AppSidebar() {
   const { t } = useLanguage()
   const { isAuthenticated, user, logout } = useAuthContext()
+  const { hasPermission } = usePermissions()
+
+  // Filter navigation items based on user permissions
+  const getFilteredNavigationItems = () => {
+    if (!isAuthenticated) {
+      return publicNavigationItems
+    }
+
+    return authenticatedNavigationItems.filter(item => {
+      // If no permission required, always show
+      if (!item.permission) return true
+      
+      // Check if user has the required permission
+      return hasPermission(item.permission)
+    })
+  }
 
   // Preload routes on hover for better performance
   const handleRouteHover = React.useCallback((href: string) => {
@@ -67,6 +85,8 @@ export function AppSidebar() {
       preloadRoute(href)
     }
   }, [])
+
+  const filteredItems = getFilteredNavigationItems()
 
   return (
     <Sidebar 
@@ -98,13 +118,12 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
 
-
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="text-primary dark:text-main-400">Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {(isAuthenticated ? authenticatedNavigationItems : publicNavigationItems).map((item) => (
+              {filteredItems.map((item) => (
                 <SidebarMenuItem key={item.key}>
                   <SidebarMenuButton
                     asChild

@@ -49,6 +49,19 @@ export interface Role {
   active: boolean;
 }
 
+export interface Permission {
+  id: number;
+  name: string;
+  description: string;
+  active: boolean;
+}
+
+export interface RolePermission {
+  id: number;
+  roleId: number;
+  permissionId: number;
+}
+
 // API Client class
 class ApiClient {
   private baseURL: string;
@@ -177,4 +190,48 @@ export const authApi = {
   logout: () => apiClient.logout(),
   getCurrentUser: () => apiClient.getCurrentUser(),
   register: (userData: RegisterRequest) => apiClient.register(userData),
+};
+
+// Permissions API
+export const permissionsApi = {
+  getUserPermissions: async () => {
+    try {
+      const response = await apiClient.get<{
+        success: boolean;
+        data: {
+          user: {
+            id: string;
+            email: string;
+            firstName: string;
+            lastName: string;
+          };
+          roles: Array<{
+            id: number;
+            nombre: string;
+            descripcion: string;
+            activo: boolean;
+          }>;
+          permissions: Array<{
+            id: number;
+            name: string;
+            description: string;
+            active: boolean;
+          }>;
+          totalPermissions: number;
+          totalRoles: number;
+        };
+      }>('/api/permissions/user');
+      
+      // Return the data portion of the response
+      if (response.data && response.data.success) {
+        return { data: response.data.data };
+      } else {
+        return { data: null, error: 'Failed to fetch permissions' };
+      }
+    } catch (error) {
+      return { data: null, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+  },
+  checkPermission: (permission: string) => apiClient.get<{ hasPermission: boolean }>(`/api/permissions/check/${permission}`),
+  checkPermissions: (permissions: string[]) => apiClient.post<{ hasPermissions: boolean[] }>('/api/permissions/check-multiple', { permissions }),
 };

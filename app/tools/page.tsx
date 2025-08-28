@@ -3,12 +3,13 @@
 import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Wrench, Plus, Edit2, Trash2, Check, X } from "lucide-react"
+import { Wrench, Plus, Edit2, Trash2, Check, X, Shield } from "lucide-react"
 import { useLanguage } from "@/lib/language-context"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { PermissionDemo } from "@/components/permission-demo"
 
 // Simple data structure matching consultation-data.ts
 type SimpleList = {
@@ -172,11 +173,15 @@ export default function ToolsPage() {
       {/* Main Content */}
       <div className="flex-1 p-6">
         <Tabs defaultValue="complaints" className="h-full">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5">
             <TabsTrigger value="complaints">Quejas Comunes</TabsTrigger>
             <TabsTrigger value="symptoms">Síntomas</TabsTrigger>
             <TabsTrigger value="medications">Medicamentos</TabsTrigger>
             <TabsTrigger value="labTests">Pruebas de Laboratorio</TabsTrigger>
+            <TabsTrigger value="permissions" className="flex items-center gap-2">
+              <Shield className="h-4 w-4" />
+              Permisos
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="complaints" className="mt-6">
@@ -213,6 +218,10 @@ export default function ToolsPage() {
               setItems={setLabTests}
               placeholder="Agregar prueba..."
             />
+          </TabsContent>
+
+          <TabsContent value="permissions" className="mt-6">
+            <PermissionDemo />
           </TabsContent>
         </Tabs>
       </div>
