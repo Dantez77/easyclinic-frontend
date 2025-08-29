@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Eye, EyeOff, User, Lock, Heart, Shield } from "lucide-react"
 import { useAuthContext } from "@/lib/auth-context"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import Image from "next/image"
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -43,12 +44,29 @@ export default function LoginPage() {
       <div className="w-full max-w-md relative">
         {/* Header Section */}
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center mb-4">
-            <div className="bg-primary/10 p-3 rounded-full">
-              <Heart className="h-8 w-8 text-primary" />
-            </div>
+        <div className="flex items-center justify-center mb-4">
+          <div className="rounded-full bg-primary/10 w-40 h-40 flex items-center justify-center">
+            <Image 
+              src="/logo2.png" 
+              alt="InterGastro Logo" 
+              width={160} 
+              height={160}
+              className="h-50 w-50"
+              priority
+            />
           </div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">MedClinic Portal</h1>
+        </div>
+
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            <div className="flex items-center justify-center">
+              <span className="font-bold text-[#1E5A96] text-3xl">
+                Inter
+              </span>
+              <span className="font-bold text-[#4A90E2] text-3xl">
+                Gastro
+              </span>
+            </div>
+          </h1>
           <p className="text-muted-foreground">Secure access for medical professionals</p>
         </div>
 
@@ -79,7 +97,7 @@ export default function LoginPage() {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="doctor@medclinic.com"
+                    placeholder="mail@intergastro.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="pl-10 h-12 bg-input border-border focus:ring-2 focus:ring-ring focus:border-transparent"
