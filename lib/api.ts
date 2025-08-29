@@ -220,11 +220,11 @@ export const permissionsApi = {
           totalPermissions: number;
           totalRoles: number;
         };
-      }>('/api/permissions/user');
+      }>('/permissions/user');
       
       // Return the data portion of the response
       if (response.data && response.data.success) {
-        return { data: response.data.data };
+        return { data: response.data };
       } else {
         return { data: null, error: 'Failed to fetch permissions' };
       }
@@ -232,6 +232,6 @@ export const permissionsApi = {
       return { data: null, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   },
-  checkPermission: (permission: string) => apiClient.get<{ hasPermission: boolean }>(`/api/permissions/check/${permission}`),
-  checkPermissions: (permissions: string[]) => apiClient.post<{ hasPermissions: boolean[] }>('/api/permissions/check-multiple', { permissions }),
+  checkPermission: (permission: string) => apiClient.get<{ hasPermission: boolean }>(`/permissions/check/${permission}`),
+  checkPermissions: (permissions: string[]) => apiClient.post<{ hasPermissions: boolean[] }>('/permissions/check-multiple', { permissions }),
 };
