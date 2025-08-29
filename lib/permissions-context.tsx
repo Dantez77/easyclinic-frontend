@@ -66,8 +66,6 @@ interface BackendPermissionsResponse {
     roles: Array<{
       id: number;
       nombre: string;
-      descripcion: string;
-      activo: boolean;
     }>;
     permissions: Array<{
       id: number;
@@ -101,13 +99,16 @@ export function PermissionsProvider({ children }: PermissionsProviderProps) {
         setPermissions(response.data);
       } else if (response.data && typeof response.data === 'object' && 'permissions' in response.data) {
         // Backend response structure
-        const backendResponse = response.data as BackendPermissionsResponse['data'];
+        const backendResponse = response.data as any;
         if (backendResponse.permissions && Array.isArray(backendResponse.permissions)) {
           setPermissions(backendResponse.permissions);
         } else {
           // Fallback to role-based permissions
           derivePermissionsFromRoles();
         }
+      } else if (response.error && response.error.includes('Cached response')) {
+        // Handle 304 cached response by using role-based permissions
+        derivePermissionsFromRoles();
       } else {
         // Fallback to role-based permissions
         derivePermissionsFromRoles();
@@ -117,7 +118,10 @@ export function PermissionsProvider({ children }: PermissionsProviderProps) {
       // Fallback to role-based permissions when API fails
       derivePermissionsFromRoles();
     } finally {
-      setIsLoading(false);
+      // Add a small delay to ensure permissions are properly set before marking as not loading
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 100);
     }
   }, [isAuthenticated, user]);
 
@@ -177,7 +181,7 @@ export function PermissionsProvider({ children }: PermissionsProviderProps) {
     if (!user?.roles || user.roles.length === 0) return null;
     return {
       id: user.roles[0].id,
-      name: user.roles[0].name
+      name: user.roles[0].nombre
     };
   }, [user?.roles]);
 

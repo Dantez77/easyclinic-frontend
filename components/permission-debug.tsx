@@ -36,8 +36,7 @@ export function PermissionDebug() {
                   <Badge variant="outline" className="text-xs">
                     ID: {role.id}
                   </Badge>
-                  <span className="text-sm">{role.name}</span>
-                  <span className="text-xs text-muted-foreground">({role.description})</span>
+                  <span className="text-sm">{role.nombre}</span>
                 </div>
               ))}
             </div>

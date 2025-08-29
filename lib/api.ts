@@ -44,9 +44,7 @@ export interface User {
 
 export interface Role {
   id: number;
-  name: string;
-  description: string;
-  active: boolean;
+  nombre: string;
 }
 
 export interface Permission {
@@ -72,6 +70,7 @@ class ApiClient {
     // Try to get token from localStorage on client side
     if (typeof window !== 'undefined') {
       this.token = localStorage.getItem('easyclinic_token');
+      console.log('API Client initialized, token from localStorage:', this.token ? 'exists' : 'missing');
     }
   }
 
@@ -89,19 +88,38 @@ class ApiClient {
     }
   }
 
+  refreshToken() {
+    if (typeof window !== 'undefined') {
+      this.token = localStorage.getItem('easyclinic_token');
+      console.log('Token refreshed from localStorage:', this.token ? 'exists' : 'missing');
+    }
+  }
+
   private async request<T>(
     endpoint: string,
     options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
-    const url = `${this.baseURL}${endpoint}`;
+    // Only add timestamp to GET requests to prevent caching
+    let url = `${this.baseURL}${endpoint}`;
+    if (options.method === 'GET' || !options.method) {
+      const timestamp = Date.now();
+      url = `${url}${endpoint.includes('?') ? '&' : '?'}_t=${timestamp}`;
+    }
     
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       ...(options.headers as Record<string, string>),
     };
 
-    if (this.token) {
+    // Note: Cache-busting headers removed due to CORS restrictions
+    // Using timestamp query parameter instead for GET requests
+
+    // Don't add Authorization header to login/register endpoints, but allow it for auth/me
+    if (this.token && !endpoint.includes('/auth/login') && !endpoint.includes('/auth/register')) {
       headers.Authorization = `Bearer ${this.token}`;
+      console.log('Adding Authorization header for endpoint:', endpoint);
+    } else {
+      console.log('No Authorization header for endpoint:', endpoint, 'token:', this.token ? 'exists' : 'missing');
     }
 
     try {
@@ -110,9 +128,16 @@ class ApiClient {
         headers,
       });
 
-      if (!response.ok) {
+      if (!response.ok && response.status !== 304) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      }
+
+      // Handle 304 Not Modified - return cached data or empty response
+      if (response.status === 304) {
+        // For 304, we need to handle this case specially
+        // Return an empty response to trigger fallback to role-based permissions
+        return { error: 'Cached response, using fallback permissions' };
       }
 
       const data = await response.json();
@@ -154,6 +179,9 @@ class ApiClient {
   }
 
   async getCurrentUser(): Promise<ApiResponse<User>> {
+    // Refresh token from localStorage before making request
+    this.refreshToken();
+    console.log('Getting current user, token:', this.token ? 'exists' : 'missing');
     return this.request<User>(API_ENDPOINTS.auth.me);
   }
 
@@ -208,8 +236,6 @@ export const permissionsApi = {
           roles: Array<{
             id: number;
             nombre: string;
-            descripcion: string;
-            activo: boolean;
           }>;
           permissions: Array<{
             id: number;

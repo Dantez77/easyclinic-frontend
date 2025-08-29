@@ -53,15 +53,19 @@ export function RouteGuard({ children }: RouteGuardProps) {
     // Don't redirect while loading
     if (isLoading) return;
 
+    console.log('Route guard check:', { pathname, isAuthenticated, isLoading });
+
     // Check if the current route requires authentication
     const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
     const isProtectedRoute = PROTECTED_ROUTES.some(route => pathname.startsWith(route));
     
     if (!isAuthenticated && isProtectedRoute) {
       // Redirect to login if not authenticated and trying to access protected route
+      console.log('Redirecting to login - not authenticated');
       router.push('/login');
     } else if (isAuthenticated && pathname === '/login') {
       // Redirect authenticated users away from login page
+      console.log('Redirecting to home - already authenticated');
       router.push('/');
     } else if (!isAuthenticated && pathname === '/') {
       // Allow unauthenticated users to see the landing page
@@ -78,8 +82,16 @@ export function RouteGuard({ children }: RouteGuardProps) {
         const requiredPermission = ROUTE_PERMISSIONS[currentRoute];
         
         if (requiredPermission && !hasPermission(requiredPermission)) {
-          // Redirect to unauthorized page or show error
-          router.push('/unauthorized');
+          // Only redirect if we're sure the user doesn't have permission
+          // Wait a bit more to ensure permissions are fully loaded
+          const timeoutId = setTimeout(() => {
+            if (!hasPermission(requiredPermission)) {
+              console.log(`Permission check failed for ${requiredPermission}, redirecting to unauthorized`);
+              router.push('/unauthorized');
+            }
+          }, 1000); // Wait 1 second for permissions to load
+          
+          return () => clearTimeout(timeoutId);
         }
       }
     }

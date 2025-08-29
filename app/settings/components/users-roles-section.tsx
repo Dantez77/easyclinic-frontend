@@ -271,7 +271,7 @@ export function UsersRolesSection() {
                         onChange={() => handleRoleToggle(role.id)}
                         className="rounded border-gray-300"
                       />
-                                             <Label htmlFor={`role-${role.id}`}>{role.name}</Label>
+                                             <Label htmlFor={`role-${role.id}`}>{role.nombre}</Label>
                     </div>
                   ))}
                 </div>
@@ -340,8 +340,8 @@ export function UsersRolesSection() {
                 <div className="flex items-center gap-2">
                   <div className="flex flex-wrap gap-1">
                     {user.roles.map((role) => (
-                      <Badge key={role.id} variant={getRoleBadgeVariant(role.name)}>
-                        {role.name}
+                      <Badge key={role.id} variant={getRoleBadgeVariant(role.nombre)}>
+                        {role.nombre}
                       </Badge>
                     ))}
                   </div>
