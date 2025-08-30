@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -8,8 +8,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
+import { Skeleton } from "@/components/ui/skeleton"
 import AvailabilityManager from "./components/availability-manager"
-
+import { useDoctorProfile } from "@/hooks/use-doctor-profile"
+import { DoctorProfile } from "@/lib/api"
+import { useToast } from "@/hooks/use-toast"
+import { useLanguage } from "@/lib/language-context"
 
 import {
   Calendar,
@@ -30,50 +34,171 @@ import {
 } from "lucide-react"
 
 export default function DoctorEditProfilePage() {
+  const { doctorProfile, isLoading, error, refreshDoctorProfile, updateDoctorProfile, isUpdating } = useDoctorProfile()
+  const { toast } = useToast()
+  const { t } = useLanguage()
   const [isEditing, setIsEditing] = useState(false)
   const [showAvailabilityManager, setShowAvailabilityManager] = useState(false)
+  const [loadingTimeout, setLoadingTimeout] = useState<NodeJS.Timeout | null>(null) // For loading timeout
 
-  const [formData, setFormData] = useState({
-    name: "Dr. Quesada",
-    specialty: "Cirujano General y Gastrointestinal",
-    phone: "(503) 7123-4567",
-    email: "dr.quesada@clinic.com",
-    address: "123 Medical Center Dr, Suite 200",
-    hours: "Mon-Fri: 8:00 AM - 6:00 PM",
-    bio: "Cirujano General y Gastrointestinal – Cirugía Laparoscópica de Avanzada – Cirugía Bariátrica – Balón Intragástrico – Endoscopia Digestiva Diagnóstica y Terapéutica.  Colangio-Pancreatografía Endoscópica Retrógrada (ERCP) – Ultrasonido Endoscopico.     JVPM: 3847 – CONACEM (CHILE) 6324",
-    education: ["MD - Harvard Medical School", "Residency - Johns Hopkins Hospital", "Fellowship - Mayo Clinic"],
-    specializations: ["Endoscopia", "Cirugia Digestiva", "Cirugia General", "Cirugia Bariatrica"],
-    languages: "English, Spanish",
-    hospitalAffiliations: "City General, St. Mary's",
-    yearsInPractice: "30+ years",
-    gender: "Male",
-    acceptingNewPatients: true,
-  })
+  const [formData, setFormData] = useState<Partial<DoctorProfile>>({})
+  const [originalData, setOriginalData] = useState<Partial<DoctorProfile>>({})
 
-  const [originalData, setOriginalData] = useState(formData)
+  // Safety mechanism: if loading takes too long, force refresh
+  useEffect(() => {
+    if (isLoading && !loadingTimeout) {
+      const timeout = setTimeout(() => {
+        console.log('Loading timeout reached, forcing refresh...')
+        refreshDoctorProfile()
+      }, 10000) // 10 seconds timeout
+      setLoadingTimeout(timeout)
+    } else if (!isLoading && loadingTimeout) {
+      clearTimeout(loadingTimeout)
+      setLoadingTimeout(null)
+    }
+  }, [isLoading, loadingTimeout, refreshDoctorProfile])
 
-  const handleInputChange = (field: string, value: string | boolean) => {
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (loadingTimeout) {
+        clearTimeout(loadingTimeout)
+      }
+    }
+  }, [loadingTimeout])
+
+  // Update form data when profile is loaded
+  useEffect(() => {
+    console.log('Profile data loaded:', doctorProfile)
+    if (doctorProfile && doctorProfile.name && Object.keys(formData).length === 0) {
+      setFormData(doctorProfile)
+      setOriginalData(doctorProfile)
+    }
+  }, [doctorProfile, formData])
+
+  // Fallback: if profile data becomes invalid, try to refresh
+  useEffect(() => {
+    if (doctorProfile && !doctorProfile.name && !isLoading) {
+      console.log('Profile data invalid, attempting refresh...')
+      refreshDoctorProfile()
+    }
+  }, [doctorProfile, isLoading, refreshDoctorProfile])
+
+  const handleInputChange = (field: string, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
-  const handleArrayChange = (field: string, index: number, value: string) => {
+  const handleArrayChange = (field: keyof Pick<DoctorProfile, 'education' | 'specializations' | 'languages' | 'hospitalAffiliations'>, index: number, value: string) => {
     setFormData((prev) => ({
       ...prev,
-      [field]: prev[field as keyof typeof prev].map((item: string, i: number) => (i === index ? value : item)),
+      [field]: (prev[field] as string[])?.map((item: string, i: number) => (i === index ? value : item)) || [],
     }))
   }
 
-  const handleSave = () => {
-    setOriginalData(formData)
-    setIsEditing(false)
-    // Here you would typically save to a database
-    alert("Profile updated successfully!")
+  const handleSave = async () => {
+    try {
+      console.log('Starting profile update with data:', formData)
+      const result = await updateDoctorProfile(formData)
+      console.log('Update result:', result)
+      
+      if (result.success) {
+        setOriginalData(formData)
+        setIsEditing(false)
+        toast({
+          title: t('profile.toast.success.title'),
+          description: t('profile.toast.success.description'),
+        })
+        console.log('Profile update completed successfully')
+      } else {
+        toast({
+          title: t('profile.toast.error.title'),
+          description: result.error || t('profile.toast.error.description'),
+          variant: "destructive",
+        })
+        console.log('Profile update failed:', result.error)
+      }
+    } catch (error) {
+      console.error('Unexpected error during profile update:', error)
+      toast({
+        title: t('profile.toast.error.title'),
+        description: t('profile.toast.error.unexpected'),
+        variant: "destructive",
+      })
+    }
   }
 
   const handleCancel = () => {
     setFormData(originalData)
     setIsEditing(false)
   }
+
+  // Loading state or incomplete data
+  if (isLoading || !doctorProfile) { // Simplified check
+    return (
+      <div className="container mx-auto py-8 space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <div className="h-8 w-64 bg-muted animate-pulse rounded" />
+            <div className="h-4 w-48 bg-muted animate-pulse rounded" />
+          </div>
+          <div className="h-10 w-24 bg-muted animate-pulse rounded" />
+        </div>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-6">
+            <Card>
+              <CardHeader>
+                <div className="h-6 w-48 bg-muted animate-pulse rounded" />
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="h-4 w-full bg-muted animate-pulse rounded" />
+                <div className="h-4 w-3/4 bg-muted animate-pulse rounded" />
+                <div className="h-4 w-1/2 bg-muted animate-pulse rounded" />
+              </CardContent>
+            </Card>
+          </div>
+          
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <div className="h-6 w-32 bg-muted animate-pulse rounded" />
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="h-4 w-24 bg-muted animate-pulse rounded" />
+                <div className="h-4 w-32 bg-muted animate-pulse rounded" />
+                <div className="h-4 w-28 bg-muted animate-pulse rounded" />
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="container mx-auto py-8">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-center space-y-4">
+              <div className="text-destructive text-lg font-semibold">
+                {t('profile.error.loading')}
+              </div>
+              <p className="text-muted-foreground">
+                {error}
+              </p>
+              <Button onClick={refreshDoctorProfile}>
+                {t('profile.error.retry')}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+
 
   const reviews = [
     {
@@ -103,23 +228,36 @@ export default function DoctorEditProfilePage() {
         {/* Header Section */}
         <Card className="bg-card border-border">
           <CardContent className="p-8">
-            <div className="flex justify-between items-start mb-6">
-              <h1 className="text-2xl font-bold">My Profile</h1>
+            <div className="flex items-center justify-between mb-6">
+              <div className="space-y-2">
+                <h1 className="text-3xl font-bold text-foreground">
+                  {t('profile.title')}
+                </h1>
+                <p className="text-muted-foreground">
+                  {t('profile.subtitle')}
+                </p>
+              </div>
               <div className="flex gap-2">
                 {!isEditing ? (
                   <Button onClick={() => setIsEditing(true)} className="flex items-center gap-2">
-                    <Edit className="w-4 h-4" />
-                    Edit Profile
+                    {t('profile.actions.edit')}
                   </Button>
                 ) : (
                   <>
-                    <Button onClick={handleSave} className="flex items-center gap-2">
-                      <Save className="w-4 h-4" />
-                      Save Changes
+                    <Button onClick={handleSave} className="flex items-center gap-2" disabled={isUpdating}>
+                      {isUpdating ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          {t('profile.actions.saving')}
+                        </>
+                      ) : (
+                        <>
+                          {t('profile.actions.save')}
+                        </>
+                      )}
                     </Button>
-                    <Button variant="outline" onClick={handleCancel} className="flex items-center gap-2 bg-transparent">
-                      <X className="w-4 h-4" />
-                      Cancel
+                    <Button variant="outline" onClick={handleCancel} className="flex items-center gap-2 bg-transparent" disabled={isUpdating}>
+                      {t('profile.actions.cancel')}
                     </Button>
                   </>
                 )}
@@ -127,128 +265,105 @@ export default function DoctorEditProfilePage() {
             </div>
 
             <div className="flex flex-col md:flex-row gap-8 items-start">
-              <div className="relative">
-                <Avatar className="w-32 h-32 border-4 border-primary/20">
-                  <AvatarImage src="/professional-doctor-headshot.png" alt={formData.name} />
-                  <AvatarFallback className="text-2xl bg-primary/10 text-primary">MM</AvatarFallback>
+              <div className="flex flex-col items-center space-y-4">
+                <Avatar className="w-32 h-32">
+                  <AvatarImage src={doctorProfile.avatar?.imageUrl} alt={doctorProfile.name || t('profile.avatar.alt')} />
+                  <AvatarFallback className="text-2xl">
+                    {doctorProfile.avatar?.initials || (doctorProfile.name ? doctorProfile.name.split(' ').map(n => n[0]).join('') : 'DR')}
+                  </AvatarFallback>
                 </Avatar>
                 {isEditing && (
-                  <Button
-                    size="sm"
-                    className="absolute -bottom-2 -right-2 rounded-full w-8 h-8 p-0"
-                    onClick={() => alert("Photo upload functionality would be implemented here")}
-                  >
-                    <Camera className="w-4 h-4" />
+                  <Button variant="outline" size="sm" className="w-full">
+                    {t('profile.avatar.change')}
                   </Button>
                 )}
               </div>
-
+              
               <div className="flex-1 space-y-4">
-                <div>
-                  {isEditing ? (
-                    <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="name">Full Name</Label>
-                        <Input
-                          id="name"
-                          value={formData.name}
-                          onChange={(e) => handleInputChange("name", e.target.value)}
-                          className="text-2xl font-bold h-12"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="specialty">Specialty</Label>
-                        <Input
-                          id="specialty"
-                          value={formData.specialty}
-                          onChange={(e) => handleInputChange("specialty", e.target.value)}
-                          className="text-lg"
-                        />
-                      </div>
+                {isEditing ? (
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">{t('profile.name.label')}</label>
+                      <Input
+                        value={formData.name || ''}
+                        onChange={(e) => handleInputChange("name", e.target.value)}
+                        placeholder={t('profile.name.placeholder')}
+                        className="text-2xl font-bold h-12"
+                        disabled={isUpdating}
+                      />
                     </div>
-                  ) : (
-                    <>
-                      <h1 className="text-4xl font-bold text-foreground mb-2">{formData.name}</h1>
-                      <p className="text-xl text-muted-foreground mb-4">{formData.specialty}</p>
-                    </>
-                  )}
-
-
-
-                  <div className="flex flex-wrap gap-2">
-                    {isEditing ? (
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">{t('profile.specialty.label')}</label>
+                      <Input
+                        value={formData.specialty || ''}
+                        onChange={(e) => handleInputChange("specialty", e.target.value)}
+                        placeholder={t('profile.specialty.placeholder')}
+                        className="text-lg"
+                        disabled={isUpdating}
+                      />
+                    </div>
+                    <div className="flex items-center gap-4">
                       <div className="flex items-center gap-2">
                         <input
                           type="checkbox"
                           id="acceptingPatients"
-                          checked={formData.acceptingNewPatients}
+                          checked={formData.acceptingNewPatients || false}
                           onChange={(e) => handleInputChange("acceptingNewPatients", e.target.checked)}
+                          disabled={isUpdating}
                         />
-                        <Label htmlFor="acceptingPatients">Accepting New Patients</Label>
+                        <label htmlFor="acceptingPatients" className="text-sm">{t('profile.badges.acceptingPatients')}</label>
                       </div>
-                    ) : (
-                      <Badge variant="secondary" className="bg-primary/10 text-primary">
-                        <CheckCircle className="w-3 h-3 mr-1" />
-                        {formData.acceptingNewPatients ? "Accepting New Patients" : "Not Accepting New Patients"}
-                      </Badge>
-                    )}
-                    <Badge variant="outline">Board Certified</Badge>
-                    <Badge variant="outline">{formData.yearsInPractice} Experience</Badge>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id="boardCertified"
+                          checked={formData.isBoardCertified || false}
+                          onChange={(e) => handleInputChange("isBoardCertified", e.target.checked)}
+                          disabled={isUpdating}
+                        />
+                        <label htmlFor="boardCertified" className="text-sm">{t('profile.badges.boardCertified')}</label>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">{t('profile.info.yearsInPractice')}</label>
+                      <Input
+                        value={formData.yearsInPractice || ''}
+                        onChange={(e) => handleInputChange("yearsInPractice", e.target.value)}
+                        placeholder={t('profile.info.yearsInPracticePlaceholder')}
+                        disabled={isUpdating}
+                      />
+                    </div>
                   </div>
+                ) : (
+                  <div className="space-y-2">
+                    <h2 className="text-2xl font-semibold">
+                      {doctorProfile.name || t('profile.name.placeholder')}
+                    </h2>
+                    <p className="text-lg text-muted-foreground">
+                      {doctorProfile.specialty || t('profile.specialty.placeholder')}
+                    </p>
+                  </div>
+                )}
+                
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant="secondary" className="text-sm">
+                    {doctorProfile.isBoardCertified ? t('profile.badges.boardCertified') : t('profile.badges.notBoardCertified')}
+                  </Badge>
+                  <Badge variant="secondary" className="text-sm">
+                    {doctorProfile.acceptingNewPatients ? t('profile.badges.acceptingPatients') : t('profile.badges.notAcceptingPatients')}
+                  </Badge>
                 </div>
-
+                
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Phone className="w-4 h-4" />
-                    {isEditing ? (
-                      <Input
-                        value={formData.phone}
-                        onChange={(e) => handleInputChange("phone", e.target.value)}
-                        className="h-8"
-                      />
-                    ) : (
-                      <a href={`tel:${formData.phone}`} className="hover:text-primary">
-                        {formData.phone}
-                      </a>
-                    )}
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-muted-foreground">{t('profile.info.yearsInPractice')}:</span>
+                    <span>{doctorProfile.yearsInPractice || t('profile.info.notSpecified')}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Mail className="w-4 h-4" />
-                    {isEditing ? (
-                      <Input
-                        value={formData.email}
-                        onChange={(e) => handleInputChange("email", e.target.value)}
-                        className="h-8"
-                      />
-                    ) : (
-                      <a href={`mailto:${formData.email}`} className="hover:text-primary">
-                        {formData.email}
-                      </a>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <MapPin className="w-4 h-4" />
-                    {isEditing ? (
-                      <Input
-                        value={formData.address}
-                        onChange={(e) => handleInputChange("address", e.target.value)}
-                        className="h-8"
-                      />
-                    ) : (
-                      <span>{formData.address}</span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Clock className="w-4 h-4" />
-                    {isEditing ? (
-                      <Input
-                        value={formData.hours}
-                        onChange={(e) => handleInputChange("hours", e.target.value)}
-                        className="h-8"
-                      />
-                    ) : (
-                      <span>{formData.hours}</span>
-                    )}
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-muted-foreground">{t('profile.info.location')}:</span>
+                    <span>{doctorProfile.location?.address || t('profile.info.notSpecified')}</span>
                   </div>
                 </div>
               </div>
@@ -264,71 +379,126 @@ export default function DoctorEditProfilePage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Heart className="w-5 h-5 text-primary" />
-                  About Me
+                  {t('profile.about.title')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {isEditing ? (
                   <div>
-                    <Label htmlFor="bio">Biography</Label>
+                    <Label htmlFor="bio">{t('profile.bio.title')}</Label>
                     <Textarea
                       id="bio"
-                      value={formData.bio}
+                      value={formData.bio || ''}
                       onChange={(e) => handleInputChange("bio", e.target.value)}
-                      rows={4}
+                      placeholder={t('profile.bio.placeholder')}
                       className="mt-2"
+                      disabled={isUpdating}
                     />
                   </div>
                 ) : (
-                  <p className="text-muted-foreground leading-relaxed">{formData.bio}</p>
+                  <p className="text-muted-foreground leading-relaxed">
+                    {doctorProfile.bio || t('profile.bio.notProvided')}
+                  </p>
                 )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <h4 className="font-semibold flex items-center gap-2">
                       <GraduationCap className="w-4 h-4 text-primary" />
-                      Education
+                      {t('profile.education.title')}
                     </h4>
                     {isEditing ? (
                       <div className="space-y-2">
-                        {formData.education.map((edu, index) => (
-                          <Input
-                            key={index}
-                            value={edu}
-                            onChange={(e) => handleArrayChange("education", index, e.target.value)}
-                            className="text-sm"
-                          />
+                        {(formData.education || []).map((edu, index) => (
+                          <div key={index} className="flex items-center gap-2">
+                            <Input
+                              value={edu}
+                              onChange={(e) => handleArrayChange("education", index, e.target.value)}
+                              className="text-sm flex-1"
+                              disabled={isUpdating}
+                            />
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                const newEducation = (formData.education || []).filter((_, i) => i !== index)
+                                handleInputChange("education", newEducation)
+                              }}
+                              className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                              disabled={isUpdating}
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </div>
                         ))}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleInputChange("education", [...(formData.education || []), ""])}
+                          disabled={isUpdating}
+                        >
+                          {t('profile.education.add')}
+                        </Button>
                       </div>
                     ) : (
                       <ul className="text-sm text-muted-foreground space-y-1">
-                        {formData.education.map((edu, index) => (
-                          <li key={index}>• {edu}</li>
-                        ))}
+                        {doctorProfile.education && doctorProfile.education.length > 0 ? (
+                          doctorProfile.education.map((edu, index) => (
+                            <li key={index}>• {edu}</li>
+                          ))
+                        ) : (
+                          <li className="text-muted-foreground">{t('profile.education.notProvided')}</li>
+                        )}
                       </ul>
                     )}
                   </div>
                   <div className="space-y-2">
                     <h4 className="font-semibold flex items-center gap-2">
                       <Award className="w-4 h-4 text-primary" />
-                      Specializations
+                      {t('profile.specializations.title')}
                     </h4>
                     {isEditing ? (
                       <div className="space-y-2">
-                        {formData.specializations.map((spec, index) => (
-                          <Input
-                            key={index}
-                            value={spec}
-                            onChange={(e) => handleArrayChange("specializations", index, e.target.value)}
-                            className="text-sm"
-                          />
+                        {(formData.specializations || []).map((spec, index) => (
+                          <div key={index} className="flex items-center gap-2">
+                            <Input
+                              value={spec}
+                              onChange={(e) => handleArrayChange("specializations", index, e.target.value)}
+                              className="text-sm flex-1"
+                              disabled={isUpdating}
+                            />
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                const newSpecializations = (formData.specializations || []).filter((_, i) => i !== index)
+                                handleInputChange("specializations", newSpecializations)
+                              }}
+                              className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                              disabled={isUpdating}
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </div>
                         ))}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleInputChange("specializations", [...(formData.specializations || []), ""])}
+                          disabled={isUpdating}
+                        >
+                          {t('profile.specializations.add')}
+                        </Button>
                       </div>
                     ) : (
                       <ul className="text-sm text-muted-foreground space-y-1">
-                        {formData.specializations.map((spec, index) => (
-                          <li key={index}>• {spec}</li>
-                        ))}
+                        {doctorProfile.specializations && doctorProfile.specializations.length > 0 ? (
+                          doctorProfile.specializations.map((spec, index) => (
+                            <li key={index}>• {spec}</li>
+                          ))
+                        ) : (
+                          <li className="text-muted-foreground">{t('profile.specializations.notProvided')}</li>
+                        )}
                       </ul>
                     )}
                   </div>
@@ -341,7 +511,7 @@ export default function DoctorEditProfilePage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Users className="w-5 h-5 text-primary" />
-                  Patient Reviews
+                  {t('profile.reviews.title')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -379,60 +549,207 @@ export default function DoctorEditProfilePage() {
           <div className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Quick Info</CardTitle>
+                <CardTitle className="text-lg">{t('profile.quickInfo.title')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 text-sm">
                 <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Languages:</span>
+                  <span className="text-muted-foreground">{t('profile.quickInfo.languages')}:</span>
                   {isEditing ? (
-                    <Input
-                      value={formData.languages}
-                      onChange={(e) => handleInputChange("languages", e.target.value)}
-                      className="h-8 w-32"
-                    />
+                    <div className="w-32">
+                      <div className="space-y-2">
+                        {(formData.languages || []).map((lang, index) => (
+                          <div key={index} className="flex items-center gap-1">
+                            <Input
+                              value={lang}
+                              onChange={(e) => handleArrayChange("languages", index, e.target.value)}
+                              className="h-8 text-xs"
+                              disabled={isUpdating}
+                              placeholder={t('profile.quickInfo.languagePlaceholder')}
+                            />
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                const newLanguages = (formData.languages || []).filter((_, i) => i !== index)
+                                handleInputChange("languages", newLanguages)
+                              }}
+                              className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                              disabled={isUpdating}
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        ))}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleInputChange("languages", [...(formData.languages || []), ""])}
+                          className="h-8 w-full text-xs"
+                          disabled={isUpdating}
+                        >
+                          {t('profile.quickInfo.addLanguage')}
+                        </Button>
+                      </div>
+                    </div>
                   ) : (
-                    <span>{formData.languages}</span>
+                    <span>
+                      {doctorProfile.languages && doctorProfile.languages.length > 0 
+                        ? doctorProfile.languages.join(', ') 
+                        : t('profile.quickInfo.notProvided')}
+                    </span>
                   )}
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Hospital Affiliations:</span>
+                  <span className="text-muted-foreground">{t('profile.quickInfo.hospitalAffiliations')}:</span>
                   {isEditing ? (
-                    <Input
-                      value={formData.hospitalAffiliations}
-                      onChange={(e) => handleInputChange("hospitalAffiliations", e.target.value)}
-                      className="h-8 w-32"
-                    />
+                    <div className="w-32">
+                      <div className="space-y-2">
+                        {(formData.hospitalAffiliations || []).map((hospital, index) => (
+                          <div key={index} className="flex items-center gap-1">
+                            <Input
+                              value={hospital}
+                              onChange={(e) => handleArrayChange("hospitalAffiliations", index, e.target.value)}
+                              className="h-8 text-xs"
+                              disabled={isUpdating}
+                              placeholder={t('profile.quickInfo.hospitalPlaceholder')}
+                            />
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                const newHospitals = (formData.hospitalAffiliations || []).filter((_, i) => i !== index)
+                                handleInputChange("hospitalAffiliations", newHospitals)
+                              }}
+                              className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                              disabled={isUpdating}
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        ))}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleInputChange("hospitalAffiliations", [...(formData.hospitalAffiliations || []), ""])}
+                          className="h-8 w-full text-xs"
+                          disabled={isUpdating}
+                        >
+                          {t('profile.quickInfo.addHospital')}
+                        </Button>
+                      </div>
+                    </div>
                   ) : (
-                    <span>{formData.hospitalAffiliations}</span>
+                    <span>
+                      {doctorProfile.hospitalAffiliations && doctorProfile.hospitalAffiliations.length > 0 
+                        ? doctorProfile.hospitalAffiliations.join(', ') 
+                        : t('profile.quickInfo.notProvided')}
+                    </span>
                   )}
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Years in Practice:</span>
+                  <span className="text-muted-foreground">{t('profile.quickInfo.yearsInPractice')}:</span>
                   {isEditing ? (
                     <Input
-                      value={formData.yearsInPractice}
+                      value={formData.yearsInPractice || ''}
                       onChange={(e) => handleInputChange("yearsInPractice", e.target.value)}
                       className="h-8 w-32"
+                      disabled={isUpdating}
                     />
                   ) : (
-                    <span>{formData.yearsInPractice}</span>
+                    <span>{doctorProfile.yearsInPractice || t('profile.quickInfo.notProvided')}</span>
                   )}
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Gender:</span>
+                  <span className="text-muted-foreground">{t('profile.quickInfo.gender')}:</span>
                   {isEditing ? (
                     <select
-                      value={formData.gender}
+                      value={formData.gender || ''}
                       onChange={(e) => handleInputChange("gender", e.target.value)}
                       className="h-8 w-32 rounded border border-input bg-background px-2"
+                      disabled={isUpdating}
                     >
-                      <option value="Female">Female</option>
-                      <option value="Male">Male</option>
-                      <option value="Non-binary">Non-binary</option>
-                      <option value="Prefer not to say">Prefer not to say</option>
+                      <option value="">{t('profile.quickInfo.selectGender')}</option>
+                      <option value="Female">{t('profile.quickInfo.gender.female')}</option>
+                      <option value="Male">{t('profile.quickInfo.gender.male')}</option>
                     </select>
                   ) : (
-                    <span>{formData.gender}</span>
+                    <span>{doctorProfile.gender || t('profile.quickInfo.notProvided')}</span>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Contact Information Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Phone className="w-5 h-5 text-primary" />
+                  {t('profile.contact.title')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">{t('profile.contact.phone')}</label>
+                    {isEditing ? (
+                      <Input
+                        value={formData.contact?.phone || ''}
+                        onChange={(e) => handleInputChange("contact", { ...formData.contact, phone: e.target.value })}
+                        placeholder={t('profile.contact.phonePlaceholder')}
+                        disabled={isUpdating}
+                      />
+                    ) : (
+                      <p className="text-sm text-muted-foreground">
+                        {doctorProfile.contact?.phone || t('profile.contact.notProvided')}
+                      </p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">{t('profile.contact.email')}</label>
+                    {isEditing ? (
+                      <Input
+                        value={formData.contact?.email || ''}
+                        onChange={(e) => handleInputChange("contact", { ...formData.contact, email: e.target.value })}
+                        placeholder={t('profile.contact.emailPlaceholder')}
+                        disabled={isUpdating}
+                      />
+                    ) : (
+                      <p className="text-sm text-muted-foreground">
+                        {doctorProfile.contact?.email || t('profile.contact.notProvided')}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">{t('profile.contact.address')}</label>
+                  {isEditing ? (
+                    <Input
+                      value={formData.location?.address || ''}
+                      onChange={(e) => handleInputChange("location", { ...formData.location, address: e.target.value })}
+                      placeholder={t('profile.contact.addressPlaceholder')}
+                      disabled={isUpdating}
+                    />
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      {doctorProfile.location?.address || t('profile.contact.notProvided')}
+                    </p>
+                  )}
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">{t('profile.contact.officeHours')}</label>
+                  {isEditing ? (
+                    <Input
+                      value={formData.officeHours || ''}
+                      onChange={(e) => handleInputChange("officeHours", e.target.value)}
+                      placeholder={t('profile.contact.officeHoursPlaceholder')}
+                      disabled={isUpdating}
+                    />
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      {doctorProfile.officeHours || t('profile.contact.notProvided')}
+                    </p>
                   )}
                 </div>
               </CardContent>
@@ -443,7 +760,7 @@ export default function DoctorEditProfilePage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Calendar className="w-5 h-5 text-primary" />
-                  Schedule Management
+                  {t('profile.schedule.title')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -452,7 +769,7 @@ export default function DoctorEditProfilePage() {
                   variant="outline"
                   onClick={() => setShowAvailabilityManager(true)}
                 >
-                  Manage Availability
+                  {t('profile.schedule.manageAvailability')}
                 </Button>
                 <Button className="w-full bg-transparent" variant="outline">
                   View Appointments

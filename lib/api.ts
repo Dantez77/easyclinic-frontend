@@ -100,6 +100,33 @@ export interface ClinicWithUsers extends Clinic {
   }>;
 }
 
+export interface DoctorProfile {
+  id: string;
+  name: string;
+  specialty: string;
+  avatar: {
+    imageUrl: string;
+    initials: string;
+  };
+  acceptingNewPatients: boolean;
+  isBoardCertified: boolean;
+  yearsInPractice: string;
+  contact: {
+    phone: string;
+    email: string;
+  };
+  location: {
+    address: string;
+  };
+  officeHours: string;
+  bio: string;
+  education: string[];
+  specializations: string[];
+  languages: string[];
+  hospitalAffiliations: string[];
+  gender: string;
+}
+
 // API Client class
 class ApiClient {
   private baseURL: string;
@@ -242,6 +269,17 @@ class ApiClient {
     return this.request<ClinicUsersResponse>(API_ENDPOINTS.clinic.getUsers(clinicId));
   }
 
+  async getDoctorProfile(doctorId: string): Promise<ApiResponse<DoctorProfile>> {
+    return this.request<DoctorProfile>(API_ENDPOINTS.doctorProfile.get(doctorId));
+  }
+
+  async updateDoctorProfile(doctorId: string, profileData: Partial<DoctorProfile>): Promise<ApiResponse<DoctorProfile>> {
+    return this.request<DoctorProfile>(API_ENDPOINTS.doctorProfile.update(doctorId), {
+      method: 'PUT',
+      body: JSON.stringify(profileData),
+    });
+  }
+
   // Generic methods for other endpoints
   async get<T>(endpoint: string): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { method: 'GET' });
@@ -280,6 +318,11 @@ export const authApi = {
 export const clinicApi = {
   getClinic: (clinicId: number) => apiClient.getClinic(clinicId),
   getClinicUsers: (clinicId: number) => apiClient.getClinicUsers(clinicId),
+};
+
+export const doctorProfileApi = {
+  getDoctorProfile: (doctorId: string) => apiClient.getDoctorProfile(doctorId),
+  updateDoctorProfile: (doctorId: string, profileData: Partial<DoctorProfile>) => apiClient.updateDoctorProfile(doctorId, profileData),
 };
 
 // Permissions API

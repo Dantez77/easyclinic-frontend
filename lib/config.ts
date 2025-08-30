@@ -33,6 +33,10 @@ export const API_ENDPOINTS = {
     get: (id: number) => `/clinic/${id}`,
     getUsers: (id: number) => `/clinic/${id}/users`,
   },
+  doctorProfile: {
+    get: (id: string) => `/doctor-profile/${id}`,
+    update: (id: string) => `/doctor-profile/${id}`,
+  },
   patients: {
     list: '/patients',
     create: '/patients',
