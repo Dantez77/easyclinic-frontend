@@ -14,60 +14,26 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { useLanguage } from "@/lib/language-context"
 import { useToast } from "@/hooks/use-toast"
-import { authApi, User, Role } from "@/lib/api"
+import { authApi, User, Role, ClinicUser } from "@/lib/api"
+import { useClinicUsers } from "@/hooks/use-clinic-users"
+import { Skeleton } from "@/components/ui/skeleton"
 
-// Using imported User and Role types from API
-
-// Mock users data (will be replaced with API calls)
-const mockUsers: User[] = [
-  {
-    id: "1",
-    firstName: "Roberto",
-    lastName: "Martínez",
-    email: "roberto@clinica.com",
-    phone: "7777-7777",
-    birthDate: "1980-05-15",
-    roles: [{ id: 1, name: "Administrator", description: "Full system access", active: true }],
-    active: true
-  },
-  {
-    id: "2",
-    firstName: "María",
-    lastName: "González",
-    email: "maria@clinica.com",
-    phone: "7777-7778",
-    birthDate: "1985-08-22",
-    roles: [{ id: 2, name: "Doctor", description: "Medical staff access", active: true }],
-    active: true
-  },
-  {
-    id: "3",
-    firstName: "Ana",
-    lastName: "Rodríguez",
-    email: "ana@clinica.com",
-    phone: "7777-7779",
-    birthDate: "1990-03-10",
-    roles: [{ id: 3, name: "Secretary", description: "Administrative access", active: true }],
-    active: true
-  }
-]
-
-// Available roles for selection
+// Available roles for selection (this could also come from backend in the future)
 const availableRoles = [
-  { id: 1, name: "Administrator", description: "Full system access", active: true },
-  { id: 2, name: "Doctor", description: "Medical staff access", active: true },
-  { id: 3, name: "Secretary", description: "Administrative access", active: true }
+  { id: 1, name: "Administrator", description: "Full system access" },
+  { id: 2, name: "Doctor", description: "Medical staff access" },
+  { id: 3, name: "Secretary", description: "Administrative access" }
 ]
 
 export function UsersRolesSection() {
   const { t } = useLanguage()
   const { toast } = useToast()
-  const [users, setUsers] = useState<User[]>(mockUsers)
+  const { clinicUsers, isLoading, error, refreshClinicUsers } = useClinicUsers()
   const [isAddUserOpen, setIsAddUserOpen] = useState(false)
   const [isEditUserOpen, setIsEditUserOpen] = useState(false)
   const [isPasswordResetOpen, setIsPasswordResetOpen] = useState(false)
-  const [selectedUser, setSelectedUser] = useState<User | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const [selectedUser, setSelectedUser] = useState<ClinicUser | null>(null)
+  const [isLoadingAction, setIsLoadingAction] = useState(false)
   
   const [newUser, setNewUser] = useState({
     firstName: '',
@@ -84,7 +50,7 @@ export function UsersRolesSection() {
 
   const handleAddUser = async () => {
     if (newUser.firstName && newUser.lastName && newUser.email && newUser.roles.length > 0 && newUser.password) {
-      setIsLoading(true)
+      setIsLoadingAction(true)
       
       // Debug: Log the request payload
       console.log('Sending user data:', newUser)
@@ -95,8 +61,8 @@ export function UsersRolesSection() {
         if (response.data) {
           const createdUser = response.data
           
-          // Add the new user to the local state
-          setUsers([...users, createdUser])
+          // Refresh the clinic users data to show the new user
+          await refreshClinicUsers()
           
           // Reset form
           setNewUser({ firstName: '', lastName: '', email: '', phone: '', birthDate: '', roles: [], password: '' })
@@ -118,29 +84,33 @@ export function UsersRolesSection() {
           variant: "destructive",
         })
       } finally {
-        setIsLoading(false)
+        setIsLoadingAction(false)
       }
     }
   }
 
-  const handleEditUser = (user: User) => {
+  const handleEditUser = (user: ClinicUser) => {
     setSelectedUser(user)
     setIsEditUserOpen(true)
   }
 
   const handleUpdateUser = () => {
     if (selectedUser) {
-      setUsers(users.map(u => u.id === selectedUser.id ? selectedUser : u))
+      // In a real implementation, this would call an API to update the user
+      // For now, just refresh the data
+      refreshClinicUsers()
       setIsEditUserOpen(false)
       setSelectedUser(null)
     }
   }
 
   const handleDeleteUser = (userId: string) => {
-    setUsers(users.filter(u => u.id !== userId))
+    // In a real implementation, this would call an API to delete the user
+    // For now, just refresh the data
+    refreshClinicUsers()
   }
 
-  const handlePasswordReset = (user: User) => {
+  const handlePasswordReset = (user: ClinicUser) => {
     setSelectedUser(user)
     setResetPassword('')
     setIsPasswordResetOpen(true)
@@ -177,11 +147,80 @@ export function UsersRolesSection() {
 
   const getRoleBadgeVariant = (roleName: string) => {
     switch (roleName) {
-      case 'Administrator': return 'default'
-      case 'Doctor': return 'secondary'
-      case 'Secretary': return 'outline'
-      default: return 'outline'
+      case "Administrator":
+        return "default"
+      case "Doctor":
+        return "secondary"
+      case "Secretary":
+        return "outline"
+      default:
+        return "secondary"
     }
+  }
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <Skeleton className="h-8 w-64" />
+          <Skeleton className="h-4 w-96 mt-2" />
+        </div>
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-48" />
+            <Skeleton className="h-4 w-80" />
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} className="h-20 w-full" />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-2xl font-semibold text-foreground">{t("settings.users.title")}</h2>
+          <p className="text-muted-foreground">{t("settings.users.subtitle")}</p>
+        </div>
+        <Card>
+          <CardContent className="p-6">
+            <div className="text-center">
+              <p className="text-destructive mb-4">{error}</p>
+              <Button onClick={refreshClinicUsers}>Retry</Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  // No data state
+  if (!clinicUsers) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-2xl font-semibold text-foreground">{t("settings.users.title")}</h2>
+          <p className="text-muted-foreground">{t("settings.users.subtitle")}</p>
+        </div>
+        <Card>
+          <CardContent className="p-6">
+            <div className="text-center">
+              <p className="text-muted-foreground mb-4">No clinic users data available</p>
+              <Button onClick={refreshClinicUsers}>Refresh</Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (
@@ -271,9 +310,24 @@ export function UsersRolesSection() {
                         onChange={() => handleRoleToggle(role.id)}
                         className="rounded border-gray-300"
                       />
-                                             <Label htmlFor={`role-${role.id}`}>{role.nombre}</Label>
+                      <Label htmlFor={`role-${role.id}`}>{role.name}</Label>
                     </div>
                   ))}
+                </div>
+              </div>
+
+              {/* Clinic Information */}
+              <div className="space-y-2">
+                <Label>Clinic Assignment</Label>
+                <div className="p-3 bg-muted rounded-lg">
+                  <p className="text-sm text-muted-foreground">
+                    New users will automatically be assigned to the same clinic as the current user.
+                  </p>
+                  {clinicUsers.clinic && (
+                    <p className="text-sm font-medium mt-1">
+                      Clinic: {clinicUsers.clinic.clinic_name} (ID: {clinicUsers.clinic.clinic_id})
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -307,9 +361,9 @@ export function UsersRolesSection() {
               <Button 
                 type="submit" 
                 onClick={handleAddUser}
-                disabled={isLoading}
+                disabled={isLoadingAction}
               >
-                {isLoading ? t("settings.users.form.loading") : t("settings.users.form.submit")}
+                {isLoadingAction ? t("settings.users.form.loading") : t("settings.users.form.submit")}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -322,8 +376,48 @@ export function UsersRolesSection() {
           <CardDescription>{t("settings.users.userList.description")}</CardDescription>
         </CardHeader>
         <CardContent>
+          {/* Clinic Filter Section */}
+          <div className="mb-4 p-3 bg-muted/50 rounded-lg border">
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-medium text-sm">Current Clinic</h4>
+                {clinicUsers.clinic ? (
+                  <p className="text-sm text-muted-foreground">
+                    {clinicUsers.clinic.clinic_name} (ID: {clinicUsers.clinic.clinic_id})
+                  </p>
+                ) : (
+                  <p className="text-muted-foreground">No clinic information available</p>
+                )}
+              </div>
+              <div className="text-right">
+                <p className="text-xs text-muted-foreground">Users in this clinic</p>
+                <p className="text-lg font-semibold text-primary">{clinicUsers.users.length}</p>
+              </div>
+            </div>
+            {clinicUsers.clinic && (
+              <div className="mt-3 pt-3 border-t grid grid-cols-3 gap-4 text-center">
+                <div>
+                  <p className="text-xs text-muted-foreground">Total Users</p>
+                  <p className="text-lg font-semibold">{clinicUsers.users.length}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Active Users</p>
+                  <p className="text-lg font-semibold text-green-600">
+                    {clinicUsers.users.filter(u => u.active).length}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Inactive Users</p>
+                  <p className="text-lg font-semibold text-orange-600">
+                    {clinicUsers.users.filter(u => !u.active).length}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
           <div className="space-y-4">
-            {users.map((user) => (
+            {clinicUsers.users.map((user) => (
               <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg border-main-200 dark:border-main-800">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
@@ -335,13 +429,18 @@ export function UsersRolesSection() {
                     <p className="font-medium">{user.firstName} {user.lastName}</p>
                     <p className="text-sm text-muted-foreground">{user.email}</p>
                     <p className="text-xs text-muted-foreground">{user.phone}</p>
+                    {clinicUsers.clinic && (
+                      <p className="text-xs text-primary">
+                        {clinicUsers.clinic.clinic_name} (ID: {clinicUsers.clinic.clinic_id})
+                      </p>
+                    )}
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="flex flex-wrap gap-1">
                     {user.roles.map((role) => (
-                      <Badge key={role.id} variant={getRoleBadgeVariant(role.nombre)}>
-                        {role.nombre}
+                      <Badge key={role.id} variant={getRoleBadgeVariant(role.name)}>
+                        {role.name}
                       </Badge>
                     ))}
                   </div>
@@ -434,28 +533,26 @@ export function UsersRolesSection() {
                 <Label htmlFor="edit-phone">{t("settings.users.form.phone")}</Label>
                 <Input
                   id="edit-phone"
-                  value={selectedUser.phone}
+                  value={selectedUser.phone || ''}
                   onChange={(e) => setSelectedUser({...selectedUser, phone: e.target.value})}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-status">{t("settings.users.form.status")}</Label>
+                <Label>Status</Label>
                 <Select value={selectedUser.active ? "active" : "inactive"} onValueChange={(value: 'active' | 'inactive') => setSelectedUser({...selectedUser, active: value === 'active'})}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="active">{t("settings.users.status.active")}</SelectItem>
-                    <SelectItem value="inactive">{t("settings.users.status.inactive")}</SelectItem>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
           )}
           <DialogFooter>
-            <Button type="submit" onClick={handleUpdateUser}>
-              {t("settings.users.editUser.save")}
-            </Button>
+            <Button onClick={handleUpdateUser}>{t("settings.users.editUser.save")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -464,130 +561,28 @@ export function UsersRolesSection() {
       <Dialog open={isPasswordResetOpen} onOpenChange={setIsPasswordResetOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>{t("settings.users.passwordReset.title")}</DialogTitle>
+            <DialogTitle>Reset Password</DialogTitle>
             <DialogDescription>
-              {t("settings.users.passwordReset.description")} {selectedUser?.firstName} {selectedUser?.lastName}
+              Set a new password for {selectedUser?.firstName} {selectedUser?.lastName}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="new-password">{t("settings.users.passwordReset.newPassword")}</Label>
-              <div className="relative">
-                <Input
-                  id="new-password"
-                  type={showPassword ? "text" : "password"}
-                  value={resetPassword}
-                  onChange={(e) => setResetPassword(e.target.value)}
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </Button>
-              </div>
+              <Label htmlFor="new-password">New Password</Label>
+              <Input
+                id="new-password"
+                type="password"
+                value={resetPassword}
+                onChange={(e) => setResetPassword(e.target.value)}
+                placeholder="Enter new password"
+              />
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit" onClick={handleResetPassword}>
-              {t("settings.users.passwordReset.reset")}
-            </Button>
+            <Button onClick={handleResetPassword}>Reset Password</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      <Card className="border-main-200 dark:border-main-800">
-        <CardHeader>
-          <CardTitle>{t("settings.users.roles.title")}</CardTitle>
-          <CardDescription>{t("settings.users.roles.description")}</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-3">
-            <h4 className="font-medium">{t("settings.users.roles.admin.title")}</h4>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="admin-users">{t("settings.users.roles.admin.manageUsers")}</Label>
-                <Switch id="admin-users" defaultChecked />
-              </div>
-              <div className="flex items-center justify-between">
-                <Label htmlFor="admin-billing">{t("settings.users.roles.admin.billingAccess")}</Label>
-                <Switch id="admin-billing" defaultChecked />
-              </div>
-              <div className="flex items-center justify-between">
-                <Label htmlFor="admin-reports">{t("settings.users.roles.admin.viewReports")}</Label>
-                <Switch id="admin-reports" defaultChecked />
-              </div>
-              <div className="flex items-center justify-between">
-                <Label htmlFor="admin-settings">{t("settings.users.roles.admin.settings")}</Label>
-                <Switch id="admin-settings" defaultChecked />
-              </div>
-            </div>
-          </div>
-
-          <Separator />
-
-          <div className="space-y-3">
-            <h4 className="font-medium">{t("settings.users.roles.doctor.title")}</h4>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="doctor-patients">{t("settings.users.roles.doctor.managePatients")}</Label>
-                <Switch id="doctor-patients" defaultChecked />
-              </div>
-              <div className="flex items-center justify-between">
-                <Label htmlFor="doctor-appointments">{t("settings.users.roles.doctor.viewAppointments")}</Label>
-                <Switch id="doctor-appointments" defaultChecked />
-              </div>
-              <div className="flex items-center justify-between">
-                <Label htmlFor="doctor-prescriptions">{t("settings.users.roles.doctor.prescribeMedications")}</Label>
-                <Switch id="doctor-prescriptions" defaultChecked />
-              </div>
-              <div className="flex items-center justify-between">
-                <Label htmlFor="doctor-reports">{t("settings.users.roles.doctor.viewMedicalReports")}</Label>
-                <Switch id="doctor-reports" />
-              </div>
-            </div>
-          </div>
-
-          <Separator />
-
-          <div className="space-y-3">
-            <h4 className="font-medium">{t("settings.users.roles.secretary.title")}</h4>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="secretary-patients">{t("settings.users.roles.secretary.viewPatients")}</Label>
-                <Switch id="secretary-patients" defaultChecked />
-              </div>
-              <div className="flex items-center justify-between">
-                <Label htmlFor="secretary-appointments">{t("settings.users.roles.secretary.manageAppointments")}</Label>
-                <Switch id="secretary-appointments" defaultChecked />
-              </div>
-              <div className="flex items-center justify-between">
-                <Label htmlFor="secretary-billing">{t("settings.users.roles.secretary.viewBilling")}</Label>
-                <Switch id="secretary-billing" />
-              </div>
-              <div className="flex items-center justify-between">
-                <Label htmlFor="secretary-reports">{t("settings.users.roles.secretary.viewBasicReports")}</Label>
-                <Switch id="secretary-reports" />
-              </div>
-              <div className="flex items-center justify-between">
-                <Label htmlFor="secretary-phone">{t("settings.users.roles.secretary.phoneAccess")}</Label>
-                <Switch id="secretary-phone" defaultChecked />
-              </div>
-              <div className="flex items-center justify-between">
-                <Label htmlFor="secretary-email">{t("settings.users.roles.secretary.emailAccess")}</Label>
-                <Switch id="secretary-email" defaultChecked />
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   )
 }

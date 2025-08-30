@@ -29,6 +29,10 @@ export const API_ENDPOINTS = {
     update: (id: string) => `/users/${id}`,
     delete: (id: string) => `/users/${id}`,
   },
+  clinic: {
+    get: (id: number) => `/clinic/${id}`,
+    getUsers: (id: number) => `/clinic/${id}/users`,
+  },
   patients: {
     list: '/patients',
     create: '/patients',

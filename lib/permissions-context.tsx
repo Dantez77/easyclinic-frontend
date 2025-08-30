@@ -181,7 +181,7 @@ export function PermissionsProvider({ children }: PermissionsProviderProps) {
     if (!user?.roles || user.roles.length === 0) return null;
     return {
       id: user.roles[0].id,
-      name: user.roles[0].nombre
+      name: user.roles[0].name
     };
   }, [user?.roles]);
 

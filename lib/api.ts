@@ -20,8 +20,8 @@ export interface RegisterRequest {
   firstName: string;
   lastName: string;
   email: string;
-  phone: string;
-  birthDate: string;
+  phone?: string; // Made optional
+  birthDate?: string; // Made optional
   roles: number[];
   password: string;
 }
@@ -36,15 +36,18 @@ export interface User {
   firstName: string;
   lastName: string;
   email: string;
-  phone: string;
-  birthDate: string;
+  phone?: string; // Made optional
+  birthDate?: string; // Made optional
   active: boolean;
+  clinic_id: number; // New field from backend
   roles: Role[];
+  Clinic: Clinic; // New nested object from backend
 }
 
 export interface Role {
   id: number;
-  nombre: string;
+  name: string; // Changed from 'nombre' to 'name' for consistency
+  description?: string; // Added description field from backend
 }
 
 export interface Permission {
@@ -58,6 +61,43 @@ export interface RolePermission {
   id: number;
   roleId: number;
   permissionId: number;
+}
+
+export interface ClinicUsersResponse {
+  clinic: {
+    clinic_id: number;
+    clinic_name: string;
+  };
+  users: ClinicUser[];
+}
+
+export interface ClinicUser {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  birthDate: string;
+  active: boolean;
+  roles: Role[];
+}
+
+export interface Clinic {
+  clinic_id: number;
+  clinic_name: string;
+  phone?: string;
+  address?: string;
+  email?: string;
+}
+
+export interface ClinicWithUsers extends Clinic {
+  users: Array<{
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    active: boolean;
+  }>;
 }
 
 // API Client class
@@ -114,11 +154,15 @@ class ApiClient {
     // Note: Cache-busting headers removed due to CORS restrictions
     // Using timestamp query parameter instead for GET requests
 
-    // Don't add Authorization header to login/register endpoints, but allow it for auth/me
-    if (this.token && !endpoint.includes('/auth/login') && !endpoint.includes('/auth/register')) {
+    // Don't add Authorization header to login endpoint, but require it for register and other endpoints
+    if (this.token && !endpoint.includes('/auth/login')) {
       headers.Authorization = `Bearer ${this.token}`;
       console.log('Adding Authorization header for endpoint:', endpoint);
-    } else {
+    } else if (endpoint.includes('/auth/register') && !this.token) {
+      // Register endpoint now requires authentication
+      console.log('Register endpoint requires authentication but no token found');
+      return { error: 'Authentication required for user registration' };
+    } else if (!endpoint.includes('/auth/login')) {
       console.log('No Authorization header for endpoint:', endpoint, 'token:', this.token ? 'exists' : 'missing');
     }
 
@@ -164,6 +208,11 @@ class ApiClient {
   }
 
   async register(userData: RegisterRequest): Promise<ApiResponse<User>> {
+    // Ensure we have a token for registration
+    if (!this.token) {
+      return { error: 'Authentication required for user registration. Please login first.' };
+    }
+    
     return this.request<User>(API_ENDPOINTS.auth.register, {
       method: 'POST',
       body: JSON.stringify(userData),
@@ -183,6 +232,14 @@ class ApiClient {
     this.refreshToken();
     console.log('Getting current user, token:', this.token ? 'exists' : 'missing');
     return this.request<User>(API_ENDPOINTS.auth.me);
+  }
+
+  async getClinic(clinicId: number): Promise<ApiResponse<ClinicWithUsers>> {
+    return this.request<ClinicWithUsers>(API_ENDPOINTS.clinic.get(clinicId));
+  }
+
+  async getClinicUsers(clinicId: number): Promise<ApiResponse<ClinicUsersResponse>> {
+    return this.request<ClinicUsersResponse>(API_ENDPOINTS.clinic.getUsers(clinicId));
   }
 
   // Generic methods for other endpoints
@@ -218,6 +275,11 @@ export const authApi = {
   logout: () => apiClient.logout(),
   getCurrentUser: () => apiClient.getCurrentUser(),
   register: (userData: RegisterRequest) => apiClient.register(userData),
+};
+
+export const clinicApi = {
+  getClinic: (clinicId: number) => apiClient.getClinic(clinicId),
+  getClinicUsers: (clinicId: number) => apiClient.getClinicUsers(clinicId),
 };
 
 // Permissions API
