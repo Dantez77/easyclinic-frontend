@@ -26,8 +26,9 @@ export const API_ENDPOINTS = {
   users: {
     list: '/users',
     create: '/users',
-    update: (id: string) => `/users/${id}`,
-    delete: (id: string) => `/users/${id}`,
+    update: (id: string) => `/user/${id}`,
+    delete: (id: string) => `/user/${id}`,
+    changePassword: (id: string) => `/user/${id}/change-password`,
   },
   clinic: {
     get: (id: number) => `/clinic/${id}`,

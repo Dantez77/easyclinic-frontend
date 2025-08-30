@@ -8,6 +8,7 @@ import { AuthProvider } from "@/lib/auth-context"
 import { PermissionsProvider } from "@/lib/permissions-context"
 import { RouteGuard } from "@/components/route-guard"
 import { AppLayout } from "@/components/app-layout"
+import { Toaster } from "@/components/ui/toaster"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -37,6 +38,7 @@ export default function RootLayout({
                 <RouteGuard>
                   <AppLayout>
                     {children}
+                    <Toaster />
                   </AppLayout>
                 </RouteGuard>
               </PermissionsProvider>

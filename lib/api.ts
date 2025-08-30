@@ -26,6 +26,29 @@ export interface RegisterRequest {
   password: string;
 }
 
+export interface UpdateUserRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  birthDate: string;
+  active: boolean;
+}
+
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+}
+
+export interface ChangePasswordResponse {
+  message: string;
+}
+
+export interface UpdateUserResponse {
+  message: string;
+  user: User;
+}
+
 export interface LoginResponse {
   token: string;
   user: User;
@@ -185,12 +208,20 @@ class ApiClient {
     if (this.token && !endpoint.includes('/auth/login')) {
       headers.Authorization = `Bearer ${this.token}`;
       console.log('Adding Authorization header for endpoint:', endpoint);
+      console.log('Token preview:', this.token.substring(0, 20) + '...');
     } else if (endpoint.includes('/auth/register') && !this.token) {
       // Register endpoint now requires authentication
       console.log('Register endpoint requires authentication but no token found');
       return { error: 'Authentication required for user registration' };
     } else if (!endpoint.includes('/auth/login')) {
       console.log('No Authorization header for endpoint:', endpoint, 'token:', this.token ? 'exists' : 'missing');
+    }
+
+    console.log('Making request to:', url);
+    console.log('Request headers:', headers);
+    console.log('Request method:', options.method || 'GET');
+    if (options.body) {
+      console.log('Request body:', options.body);
     }
 
     try {
@@ -200,8 +231,60 @@ class ApiClient {
       });
 
       if (!response.ok && response.status !== 304) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        let errorMessage = `HTTP error! status: ${response.status}`;
+        
+        // Provide specific error messages for common status codes
+        switch (response.status) {
+          case 400:
+            errorMessage = 'Bad Request - Invalid data provided';
+            break;
+          case 401:
+            errorMessage = 'Unauthorized - Please log in again';
+            break;
+          case 403:
+            errorMessage = 'Forbidden - You do not have permission to perform this action';
+            break;
+          case 404:
+            errorMessage = 'Not Found - The requested resource was not found';
+            break;
+          case 409:
+            errorMessage = 'Conflict - The resource already exists or conflicts with current state';
+            break;
+          case 422:
+            errorMessage = 'Unprocessable Entity - Validation failed';
+            break;
+          case 500:
+            errorMessage = 'Internal Server Error - Please try again later';
+            break;
+          default:
+            errorMessage = `HTTP error! status: ${response.status}`;
+        }
+        
+        try {
+          const errorData = await response.json();
+          if (errorData.message) {
+            errorMessage = errorData.message;
+          } else if (errorData.error) {
+            errorMessage = errorData.error;
+          } else if (typeof errorData === 'string') {
+            errorMessage = errorData;
+          } else if (Object.keys(errorData).length > 0) {
+            errorMessage = JSON.stringify(errorData);
+          }
+        } catch (parseError) {
+          // If we can't parse the response as JSON, try to get text
+          try {
+            const errorText = await response.text();
+            if (errorText && errorText.trim()) {
+              errorMessage = errorText;
+            }
+          } catch (textError) {
+            // If all else fails, use the status text
+            errorMessage = response.statusText || errorMessage;
+          }
+        }
+        
+        throw new Error(errorMessage);
       }
 
       // Handle 304 Not Modified - return cached data or empty response
@@ -211,9 +294,15 @@ class ApiClient {
         return { error: 'Cached response, using fallback permissions' };
       }
 
+      // Handle empty responses (like 204 No Content)
+      if (response.status === 204 || response.headers.get('content-length') === '0') {
+        return { data: null as T };
+      }
+
       const data = await response.json();
       return { data };
     } catch (error) {
+      console.error('API request error:', error);
       return {
         error: error instanceof Error ? error.message : 'An unknown error occurred',
       };
@@ -280,6 +369,43 @@ class ApiClient {
     });
   }
 
+  async updateUser(userId: string, userData: UpdateUserRequest): Promise<ApiResponse<UpdateUserResponse>> {
+    // Refresh token from localStorage before making request
+    this.refreshToken();
+    
+    console.log('updateUser called with:', { userId, userData });
+    console.log('API endpoint:', API_ENDPOINTS.users.update(userId));
+    console.log('Current token exists:', !!this.token);
+    
+    const response = await this.request<UpdateUserResponse>(API_ENDPOINTS.users.update(userId), {
+      method: 'PUT',
+      body: JSON.stringify(userData),
+    });
+    
+    console.log('updateUser response:', response);
+    return response;
+  }
+
+  async changePassword(userId: string, passwordData: ChangePasswordRequest): Promise<ApiResponse<ChangePasswordResponse>> {
+    // Refresh token from localStorage before making request
+    this.refreshToken();
+    
+    const endpoint = API_ENDPOINTS.users.changePassword(userId);
+    const fullUrl = `${this.baseURL}${endpoint}`;
+    
+    console.log('changePassword - User ID:', userId);
+    console.log('changePassword - Full URL:', fullUrl);
+    console.log('changePassword - Token exists:', !!this.token);
+    
+    const response = await this.request<ChangePasswordResponse>(endpoint, {
+      method: 'PUT',
+      body: JSON.stringify(passwordData),
+    });
+    
+    console.log('changePassword response:', response);
+    return response;
+  }
+
   // Generic methods for other endpoints
   async get<T>(endpoint: string): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { method: 'GET' });
@@ -313,6 +439,8 @@ export const authApi = {
   logout: () => apiClient.logout(),
   getCurrentUser: () => apiClient.getCurrentUser(),
   register: (userData: RegisterRequest) => apiClient.register(userData),
+  updateUser: (userId: string, userData: UpdateUserRequest) => apiClient.updateUser(userId, userData),
+  changePassword: (userId: string, passwordData: ChangePasswordRequest) => apiClient.changePassword(userId, passwordData),
 };
 
 export const clinicApi = {

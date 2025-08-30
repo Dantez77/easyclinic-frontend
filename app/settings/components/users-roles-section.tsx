@@ -94,13 +94,73 @@ export function UsersRolesSection() {
     setIsEditUserOpen(true)
   }
 
-  const handleUpdateUser = () => {
+  const handleUpdateUser = async () => {
     if (selectedUser) {
-      // In a real implementation, this would call an API to update the user
-      // For now, just refresh the data
-      refreshClinicUsers()
-      setIsEditUserOpen(false)
-      setSelectedUser(null)
+      setIsLoadingAction(true)
+      
+      try {
+        // Validate required fields
+        if (!selectedUser.firstName.trim() || !selectedUser.lastName.trim() || !selectedUser.email.trim()) {
+          throw new Error('First name, last name, and email are required fields');
+        }
+
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(selectedUser.email)) {
+          throw new Error('Please enter a valid email address');
+        }
+
+        // Prepare the update data according to the API specification
+        const updateData = {
+          firstName: selectedUser.firstName.trim(),
+          lastName: selectedUser.lastName.trim(),
+          email: selectedUser.email.trim(),
+          phone: selectedUser.phone?.trim() || '',
+          birthDate: selectedUser.birthDate || '',
+          active: selectedUser.active
+        }
+
+        console.log('Starting user update...')
+        console.log('User ID:', selectedUser.id)
+        console.log('Update data:', updateData)
+        console.log('Current token exists:', !!authApi.updateUser)
+        
+        const response = await authApi.updateUser(selectedUser.id, updateData)
+
+        console.log('API response received:', response)
+
+        if (response.data) {
+          console.log('Update successful, refreshing user list...')
+          // Refresh the clinic users data to show the updated user
+          await refreshClinicUsers()
+          
+          // Close the dialog and reset
+          setIsEditUserOpen(false)
+          setSelectedUser(null)
+          
+          toast({
+            title: t("settings.users.editUser.success"),
+            description: `${selectedUser.firstName} ${selectedUser.lastName} has been updated successfully.`,
+          })
+        } else {
+          console.error('API Error Response:', response)
+          console.error('Response error:', response.error)
+          throw new Error(response.error || 'Failed to update user')
+        }
+      } catch (error) {
+        console.error('Error updating user:', error)
+        console.error('Error details:', {
+          message: error instanceof Error ? error.message : 'Unknown error',
+          stack: error instanceof Error ? error.stack : undefined
+        })
+        toast({
+          title: t("settings.users.editUser.error"),
+          description: error instanceof Error ? error.message : 'An unexpected error occurred',
+          variant: "destructive",
+        })
+      } finally {
+        setIsLoadingAction(false)
+      }
     }
   }
 
@@ -195,7 +255,7 @@ export function UsersRolesSection() {
           <CardContent className="p-6">
             <div className="text-center">
               <p className="text-destructive mb-4">{error}</p>
-              <Button onClick={refreshClinicUsers}>Retry</Button>
+              <Button onClick={refreshClinicUsers}>{t("settings.users.error.retry")}</Button>
             </div>
           </CardContent>
         </Card>
@@ -214,8 +274,8 @@ export function UsersRolesSection() {
         <Card>
           <CardContent className="p-6">
             <div className="text-center">
-              <p className="text-muted-foreground mb-4">No clinic users data available</p>
-              <Button onClick={refreshClinicUsers}>Refresh</Button>
+              <p className="text-muted-foreground mb-4">{t("settings.users.error.noData")}</p>
+              <Button onClick={refreshClinicUsers}>{t("settings.users.error.refresh")}</Button>
             </div>
           </CardContent>
         </Card>
@@ -538,21 +598,32 @@ export function UsersRolesSection() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Status</Label>
+                <Label htmlFor="edit-birthDate">{t("settings.users.form.birthDate")}</Label>
+                <Input
+                  id="edit-birthDate"
+                  type="date"
+                  value={selectedUser.birthDate || ''}
+                  onChange={(e) => setSelectedUser({...selectedUser, birthDate: e.target.value})}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>{t("settings.users.form.status")}</Label>
                 <Select value={selectedUser.active ? "active" : "inactive"} onValueChange={(value: 'active' | 'inactive') => setSelectedUser({...selectedUser, active: value === 'active'})}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
+                    <SelectItem value="active">{t("settings.users.status.active")}</SelectItem>
+                    <SelectItem value="inactive">{t("settings.users.status.inactive")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
           )}
           <DialogFooter>
-            <Button onClick={handleUpdateUser}>{t("settings.users.editUser.save")}</Button>
+            <Button onClick={handleUpdateUser} disabled={isLoadingAction}>
+              {isLoadingAction ? t("settings.users.editUser.saving") : t("settings.users.editUser.save")}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
