@@ -18,28 +18,48 @@ export function FinalDiagnosisCard({ finalDiagnosis, onFinalDiagnosisChange }: F
   const addSecondaryDiagnosis = (value: string) => {
     if (value.trim() && !finalDiagnosis.secondaryDiagnoses.includes(value.trim())) {
       onFinalDiagnosisChange({
-        secondaryDiagnoses: [...finalDiagnosis.secondaryDiagnoses, value.trim()]
+        secondaryDiagnoses: [...finalDiagnosis.secondaryDiagnoses, value.trim()],
+        secondaryDiagnosisStatuses: [...finalDiagnosis.secondaryDiagnosisStatuses, "suspected"]
       })
     }
   }
 
   const removeSecondaryDiagnosis = (index: number) => {
     onFinalDiagnosisChange({
-      secondaryDiagnoses: finalDiagnosis.secondaryDiagnoses.filter((_, i) => i !== index)
+      secondaryDiagnoses: finalDiagnosis.secondaryDiagnoses.filter((_, i) => i !== index),
+      secondaryDiagnosisStatuses: finalDiagnosis.secondaryDiagnosisStatuses.filter((_, i) => i !== index)
+    })
+  }
+
+  const updateSecondaryDiagnosisStatus = (index: number, status: "confirmed" | "suspected" | "ruled-out") => {
+    const newStatuses = [...finalDiagnosis.secondaryDiagnosisStatuses]
+    newStatuses[index] = status
+    onFinalDiagnosisChange({
+      secondaryDiagnosisStatuses: newStatuses
     })
   }
 
   const addDifferentialDiagnosis = (value: string) => {
     if (value.trim() && !finalDiagnosis.differentialDiagnoses.includes(value.trim())) {
       onFinalDiagnosisChange({
-        differentialDiagnoses: [...finalDiagnosis.differentialDiagnoses, value.trim()]
+        differentialDiagnoses: [...finalDiagnosis.differentialDiagnoses, value.trim()],
+        differentialDiagnosisStatuses: [...finalDiagnosis.differentialDiagnosisStatuses, "suspected"]
       })
     }
   }
 
   const removeDifferentialDiagnosis = (index: number) => {
     onFinalDiagnosisChange({
-      differentialDiagnoses: finalDiagnosis.differentialDiagnoses.filter((_, i) => i !== index)
+      differentialDiagnoses: finalDiagnosis.differentialDiagnoses.filter((_, i) => i !== index),
+      differentialDiagnosisStatuses: finalDiagnosis.differentialDiagnosisStatuses.filter((_, i) => i !== index)
+    })
+  }
+
+  const updateDifferentialDiagnosisStatus = (index: number, status: "confirmed" | "suspected" | "ruled-out") => {
+    const newStatuses = [...finalDiagnosis.differentialDiagnosisStatuses]
+    newStatuses[index] = status
+    onFinalDiagnosisChange({
+      differentialDiagnosisStatuses: newStatuses
     })
   }
 
@@ -55,6 +75,32 @@ export function FinalDiagnosisCard({ finalDiagnosis, onFinalDiagnosisChange }: F
     onFinalDiagnosisChange({
       icd10Codes: finalDiagnosis.icd10Codes.filter((_, i) => i !== index)
     })
+  }
+
+  const getStatusBadgeVariant = (status: "confirmed" | "suspected" | "ruled-out") => {
+    switch (status) {
+      case "confirmed":
+        return "default"
+      case "suspected":
+        return "secondary"
+      case "ruled-out":
+        return "outline"
+      default:
+        return "secondary"
+    }
+  }
+
+  const getStatusText = (status: "confirmed" | "suspected" | "ruled-out") => {
+    switch (status) {
+      case "confirmed":
+        return "Confirmado"
+      case "suspected":
+        return "Sospechado"
+      case "ruled-out":
+        return "Descartado"
+      default:
+        return "Sospechado"
+    }
   }
 
   return (
@@ -75,6 +121,29 @@ export function FinalDiagnosisCard({ finalDiagnosis, onFinalDiagnosisChange }: F
             value={finalDiagnosis.primaryDiagnosis}
             onChange={(e) => onFinalDiagnosisChange({ primaryDiagnosis: e.target.value })}
           />
+          <div className="flex gap-2">
+            <Badge 
+              variant={finalDiagnosis.primaryDiagnosisStatus === "confirmed" ? "default" : "secondary"}
+              className="cursor-pointer"
+              onClick={() => onFinalDiagnosisChange({ primaryDiagnosisStatus: "confirmed" })}
+            >
+              Confirmado
+            </Badge>
+            <Badge 
+              variant={finalDiagnosis.primaryDiagnosisStatus === "suspected" ? "default" : "secondary"}
+              className="cursor-pointer"
+              onClick={() => onFinalDiagnosisChange({ primaryDiagnosisStatus: "suspected" })}
+            >
+              Sospechado
+            </Badge>
+            <Badge 
+              variant={finalDiagnosis.primaryDiagnosisStatus === "ruled-out" ? "default" : "secondary"}
+              className="cursor-pointer"
+              onClick={() => onFinalDiagnosisChange({ primaryDiagnosisStatus: "ruled-out" })}
+            >
+              Descartado
+            </Badge>
+          </div>
         </div>
 
         {/* Secondary Diagnoses */}
@@ -82,18 +151,43 @@ export function FinalDiagnosisCard({ finalDiagnosis, onFinalDiagnosisChange }: F
           <Label className="text-sm font-medium">Diagnósticos Secundarios</Label>
           <div className="space-y-2">
             {finalDiagnosis.secondaryDiagnoses.map((diagnosis, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <Badge variant="outline" className="flex-1">
-                  {diagnosis}
-                </Badge>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => removeSecondaryDiagnosis(index)}
-                  className="h-6 w-6 p-0"
-                >
-                  <X className="w-3 h-3" />
-                </Button>
+              <div key={index} className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="flex-1">
+                    {diagnosis}
+                  </Badge>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeSecondaryDiagnosis(index)}
+                    className="h-6 w-6 p-0"
+                  >
+                    <X className="w-3 h-3" />
+                  </Button>
+                </div>
+                <div className="flex gap-2">
+                  <Badge 
+                    variant={finalDiagnosis.secondaryDiagnosisStatuses[index] === "confirmed" ? "default" : "secondary"}
+                    className="cursor-pointer text-xs"
+                    onClick={() => updateSecondaryDiagnosisStatus(index, "confirmed")}
+                  >
+                    Confirmado
+                  </Badge>
+                  <Badge 
+                    variant={finalDiagnosis.secondaryDiagnosisStatuses[index] === "suspected" ? "default" : "secondary"}
+                    className="cursor-pointer text-xs"
+                    onClick={() => updateSecondaryDiagnosisStatus(index, "suspected")}
+                  >
+                    Sospechado
+                  </Badge>
+                  <Badge 
+                    variant={finalDiagnosis.secondaryDiagnosisStatuses[index] === "ruled-out" ? "default" : "secondary"}
+                    className="cursor-pointer text-xs"
+                    onClick={() => updateSecondaryDiagnosisStatus(index, "ruled-out")}
+                  >
+                    Descartado
+                  </Badge>
+                </div>
               </div>
             ))}
             <div className="flex gap-2">
@@ -127,18 +221,43 @@ export function FinalDiagnosisCard({ finalDiagnosis, onFinalDiagnosisChange }: F
           <Label className="text-sm font-medium">Diagnósticos Diferenciales</Label>
           <div className="space-y-2">
             {finalDiagnosis.differentialDiagnoses.map((diagnosis, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <Badge variant="secondary" className="flex-1">
-                  {diagnosis}
-                </Badge>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => removeDifferentialDiagnosis(index)}
-                  className="h-6 w-6 p-0"
-                >
-                  <X className="w-3 h-3" />
-                </Button>
+              <div key={index} className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary" className="flex-1">
+                    {diagnosis}
+                  </Badge>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeDifferentialDiagnosis(index)}
+                    className="h-6 w-6 p-0"
+                  >
+                    <X className="w-3 h-3" />
+                  </Button>
+                </div>
+                <div className="flex gap-2">
+                  <Badge 
+                    variant={finalDiagnosis.differentialDiagnosisStatuses[index] === "confirmed" ? "default" : "secondary"}
+                    className="cursor-pointer text-xs"
+                    onClick={() => updateDifferentialDiagnosisStatus(index, "confirmed")}
+                  >
+                    Confirmado
+                  </Badge>
+                  <Badge 
+                    variant={finalDiagnosis.differentialDiagnosisStatuses[index] === "suspected" ? "default" : "secondary"}
+                    className="cursor-pointer text-xs"
+                    onClick={() => updateDifferentialDiagnosisStatus(index, "suspected")}
+                  >
+                    Sospechado
+                  </Badge>
+                  <Badge 
+                    variant={finalDiagnosis.differentialDiagnosisStatuses[index] === "ruled-out" ? "default" : "secondary"}
+                    className="cursor-pointer text-xs"
+                    onClick={() => updateDifferentialDiagnosisStatus(index, "ruled-out")}
+                  >
+                    Descartado
+                  </Badge>
+                </div>
               </div>
             ))}
             <div className="flex gap-2">

@@ -2,9 +2,6 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 
 // Import custom hook
 import { useConsultation } from "./hooks/use-consultation"
@@ -141,45 +138,7 @@ export default function PatientConsultationPage() {
                       onCalculateBMI={calculateBMI}
                     />
 
-                    {/* Clinical Diagnosis */}
-                    <div className="border-main-200 dark:border-main-800 border rounded-lg p-6">
-                      <h3 className="text-primary dark:text-main-400 font-semibold mb-4">{t('consultation.clinicalDiagnosis.title')}</h3>
-                      <div className="space-y-4">
-                        <div>
-                          <Label htmlFor="diagnosis">{t('consultation.clinicalDiagnosis.search')}</Label>
-                          <Input
-                            id="diagnosis"
-                            placeholder={t('consultation.clinicalDiagnosis.searchPlaceholder')}
-                            className="border-main-200 dark:border-main-800"
-                            value={formData.diagnosis}
-                            onChange={(e) => updateFormData({ diagnosis: e.target.value })}
-                          />
-                        </div>
-                        <div className="flex gap-2">
-                          <Badge 
-                            variant={formData.diagnosisStatus === "confirmed" ? "default" : "secondary"}
-                            className="cursor-pointer"
-                            onClick={() => updateFormData({ diagnosisStatus: "confirmed" })}
-                          >
-                            {t('consultation.clinicalDiagnosis.confirmed')}
-                          </Badge>
-                          <Badge 
-                            variant={formData.diagnosisStatus === "suspected" ? "default" : "secondary"}
-                            className="cursor-pointer"
-                            onClick={() => updateFormData({ diagnosisStatus: "suspected" })}
-                          >
-                            {t('consultation.clinicalDiagnosis.suspected')}
-                          </Badge>
-                          <Badge 
-                            variant={formData.diagnosisStatus === "ruled-out" ? "default" : "secondary"}
-                            className="cursor-pointer"
-                            onClick={() => updateFormData({ diagnosisStatus: "ruled-out" })}
-                          >
-                            {t('consultation.clinicalDiagnosis.ruledOut')}
-                          </Badge>
-                        </div>
-                      </div>
-                    </div>
+
 
                     <PrescriptionCard
                       prescriptions={formData.prescriptions}

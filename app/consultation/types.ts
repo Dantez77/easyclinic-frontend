@@ -122,8 +122,11 @@ export interface SuggestedDiagnosis {
 
 export interface FinalDiagnosis {
   primaryDiagnosis: string
+  primaryDiagnosisStatus: "confirmed" | "suspected" | "ruled-out"
   secondaryDiagnoses: string[]
+  secondaryDiagnosisStatuses: ("confirmed" | "suspected" | "ruled-out")[]
   differentialDiagnoses: string[]
+  differentialDiagnosisStatuses: ("confirmed" | "suspected" | "ruled-out")[]
   icd10Codes: string[]
   clinicalImpression: string
   treatmentPlan: string
@@ -131,30 +134,13 @@ export interface FinalDiagnosis {
   notes: string
 }
 
-export interface Consultation {
-  id: string
-  date: string
-  doctor: string
-  specialty: string
-  reason: string
-  symptoms: string[]
-  diagnosis: string
-  treatment: string
-  notes: string
-  followUp?: string
-  status: "Programada" | "En Proceso" | "Completada" | "Cancelada"
-  prescriptions: Prescription[]
-  labTests: LabTest[]
-  vitalSigns: VitalSigns
-}
+
 
 export interface ConsultationForm {
   chiefComplaint: string
   symptoms: string[]
   symptomsNotes: string
   vitalSigns: VitalSigns
-  diagnosis: string
-  diagnosisStatus: "confirmed" | "suspected" | "ruled-out"
   prescriptions: Prescription[]
   selectedTests: string[]
   labNotes: string

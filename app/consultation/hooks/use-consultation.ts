@@ -26,8 +26,6 @@ export const useConsultation = () => {
       height: "",
       bmi: "",
     },
-    diagnosis: "",
-    diagnosisStatus: "suspected",
     prescriptions: [{ 
       medication: "", 
       dosage: "", 
@@ -63,8 +61,11 @@ export const useConsultation = () => {
     },
     finalDiagnosis: {
       primaryDiagnosis: "",
+      primaryDiagnosisStatus: "suspected",
       secondaryDiagnoses: [],
+      secondaryDiagnosisStatuses: [],
       differentialDiagnoses: [],
+      differentialDiagnosisStatuses: [],
       icd10Codes: [],
       clinicalImpression: "",
       treatmentPlan: "",
