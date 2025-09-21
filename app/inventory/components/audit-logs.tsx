@@ -8,6 +8,25 @@ interface AuditLogsProps {
   auditLogs: any[]
 }
 
+// Helper function to get user-friendly action names
+function getActionDisplayName(action: string): string {
+  const actionMap: Record<string, string> = {
+    'CREATED': '✅ Artículo Creado',
+    'UPDATED': '✏️ Artículo Actualizado',
+    'DELETED': '🗑️ Artículo Eliminado',
+    'STOCK_ADDED': '📈 Stock Agregado',
+    'STOCK_REMOVED': '📉 Stock Retirado',
+    'STOCK_SET': '🎯 Stock Establecido',
+    'BULK_STOCK_ADDED': '📈 Stock Agregado (Lote)',
+    'BULK_STOCK_REMOVED': '📉 Stock Retirado (Lote)',
+    'BULK_STOCK_SET': '🎯 Stock Establecido (Lote)',
+    'STOCK_UPDATE': '📊 Stock Actualizado', // Fallback
+    'BULK_STOCK_UPDATE': '📊 Stock Actualizado (Lote)' // Fallback
+  };
+  
+  return actionMap[action] || action;
+}
+
 export function AuditLogs({ auditLogs }: AuditLogsProps) {
   return (
     <Card>
@@ -27,11 +46,16 @@ export function AuditLogs({ auditLogs }: AuditLogsProps) {
               <div className="flex-1">
                 <div className="flex items-start justify-between">
                   <div>
-                    <h4 className="font-medium text-foreground">{log.action}</h4>
+                    <h4 className="font-medium text-foreground">{getActionDisplayName(log.action)}</h4>
                     <p className="text-sm text-muted-foreground">{log.itemName}</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {log.previousValue} → {log.newValue}
-                    </p>
+                    {log.previousValue && log.newValue && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {log.action.includes('STOCK_') || log.action.includes('BULK_STOCK_') 
+                          ? `Stock: ${log.previousValue} → ${log.newValue} unidades`
+                          : `${log.previousValue} → ${log.newValue}`
+                        }
+                      </p>
+                    )}
                     {log.reason && <p className="text-xs text-muted-foreground">Razón: {log.reason}</p>}
                   </div>
                   <div className="text-right text-xs text-muted-foreground">

@@ -19,7 +19,7 @@ export function CategoriesChart({ categories, inventoryItems, totalStockValue }:
         <div className="space-y-4">
           {categories.map((category) => {
             const categoryItems = inventoryItems.filter((item) => item.category === category)
-            const categoryValue = categoryItems.reduce((sum, item) => sum + item.totalValue, 0)
+            const categoryValue = categoryItems.reduce((sum, item) => sum + item.total_value, 0)
             const percentage = (categoryValue / totalStockValue) * 100
 
             return (

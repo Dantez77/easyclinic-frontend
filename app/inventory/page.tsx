@@ -1,8 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useInventory } from "./hooks/use-inventory"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { AlertTriangle } from "lucide-react"
+import { useInventoryStore } from "@/lib/inventory-store"
 import { InventoryHeader } from "./components/inventory-header"
 import { DashboardMetrics } from "./components/dashboard-metrics"
 import { AlertsSection } from "./components/alerts-section"
@@ -16,89 +18,152 @@ import { PurchaseOrders } from "./components/purchase-orders"
 import { AddItemDialog } from "./components/add-item-dialog"
 import { StockUpdateDialog } from "./components/stock-update-dialog"
 import { ViewItemSheet } from "./components/view-item-sheet"
+import { EditItemDialog } from "./components/edit-item-dialog"
+import { BarcodeScanner } from "./components/barcode-scanner"
+import { ReportsDashboard } from "./components/reports-dashboard"
+import { LoadingSpinner } from "@/components/loading-spinner"
 
 export default function InventoryPage() {
   const {
     // State
-    inventoryItems,
-    auditLogs,
-    purchaseOrders,
-    searchTerm,
-    categoryFilter,
-    statusFilter,
-    departmentFilter,
+    items,
     selectedItems,
-    currentPage,
+    filters,
+    pagination,
+    alerts,
+    purchaseOrders,
+    auditLogs,
+    loading,
+    error,
     activeTab,
+    modals,
+    currentItem,
     
     // Computed values
     categories,
     departments,
-    filteredItems,
-    totalPages,
-    paginatedItems,
+    locations,
     totalStockValue,
     lowStockItems,
     expiringItems,
     controlledItems,
     
     // Actions
-    setSearchTerm,
-    setCategoryFilter,
-    setStatusFilter,
-    setDepartmentFilter,
-    setCurrentPage,
+    fetchItems,
+    fetchAlerts,
+    fetchPurchaseOrders,
+    fetchAuditLogs,
+    createItem,
+    updateItem,
+    updateStock,
+    deleteItem,
+    bulkDeleteItems,
+    exportInventory,
+    setFilters,
+    setPagination,
+    selectAllItems,
+    selectItem,
     setActiveTab,
-    handleSelectAll,
-    handleSelectItem,
-    handleAddItem,
-    handleUpdateStock,
-    handleDeleteItem,
-    handleBulkDelete,
-    handleExport,
-    handlePrintBarcode,
-  } = useInventory()
+    openModal,
+    closeModal,
+    setCurrentItem,
+    clearError,
+  } = useInventoryStore()
 
-  // Dialog states
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
-  const [isStockUpdateDialogOpen, setIsStockUpdateDialogOpen] = useState(false)
-  const [isViewSheetOpen, setIsViewSheetOpen] = useState(false)
-  const [updatingStockItem, setUpdatingStockItem] = useState<any>(null)
-  const [viewingItem, setViewingItem] = useState<any>(null)
+  // Initialize data on component mount
+  useEffect(() => {
+    fetchItems()
+    fetchAlerts()
+  }, [fetchItems, fetchAlerts])
+
+  // Fetch data based on active tab
+  useEffect(() => {
+    switch (activeTab) {
+      case 'audit':
+        fetchAuditLogs()
+        break
+      case 'orders':
+        fetchPurchaseOrders()
+        break
+    }
+  }, [activeTab, fetchAuditLogs, fetchPurchaseOrders])
 
   const handleViewItem = (item: any) => {
-    setViewingItem(item)
-    setIsViewSheetOpen(true)
+    setCurrentItem(item)
+    openModal('viewItem')
   }
 
   const handleUpdateStockItem = (item: any) => {
-    setUpdatingStockItem(item)
-    setIsStockUpdateDialogOpen(true)
+    setCurrentItem(item)
+    openModal('updateStock')
   }
 
   const handleStockUpdate = (action: "add" | "remove" | "set", quantity: number, reason: string, batchNumber?: string, expiryDate?: string) => {
-    if (updatingStockItem) {
-      handleUpdateStock(updatingStockItem.id, action, quantity, reason, batchNumber, expiryDate)
+    if (currentItem) {
+      updateStock(currentItem.id, action, quantity, reason, batchNumber, expiryDate)
     }
   }
 
   const handleAddNewItem = (newItem: any) => {
-    handleAddItem(newItem)
+    createItem(newItem)
+  }
+
+  const handleEditItem = (item: any) => {
+    setCurrentItem(item)
+    openModal('editItem')
+  }
+
+  const handleEditItemSubmit = (itemId: string, updates: any) => {
+    updateItem(itemId, updates)
+  }
+
+  const handleBulkDelete = () => {
+    if (selectedItems.length > 0) {
+      bulkDeleteItems(selectedItems, 'Eliminación en lote')
+    }
+  }
+
+  const handlePrintBarcode = async (item: any) => {
+    // TODO: Implement barcode printing with inventoryAPI
+    console.log('Print barcode for:', item.name)
+  }
+
+  if (loading && items.length === 0) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    )
   }
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Error Display */}
+      {error && (
+        <Alert variant="destructive" className="mx-4 mt-4">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            {error}
+            <button onClick={clearError} className="ml-2 underline">
+              Dismiss
+            </button>
+          </AlertDescription>
+        </Alert>
+      )}
+
       <InventoryHeader
-        itemCount={filteredItems.length}
-        onExport={handleExport}
-        onAddItem={() => setIsAddDialogOpen(true)}
+        itemCount={items.length}
+        onExport={() => exportInventory('csv')}
+        onAddItem={() => openModal('addItem')}
+        onScanBarcode={() => openModal('scanner' as any)}
       />
 
       <div className="max-w-7xl mx-auto p-4 lg:p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5">
             <TabsTrigger value="inventory">Inventario</TabsTrigger>
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+            <TabsTrigger value="reports">Reportes</TabsTrigger>
             <TabsTrigger value="audit">Auditoría</TabsTrigger>
             <TabsTrigger value="orders">Órdenes</TabsTrigger>
           </TabsList>
@@ -114,7 +179,7 @@ export default function InventoryPage() {
             <AlertsSection lowStockItems={lowStockItems} expiringItems={expiringItems} />
             <CategoriesChart
               categories={categories}
-              inventoryItems={inventoryItems}
+              inventoryItems={items}
               totalStockValue={totalStockValue}
             />
           </TabsContent>
@@ -122,14 +187,14 @@ export default function InventoryPage() {
           {/* Inventory Tab */}
           <TabsContent value="inventory" className="space-y-6">
             <InventoryFilters
-              searchTerm={searchTerm}
-              categoryFilter={categoryFilter}
-              statusFilter={statusFilter}
-              departmentFilter={departmentFilter}
-              onSearchChange={setSearchTerm}
-              onCategoryChange={setCategoryFilter}
-              onStatusChange={setStatusFilter}
-              onDepartmentChange={setDepartmentFilter}
+              searchTerm={filters.search}
+              categoryFilter={filters.category}
+              statusFilter={filters.status}
+              departmentFilter={filters.department}
+              onSearchChange={(search) => setFilters({ search })}
+              onCategoryChange={(category) => setFilters({ category })}
+              onStatusChange={(status) => setFilters({ status })}
+              onDepartmentChange={(department) => setFilters({ department })}
               categories={categories}
               departments={departments}
             />
@@ -139,7 +204,7 @@ export default function InventoryPage() {
               onPrintCodes={() => {
                 // Handle bulk print codes
                 selectedItems.forEach(itemId => {
-                  const item = inventoryItems.find(i => i.id === itemId)
+                  const item = items.find(i => i.id === itemId)
                   if (item) handlePrintBarcode(item)
                 })
               }}
@@ -147,26 +212,29 @@ export default function InventoryPage() {
             />
 
             <InventoryTable
-              items={paginatedItems}
+              items={items}
               selectedItems={selectedItems}
-              onSelectAll={handleSelectAll}
-              onSelectItem={handleSelectItem}
+              onSelectAll={selectAllItems}
+              onSelectItem={selectItem}
               onViewItem={handleViewItem}
               onUpdateStock={handleUpdateStockItem}
-              onEditItem={() => {
-                // TODO: Implement edit functionality
-              }}
+              onEditItem={handleEditItem}
               onPrintBarcode={handlePrintBarcode}
-              onDeleteItem={handleDeleteItem}
+              onDeleteItem={(itemId) => deleteItem(itemId, 'Eliminado por usuario')}
             />
 
             <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              totalItems={filteredItems.length}
-              itemsPerPage={10}
-              onPageChange={setCurrentPage}
+              currentPage={pagination.page}
+              totalPages={pagination.totalPages}
+              totalItems={pagination.total}
+              itemsPerPage={pagination.limit}
+              onPageChange={(page) => setPagination({ page })}
             />
+          </TabsContent>
+
+          {/* Reports Tab */}
+          <TabsContent value="reports" className="space-y-6">
+            <ReportsDashboard />
           </TabsContent>
 
           {/* Audit Tab */}
@@ -181,29 +249,50 @@ export default function InventoryPage() {
         </Tabs>
       </div>
 
+      {/* Loading Overlay */}
+      {loading && (
+        <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
+          <LoadingSpinner />
+        </div>
+      )}
+
       {/* Dialogs and Sheets */}
       <AddItemDialog
-        open={isAddDialogOpen}
-        onOpenChange={setIsAddDialogOpen}
+        open={modals.addItem}
+        onOpenChange={() => closeModal('addItem')}
         onAddItem={handleAddNewItem}
       />
 
       <StockUpdateDialog
-        open={isStockUpdateDialogOpen}
-        onOpenChange={setIsStockUpdateDialogOpen}
-        item={updatingStockItem}
+        open={modals.updateStock}
+        onOpenChange={() => closeModal('updateStock')}
+        item={currentItem}
         onUpdateStock={handleStockUpdate}
       />
 
       <ViewItemSheet
-        open={isViewSheetOpen}
-        onOpenChange={setIsViewSheetOpen}
-        item={viewingItem}
+        open={modals.viewItem}
+        onOpenChange={() => closeModal('viewItem')}
+        item={currentItem}
         onUpdateStock={handleUpdateStockItem}
-        onEditItem={() => {
-          // TODO: Implement edit functionality
-        }}
+        onEditItem={handleEditItem}
         onPrintBarcode={handlePrintBarcode}
+      />
+
+      <EditItemDialog
+        open={modals.editItem}
+        onOpenChange={() => closeModal('editItem')}
+        item={currentItem}
+        onEditItem={handleEditItemSubmit}
+      />
+
+      <BarcodeScanner
+        open={modals.scanner || false}
+        onOpenChange={(open) => open ? openModal('scanner' as any) : closeModal('scanner' as any)}
+        onItemFound={(item) => {
+          setCurrentItem(item)
+          openModal('viewItem')
+        }}
       />
     </div>
   )

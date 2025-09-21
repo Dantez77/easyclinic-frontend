@@ -92,30 +92,30 @@ export function ViewItemSheet({
                   <div>
                     <span className="text-sm text-muted-foreground">Stock Actual:</span>
                     <p className="font-bold text-lg">
-                      {item.currentStock} {item.unitOfMeasure}
+                      {item.current_stock} {item.unit_of_measure}
                     </p>
                   </div>
                   <div>
                     <span className="text-sm text-muted-foreground">Stock Mínimo:</span>
                     <p className="font-medium">
-                      {item.minThreshold} {item.unitOfMeasure}
+                      {item.min_threshold} {item.unit_of_measure}
                     </p>
                   </div>
                   <div>
                     <span className="text-sm text-muted-foreground">Stock Máximo:</span>
                     <p className="font-medium">
-                      {item.maxThreshold} {item.unitOfMeasure}
+                      {item.max_threshold} {item.unit_of_measure}
                     </p>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <span className="text-sm text-muted-foreground">Costo Unitario:</span>
-                    <p className="font-medium">${item.unitCost.toLocaleString()}</p>
+                    <p className="font-medium">${item.unit_cost.toLocaleString()}</p>
                   </div>
                   <div>
                     <span className="text-sm text-muted-foreground">Valor Total:</span>
-                    <p className="font-bold text-green-600">${item.totalValue.toLocaleString()}</p>
+                    <p className="font-bold text-green-600">${item.total_value.toLocaleString()}</p>
                   </div>
                 </div>
               </div>
@@ -135,18 +135,18 @@ export function ViewItemSheet({
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <span className="text-sm text-muted-foreground">Número de Lote:</span>
-                    <p className="font-medium">{item.batchNumber}</p>
+                    <p className="font-medium">{item.batch_number}</p>
                   </div>
                   <div>
                     <span className="text-sm text-muted-foreground">Código de Barras:</span>
                     <p className="font-medium font-mono text-sm">{item.barcode}</p>
                   </div>
                 </div>
-                {item.expiryDate && (
+                {item.expiry_date && (
                   <div>
                     <span className="text-sm text-muted-foreground">Fecha de Vencimiento:</span>
                     <p className="font-medium">
-                      {format(new Date(item.expiryDate), "dd/MM/yyyy", { locale: es })}
+                      {format(new Date(item.expiry_date), "dd/MM/yyyy", { locale: es })}
                     </p>
                   </div>
                 )}
@@ -158,11 +158,11 @@ export function ViewItemSheet({
               <h4 className="font-medium text-foreground mb-3">Cumplimiento y Seguridad</h4>
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <Checkbox checked={item.controlledSubstance} disabled />
+                  <Checkbox checked={item.controlled_substance} disabled />
                   <span className="text-sm">Sustancia Controlada</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Checkbox checked={item.requiresPrescription} disabled />
+                  <Checkbox checked={item.requires_prescription} disabled />
                   <span className="text-sm">Requiere Receta Médica</span>
                 </div>
               </div>
@@ -175,12 +175,14 @@ export function ViewItemSheet({
                 <div className="flex justify-between">
                   <span className="text-sm text-muted-foreground">Fecha:</span>
                   <span className="text-sm font-medium">
-                    {format(new Date(item.lastUpdated), "dd/MM/yyyy", { locale: es })}
+                    {format(new Date(item.updated_at), "dd/MM/yyyy", { locale: es })}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm text-muted-foreground">Usuario:</span>
-                  <span className="text-sm font-medium">{item.updatedBy}</span>
+                  <span className="text-sm font-medium">
+                    {item.updater ? `${item.updater.firstName} ${item.updater.lastName}` : 'N/A'}
+                  </span>
                 </div>
               </div>
             </div>

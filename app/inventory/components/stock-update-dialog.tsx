@@ -1,13 +1,15 @@
 "use client"
 
 import { useState } from "react"
+import { useInventoryStore } from "@/lib/inventory-store"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Save } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Save, AlertTriangle } from "lucide-react"
 
 interface StockUpdateDialogProps {
   open: boolean
@@ -17,12 +19,13 @@ interface StockUpdateDialogProps {
 }
 
 export function StockUpdateDialog({ open, onOpenChange, item, onUpdateStock }: StockUpdateDialogProps) {
+  const { error, loading } = useInventoryStore()
   const [stockUpdate, setStockUpdate] = useState({
     action: "add" as "add" | "remove" | "set",
     quantity: 0,
     reason: "",
-    batchNumber: "",
-    expiryDate: "",
+    batch_number: "",
+    expiry_date: "",
   })
 
   const handleSubmit = () => {
@@ -30,15 +33,15 @@ export function StockUpdateDialog({ open, onOpenChange, item, onUpdateStock }: S
       stockUpdate.action,
       stockUpdate.quantity,
       stockUpdate.reason,
-      stockUpdate.batchNumber || undefined,
-      stockUpdate.expiryDate || undefined
+      stockUpdate.batch_number || undefined,
+      stockUpdate.expiry_date || undefined
     )
     setStockUpdate({
       action: "add",
       quantity: 0,
       reason: "",
-      batchNumber: "",
-      expiryDate: "",
+      batch_number: "",
+      expiry_date: "",
     })
     onOpenChange(false)
   }
@@ -52,11 +55,22 @@ export function StockUpdateDialog({ open, onOpenChange, item, onUpdateStock }: S
           <DialogTitle>Actualizar Stock</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
+          {/* Error Display */}
+          {error && (
+            <Alert variant="destructive">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+          
           <div className="p-4 bg-muted rounded-lg">
             <h4 className="font-medium">{item.name}</h4>
             <p className="text-sm text-muted-foreground">SKU: {item.sku}</p>
             <p className="text-sm text-muted-foreground">
-              Stock actual: {item.currentStock} {item.unitOfMeasure}
+              Stock actual: {item.current_stock} {item.unit_of_measure}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Mínimo recomendado: {item.min_threshold} {item.unit_of_measure}
             </p>
           </div>
 
@@ -86,6 +100,25 @@ export function StockUpdateDialog({ open, onOpenChange, item, onUpdateStock }: S
               value={stockUpdate.quantity}
               onChange={(e) => setStockUpdate({ ...stockUpdate, quantity: Number.parseInt(e.target.value) || 0 })}
             />
+            {/* Stock Preview */}
+            {stockUpdate.quantity > 0 && (
+              <div className="mt-2 p-2 bg-blue-50 rounded text-sm">
+                <span className="text-blue-800">
+                  Stock después de la operación: {
+                    stockUpdate.action === 'add' 
+                      ? item.current_stock + stockUpdate.quantity
+                      : stockUpdate.action === 'remove'
+                      ? Math.max(0, item.current_stock - stockUpdate.quantity)
+                      : stockUpdate.quantity
+                  } {item.unit_of_measure}
+                </span>
+                {(stockUpdate.action === 'remove' && (item.current_stock - stockUpdate.quantity) < item.min_threshold) && (
+                  <div className="text-yellow-600 mt-1">
+                    ⚠️ El stock quedará por debajo del mínimo recomendado
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div>
@@ -103,8 +136,8 @@ export function StockUpdateDialog({ open, onOpenChange, item, onUpdateStock }: S
               <Label htmlFor="newBatchNumber">Nuevo Lote (opcional)</Label>
               <Input
                 id="newBatchNumber"
-                value={stockUpdate.batchNumber}
-                onChange={(e) => setStockUpdate({ ...stockUpdate, batchNumber: e.target.value })}
+                value={stockUpdate.batch_number}
+                onChange={(e) => setStockUpdate({ ...stockUpdate, batch_number: e.target.value })}
                 placeholder="Número de lote"
               />
             </div>
@@ -113,8 +146,8 @@ export function StockUpdateDialog({ open, onOpenChange, item, onUpdateStock }: S
               <Input
                 id="newExpiryDate"
                 type="date"
-                value={stockUpdate.expiryDate}
-                onChange={(e) => setStockUpdate({ ...stockUpdate, expiryDate: e.target.value })}
+                value={stockUpdate.expiry_date}
+                onChange={(e) => setStockUpdate({ ...stockUpdate, expiry_date: e.target.value })}
               />
             </div>
           </div>
@@ -123,9 +156,9 @@ export function StockUpdateDialog({ open, onOpenChange, item, onUpdateStock }: S
             <Button variant="outline" onClick={() => onOpenChange(false)} className="bg-transparent">
               Cancelar
             </Button>
-            <Button onClick={handleSubmit} disabled={stockUpdate.quantity <= 0}>
+            <Button onClick={handleSubmit} disabled={stockUpdate.quantity <= 0 || !stockUpdate.reason.trim() || loading}>
               <Save className="w-4 h-4 mr-2" />
-              Actualizar Stock
+              {loading ? "Actualizando..." : "Actualizar Stock"}
             </Button>
           </div>
         </div>

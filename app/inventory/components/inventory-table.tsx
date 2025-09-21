@@ -82,9 +82,9 @@ export function InventoryTable({
                         <div className="font-medium text-foreground">{item.name}</div>
                         <div className="text-sm text-muted-foreground">{item.sku}</div>
                         <div className="text-xs text-muted-foreground md:hidden">
-                          Stock: {item.currentStock} {item.unitOfMeasure}
+                          Stock: {item.current_stock} {item.unit_of_measure}
                         </div>
-                        {item.controlledSubstance && (
+                        {item.controlled_substance && (
                           <Badge variant="destructive" className="text-xs mt-1">
                             Controlada
                           </Badge>
@@ -95,12 +95,12 @@ export function InventoryTable({
                   <td className="p-4 hidden md:table-cell">
                     <div className="text-sm">
                       <div className="font-medium text-foreground">
-                        {item.currentStock} {item.unitOfMeasure}
+                        {item.current_stock} {item.unit_of_measure}
                       </div>
                       <div className="text-muted-foreground">
-                        Mín: {item.minThreshold} | Máx: {item.maxThreshold}
+                        Mín: {item.min_threshold} | Máx: {item.max_threshold}
                       </div>
-                      {item.currentStock <= item.minThreshold && (
+                      {item.current_stock <= item.min_threshold && (
                         <div className="text-red-600 text-xs font-medium">¡Stock Bajo!</div>
                       )}
                     </div>
@@ -122,8 +122,8 @@ export function InventoryTable({
                   </td>
                   <td className="p-4 hidden lg:table-cell">
                     <div className="text-sm">
-                      <div className="font-medium text-foreground">${item.totalValue.toLocaleString()}</div>
-                      <div className="text-muted-foreground">${item.unitCost} c/u</div>
+                      <div className="font-medium text-foreground">${item.total_value.toLocaleString()}</div>
+                      <div className="text-muted-foreground">${item.unit_cost} c/u</div>
                     </div>
                   </td>
                   <td className="p-4">

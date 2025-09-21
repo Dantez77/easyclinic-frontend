@@ -35,9 +35,9 @@ export function AlertsSection({ lowStockItems, expiringItems }: AlertsSectionPro
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-bold text-red-600">
-                    {item.currentStock} / {item.minThreshold}
+                    {item.current_stock} / {item.min_threshold}
                   </p>
-                  <p className="text-xs text-muted-foreground">{item.unitOfMeasure}</p>
+                  <p className="text-xs text-muted-foreground">{item.unit_of_measure}</p>
                 </div>
               </div>
             ))}
@@ -64,15 +64,15 @@ export function AlertsSection({ lowStockItems, expiringItems }: AlertsSectionPro
                   {getCategoryIcon(item.category)}
                   <div>
                     <p className="font-medium text-sm">{item.name}</p>
-                    <p className="text-xs text-muted-foreground">Lote: {item.batchNumber}</p>
+                    <p className="text-xs text-muted-foreground">Lote: {item.batch_number}</p>
                   </div>
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-bold text-yellow-600">
-                    {item.expiryDate && format(new Date(item.expiryDate), "dd/MM/yyyy", { locale: es })}
+                    {item.expiry_date && format(new Date(item.expiry_date), "dd/MM/yyyy", { locale: es })}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {item.currentStock} {item.unitOfMeasure}
+                    {item.current_stock} {item.unit_of_measure}
                   </p>
                 </div>
               </div>

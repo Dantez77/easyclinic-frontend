@@ -1,15 +1,16 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Package, Download, Plus } from "lucide-react"
+import { Package, Download, Plus, Scan } from "lucide-react"
 
 interface InventoryHeaderProps {
   itemCount: number
   onExport: () => void
   onAddItem: () => void
+  onScanBarcode?: () => void
 }
 
-export function InventoryHeader({ itemCount, onExport, onAddItem }: InventoryHeaderProps) {
+export function InventoryHeader({ itemCount, onExport, onAddItem, onScanBarcode }: InventoryHeaderProps) {
   return (
     <div className="bg-card border-b border-main-200 dark:border-main-800 p-4 lg:p-6">
       <div className="max-w-7xl mx-auto">
@@ -30,6 +31,12 @@ export function InventoryHeader({ itemCount, onExport, onAddItem }: InventoryHea
               <Download className="w-4 h-4 mr-2" />
               <span className="hidden sm:inline">Exportar</span>
             </Button>
+            {onScanBarcode && (
+              <Button onClick={onScanBarcode} variant="outline" className="bg-transparent">
+                <Scan className="w-4 h-4 mr-2" />
+                <span className="hidden sm:inline">Escanear</span>
+              </Button>
+            )}
             <Button onClick={onAddItem}>
               <Plus className="w-4 h-4 mr-2" />
               <span className="hidden sm:inline">Nuevo </span>Artículo
