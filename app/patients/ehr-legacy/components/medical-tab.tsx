@@ -7,36 +7,22 @@ import { AlertTriangle, Heart, Plus } from "lucide-react"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
 import { getSeverityColor, getStatusColor } from "../utils/ehr-utils"
-import { useMedicalRecordsStore } from "@/lib/medical-records-store"
 import type { PatientEHR } from "../mocks/patient-data"
 
 interface MedicalTabProps {
   patientData: PatientEHR
-  patientId?: string
 }
 
-export function MedicalTab({ patientData, patientId }: MedicalTabProps) {
-  const { openModal } = useMedicalRecordsStore()
+export function MedicalTab({ patientData }: MedicalTabProps) {
   return (
     <div className="space-y-6">
       {/* Allergies */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5" />
-              Alergias
-            </CardTitle>
-            {patientId && (
-              <Button 
-                size="sm" 
-                onClick={() => openModal('addAllergy')}
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Agregar Alergia
-              </Button>
-            )}
-          </div>
+          <CardTitle className="flex items-center gap-2">
+            <AlertTriangle className="w-5 h-5" />
+            Alergias (Legacy)
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {patientData.allergies.length > 0 ? (
@@ -67,21 +53,10 @@ export function MedicalTab({ patientData, patientId }: MedicalTabProps) {
       {/* Chronic Conditions */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <Heart className="w-5 h-5" />
-              Condiciones Crónicas
-            </CardTitle>
-            {patientId && (
-              <Button 
-                size="sm" 
-                onClick={() => openModal('addDiagnosis')}
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Agregar Diagnóstico
-              </Button>
-            )}
-          </div>
+          <CardTitle className="flex items-center gap-2">
+            <Heart className="w-5 h-5" />
+            Condiciones Crónicas (Legacy)
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {patientData.chronicConditions.length > 0 ? (

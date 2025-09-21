@@ -149,8 +149,8 @@ export function EditPatientDialog({ open, onOpenChange, patient, onSave, onPatie
                     </Label>
                     <Input
                       id="firstName"
-                      value={patient.firstName}
-                      onChange={(e) => handleInputChange("firstName", e.target.value)}
+                      value={patient.name}
+                      onChange={(e) => handleInputChange("name", e.target.value)}
                       className="focus:ring-2 focus:ring-ring focus:border-ring border-input rounded-lg transition-all duration-200"
                     />
                   </div>
@@ -293,8 +293,8 @@ export function EditPatientDialog({ open, onOpenChange, patient, onSave, onPatie
                     </Label>
                     <Input
                       id="city"
-                      value={patient.city}
-                      onChange={(e) => handleInputChange("city", e.target.value)}
+                      value={patient.municipality || ''}
+                      onChange={(e) => handleInputChange("municipality", e.target.value)}
                       className="focus:ring-2 focus:ring-ring focus:border-ring border-input rounded-lg transition-all duration-200"
                     />
                   </div>

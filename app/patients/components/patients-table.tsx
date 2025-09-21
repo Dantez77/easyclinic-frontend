@@ -59,7 +59,7 @@ export function PatientsTable({
                 <th className="p-4 text-left text-sm font-medium text-foreground hidden lg:table-cell">Ubicación</th>
                 <th className="p-4 text-left text-sm font-medium text-foreground hidden sm:table-cell">Estado</th>
                 <th className="p-4 text-left text-sm font-medium text-foreground hidden lg:table-cell">
-                  Última Visita
+                  Última Actualización
                 </th>
                 <th className="p-4 text-left text-sm font-medium text-foreground w-32">Acciones</th>
               </tr>
@@ -80,9 +80,9 @@ export function PatientsTable({
                       </div>
                       <div>
                         <div className="font-medium text-foreground">
-                          {patient.firstName} {patient.lastName}
+                          {patient.name} {patient.lastName}
                         </div>
-                        <div className="text-sm text-muted-foreground">{patient.patientId}</div>
+                        <div className="text-sm text-muted-foreground">{patient.id}</div>
                         <div className="text-sm text-muted-foreground md:hidden">{patient.phone}</div>
                       </div>
                     </div>
@@ -101,18 +101,21 @@ export function PatientsTable({
                   </td>
                   <td className="p-4 hidden lg:table-cell">
                     <div className="text-sm">
-                      <div className="text-foreground">{patient.city}</div>
-                      <div className="text-muted-foreground">{patient.province}</div>
+                      <div className="text-foreground">{patient.municipality || patient.address || 'No especificado'}</div>
+                      <div className="text-muted-foreground">{patient.province || 'No especificado'}</div>
                     </div>
                   </td>
                   <td className="p-4 hidden sm:table-cell">
-                    <Badge variant={patient.status === "Activo" ? "default" : "secondary"}>
-                      {patient.status}
+                    <Badge variant={patient.status === "active" ? "default" : "secondary"}>
+                      {patient.status === "active" ? "Activo" : "Inactivo"}
                     </Badge>
                   </td>
                   <td className="p-4 hidden lg:table-cell">
                     <div className="text-sm text-foreground">
-                      {format(new Date(patient.lastVisit), "dd/MM/yyyy", { locale: es })}
+                      {patient.updatedAt 
+                        ? format(new Date(patient.updatedAt), "dd/MM/yyyy", { locale: es })
+                        : 'No disponible'
+                      }
                     </div>
                   </td>
                   <td className="p-4">
@@ -160,7 +163,7 @@ export function PatientsTable({
                           <AlertDialogHeader>
                             <AlertDialogTitle>¿Eliminar paciente?</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Esta acción eliminará permanentemente a {patient.firstName} {patient.lastName} y todos
+                              Esta acción eliminará permanentemente a {patient.name} {patient.lastName} y todos
                               sus datos asociados. Esta acción no se puede deshacer.
                             </AlertDialogDescription>
                           </AlertDialogHeader>

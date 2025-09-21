@@ -41,24 +41,16 @@ export function OverviewTab({ patientData }: OverviewTabProps) {
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Fecha de Nacimiento:</span>
                   <span>
-                    {patientData.dateOfBirth ? (
-                      (() => {
-                        try {
-                          const date = new Date(patientData.dateOfBirth)
-                          return isNaN(date.getTime()) 
-                            ? `${patientData.dateOfBirth} (formato inválido)`
-                            : format(date, "dd/MM/yyyy", { locale: es })
-                        } catch (error) {
-                          return `${patientData.dateOfBirth} (error de formato)`
-                        }
-                      })()
-                    ) : 'No especificado'}
+                    {patientData.dateOfBirth 
+                      ? format(new Date(patientData.dateOfBirth), "dd/MM/yyyy", { locale: es })
+                      : 'No especificado'
+                    }
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Edad:</span>
                   <span>
-                    {patientData.age > 0
+                    {patientData.dateOfBirth 
                       ? `${patientData.age} años`
                       : 'No especificado'
                     }

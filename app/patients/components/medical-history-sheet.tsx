@@ -41,7 +41,7 @@ export function MedicalHistorySheet({
           <SheetTitle>Historial Médico</SheetTitle>
           {patient && (
             <p className="text-sm text-muted-foreground">
-              {patient.firstName} {patient.lastName}
+              {patient.name} {patient.lastName}
             </p>
           )}
         </SheetHeader>

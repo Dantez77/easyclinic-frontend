@@ -7,7 +7,7 @@ export const usePatientEHR = (patientId: string) => {
   const [activeTab, setActiveTab] = useState("overview")
   const [patientData, setPatientData] = useState<PatientEHR>(mockPatientEHR)
   const [medicalRecord, setMedicalRecord] = useState<MedicalRecord | null>(null)
-  const [loading, setLoading] = useState(true) // Set to true initially to show loading
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const printRef = useRef<HTMLDivElement>(null)
 
@@ -32,70 +32,31 @@ export const usePatientEHR = (patientId: string) => {
         medicalRecordsAPI.getMedicalRecord(id, { include: ['all'] }).catch(() => null) // Don't fail if medical records don't exist
       ])
       
-      // Check if patient data is valid
-      if (!patient || !patient.id) {
-        throw new Error('No se recibieron datos válidos del paciente')
-      }
-      
-      const patientBirthDate = patient.birthDate || patient.dateOfBirth || ''
-      const patientAge = patientBirthDate ? calculateAge(patientBirthDate) : 0
-      
-        // Convert backend patient data to EHR format for compatibility
-        const ehrData: PatientEHR = {
-          ...mockPatientEHR, // Keep structure for compatibility
-          // Override with real patient data
-          id: patient.id,
-          firstName: patient.name || 'Sin nombre', // Map backend 'name' to frontend 'firstName'
-          lastName: patient.lastName || 'Sin apellido',
-          dui: patient.dui || 'Sin DUI',
-          dateOfBirth: patientBirthDate,
-          age: patientAge,
-          gender: patient.gender === 'M' ? 'Masculino' : patient.gender === 'F' ? 'Femenino' : 'Otro',
-          bloodType: patient.bloodType || 'No especificado',
-          maritalStatus: getCivilStatusLabel(patient.civilStatus) || 'No especificado',
-          occupation: patient.profession || 'No especificado',
-          phone: patient.phone || 'Sin teléfono',
-          email: patient.email || 'Sin email',
-          address: patient.address || 'Sin dirección',
-          city: patient.municipality || 'Sin ciudad', // Map municipality to city
-          province: patient.province || 'Sin provincia',
-          postalCode: patient.postalCode || '',
-          // Map emergency contact data from patient record
-          emergencyContact: patient.EmergencyContacts && patient.EmergencyContacts.length > 0 ? {
-            name: patient.EmergencyContacts[0].name,
-            relationship: patient.EmergencyContacts[0].relationship,
-            phone: patient.EmergencyContacts[0].phone,
-            email: patient.EmergencyContacts[0].email || ''
-          } : mockPatientEHR.emergencyContact,
-          // Map insurance data from patient record
-          insurance: patient.Insurances && patient.Insurances.length > 0 ? {
-            provider: patient.Insurances[0].payerName,
-            policyNumber: patient.Insurances[0].policy,
-            groupNumber: patient.Insurances[0].groupNumber,
-            effectiveDate: patient.Insurances[0].createdAt.split('T')[0],
-            expirationDate: mockPatientEHR.insurance.expirationDate, // Keep mock data for now
-            memberID: patient.Insurances[0].memberId,
-            holderName: patient.Insurances[0].holderFullName,
-            relationship: patient.Insurances[0].holderRelationship
-          } : mockPatientEHR.insurance,
+      // Convert backend patient data to EHR format for compatibility
+      const ehrData: PatientEHR = {
+        ...mockPatientEHR, // Keep structure for compatibility
+        id: patient.id,
+        firstName: patient.name, // Map backend 'name' to frontend 'firstName'
+        lastName: patient.lastName,
+        dui: patient.dui || '',
+        dateOfBirth: patient.dateOfBirth || '',
+        age: patient.dateOfBirth ? calculateAge(patient.dateOfBirth) : 0,
+        gender: patient.gender === 'M' ? 'Masculino' : patient.gender === 'F' ? 'Femenino' : 'Otro',
+        bloodType: patient.bloodType || '',
+        maritalStatus: getCivilStatusLabel(patient.civilStatus),
+        occupation: patient.profession || '',
+        phone: patient.phone,
+        email: patient.email,
+        address: patient.address || '',
+        province: patient.province || '',
         // Map medical records data - this will override the mock data with real data
-        // Combine allergies from both patient record and medical records
-        allergies: [
-          // Allergies from patient record (created during registration)
-          ...(patient.Allergies?.map(allergy => ({
-            substance: allergy.allergen,
-            severity: getSeverityLabel(allergy.severity),
-            reaction: allergy.reaction,
-            dateIdentified: allergy.onsetDate || allergy.createdAt.split('T')[0]
-          })) || []),
-          // Additional allergies from medical records (added later)
-          ...(medicalRecordData?.allergies?.map(allergy => ({
-            substance: allergy.allergen,
-            severity: getSeverityLabel(allergy.severity),
-            reaction: allergy.reaction,
-            dateIdentified: allergy.onsetDate || allergy.createdAt.split('T')[0]
-          })) || [])
-        ],
+        // Provide fallback data for sections not covered by the conditional mapping above
+        allergies: medicalRecordData?.allergies?.map(allergy => ({
+          substance: allergy.allergen,
+          severity: getSeverityLabel(allergy.severity),
+          reaction: allergy.reaction,
+          dateIdentified: allergy.onsetDate || allergy.createdAt.split('T')[0]
+        })) || [],
         currentMedications: medicalRecordData?.medications?.filter(med => med.status === 'active').map(med => ({
           medication: med.medicationName,
           dosage: med.dosage,
@@ -149,8 +110,11 @@ export const usePatientEHR = (patientId: string) => {
         })) || [],
         // Social and family history - keep mock data for now
         socialHistory: mockPatientEHR.socialHistory,
-        familyHistory: mockPatientEHR.familyHistory
-        // Note: insurance and emergencyContact are already mapped above, don't override them
+        familyHistory: mockPatientEHR.familyHistory,
+        // Insurance - keep mock data for now (would come from billing module)
+        insurance: mockPatientEHR.insurance,
+        // Emergency contact - keep mock data for now  
+        emergencyContact: mockPatientEHR.emergencyContact
       }
       
       setPatientData(ehrData)

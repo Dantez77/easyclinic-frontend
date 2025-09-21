@@ -52,6 +52,7 @@ import {
   formatPhone,
   calculateAge 
 } from "@/lib/validation-utils"
+import { patientsAPI } from "@/lib/patients-api"
 
 export default function PatientRegistrationPage() {
   const [dateOfBirth, setDateOfBirth] = useState<Date>()
@@ -174,6 +175,7 @@ export default function PatientRegistrationPage() {
     if (!formData.province) newErrors.province = "La provincia es requerida"
     if (!formData.emergencyName.trim()) newErrors.emergencyName = "El nombre del contacto de emergencia es requerido"
     if (!formData.emergencyPhone.trim()) newErrors.emergencyPhone = "El teléfono de emergencia es requerido"
+    if (!dateOfBirth) newErrors.dateOfBirth = "La fecha de nacimiento es requerida"
     
     // Format validations
     if (formData.dui) {
@@ -222,27 +224,112 @@ export default function PatientRegistrationPage() {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     if (!validateForm()) {
       return
     }
     
-    // Combine selected and custom allergies/conditions
-    const allAllergies = [...selectedAllergies, ...customAllergies]
-    const allConditions = [...selectedConditions, ...customConditions]
+    setIsSubmitting(true)
     
-    // Create the complete patient data
-    const patientData = {
-      ...formData,
-      allergies: allAllergies,
-      chronicConditions: allConditions,
+    try {
+      // Combine selected and custom allergies/conditions
+      const allAllergies = [...selectedAllergies, ...customAllergies]
+      const allConditions = [...selectedConditions, ...customConditions]
+      
+      // Create the complete patient data for the API
+      const patientData = {
+        // Personal Information
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        dui: formData.dui,
+        nit: formData.nit || undefined,
+        dateOfBirth: dateOfBirth.toISOString().split('T')[0], // Format as YYYY-MM-DD
+        gender: formData.gender,
+        bloodType: formData.bloodType || undefined,
+        maritalStatus: formData.maritalStatus || undefined,
+        occupation: formData.occupation || undefined,
+        
+        // Contact Information
+        phone: formData.phone,
+        email: formData.email || undefined,
+        address: formData.address,
+        city: formData.city,
+        province: formData.province,
+        postalCode: formData.postalCode || undefined,
+        
+        // Emergency Contact
+        emergencyName: formData.emergencyName,
+        emergencyRelationship: formData.emergencyRelationship || undefined,
+        emergencyPhone: formData.emergencyPhone,
+        emergencyEmail: formData.emergencyEmail || undefined,
+        
+        // Insurance Information
+        insuranceProvider: formData.insuranceProvider || undefined,
+        policyNumber: formData.policyNumber || undefined,
+        groupNumber: formData.groupNumber || undefined,
+        
+        // Medical Information
+        allergies: allAllergies,
+        chronicConditions: allConditions,
+        referredBy: formData.referredBy || undefined,
+        notes: formData.notes || undefined
+      }
+      
+      // Send to backend API using patients API client
+      const result = await patientsAPI.registerPatient(patientData)
+      
+      alert("¡Paciente registrado exitosamente!")
+      
+      // Reset form
+      setFormData({
+        firstName: "",
+        lastName: "",
+        dui: "",
+        nit: "",
+        gender: "",
+        bloodType: "",
+        maritalStatus: "",
+        occupation: "",
+        phone: "",
+        email: "",
+        address: "",
+        city: "",
+        province: "",
+        postalCode: "",
+        emergencyName: "",
+        emergencyRelationship: "",
+        emergencyPhone: "",
+        emergencyEmail: "",
+        insuranceProvider: "",
+        policyNumber: "",
+        groupNumber: "",
+        allergies: [],
+        chronicConditions: [],
+        referredBy: "",
+        notes: "",
+      })
+      setDateOfBirth(undefined)
+      setSelectedAllergies([])
+      setSelectedConditions([])
+      setCustomAllergies([])
+      setCustomConditions([])
+      setErrors({})
+      
+      // Redirect to patients list
+      setTimeout(() => {
+        window.location.href = "/patients"
+      }, 2000)
+      
+    } catch (error) {
+      console.error("Error registering patient:", error)
+      alert(`Error al registrar el paciente: ${error instanceof Error ? error.message : 'Error desconocido'}`)
+    } finally {
+      setIsSubmitting(false)
     }
-    
-    // Here you would typically send the data to your backend
-    console.log("Patient Registration Data:", patientData)
-    alert("Paciente registrado exitosamente!")
   }
 
   return (
@@ -898,9 +985,13 @@ export default function PatientRegistrationPage() {
             <Button type="button" variant="outline" className="bg-transparent">
               Cancelar
             </Button>
-            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+            <Button 
+              type="submit" 
+              disabled={isSubmitting} 
+              className="bg-blue-600 hover:bg-blue-700"
+            >
               <Save className="w-4 h-4 mr-2" />
-              Registrar Paciente
+              {isSubmitting ? "Registrando..." : "Registrar Paciente"}
             </Button>
           </div>
         </form>

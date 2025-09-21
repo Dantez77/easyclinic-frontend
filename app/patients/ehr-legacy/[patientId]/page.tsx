@@ -4,7 +4,7 @@ import React, { use } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Users } from "lucide-react"
-import { usePatientEHR } from "../hooks/use-patient-ehr"
+import { usePatientEHRLegacy } from "../hooks/use-patient-ehr-legacy"
 import { PatientHeader } from "../components/patient-header"
 import { OverviewTab } from "../components/overview-tab"
 import { MedicalTab } from "../components/medical-tab"
@@ -13,32 +13,20 @@ import { MedicationsTab } from "../components/medications-tab"
 import { HistoryTab } from "../components/history-tab"
 import { DocumentsTab } from "../components/documents-tab"
 
-// Import medical records dialogs
-import { AddAllergyDialog } from "../components/add-allergy-dialog"
-import { AddDiagnosisDialog } from "../components/add-diagnosis-dialog"
-import { AddMedicationDialog } from "../components/add-medication-dialog"
-import { AddLabDialog } from "../components/add-lab-dialog"
-import { AddObservationDialog } from "../components/add-observation-dialog"
+// Legacy EHR - uses mock data only
 
 export default function PatientEHRPage({ params }: { params: Promise<{ patientId: string }> }) {
   const { patientId } = use(params)
   const {
     activeTab,
     patientData,
-    medicalRecord,
     loading,
     error,
     printRef,
     setActiveTab,
     handlePrint,
     handleExportPDF,
-    fetchPatientData,
-  } = usePatientEHR(patientId)
-
-  // Function to refresh EHR data after adding medical records
-  const handleRefreshData = () => {
-    window.location.reload()
-  }
+  } = usePatientEHRLegacy(patientId)
 
   // Show loading state
   if (loading) {
@@ -116,6 +104,9 @@ export default function PatientEHRPage({ params }: { params: Promise<{ patientId
                 <Users className="w-4 h-4 mr-2" />
                 Volver a Pacientes
               </Button>
+              <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-3 py-1 rounded-lg text-sm">
+                📚 VERSIÓN LEGACY - Datos de Prueba
+              </div>
             </div>
           </div>
         </div>
@@ -147,7 +138,7 @@ export default function PatientEHRPage({ params }: { params: Promise<{ patientId
 
           {/* Medical Tab */}
           <TabsContent value="medical">
-            <MedicalTab patientData={patientData} patientId={patientId} />
+            <MedicalTab patientData={patientData} />
           </TabsContent>
 
           {/* Tests Tab */}
@@ -172,13 +163,6 @@ export default function PatientEHRPage({ params }: { params: Promise<{ patientId
           </Tabs>
         </div>
       </div>
-      
-      {/* Medical Records Dialogs - as separate JSX elements */}
-      <AddAllergyDialog patientId={patientId} onSuccess={handleRefreshData} />
-      <AddDiagnosisDialog patientId={patientId} onSuccess={handleRefreshData} />
-      <AddMedicationDialog patientId={patientId} onSuccess={handleRefreshData} />
-      <AddLabDialog patientId={patientId} onSuccess={handleRefreshData} />
-      <AddObservationDialog patientId={patientId} onSuccess={handleRefreshData} />
     </React.Fragment>
   )
 }

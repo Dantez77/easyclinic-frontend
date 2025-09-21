@@ -7,7 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Phone, Mail, MapPin, User, FileText } from "lucide-react"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
-import type { Patient } from "../mocks/patients-data"
+import type { Patient } from "@/lib/patients-api"
 
 interface ViewPatientSheetProps {
   open: boolean
@@ -17,6 +17,37 @@ interface ViewPatientSheetProps {
 
 export function ViewPatientSheet({ open, onOpenChange, patient }: ViewPatientSheetProps) {
   if (!patient) return null
+
+  // Helper function to calculate age
+  const calculateAge = (dateOfBirth: string) => {
+    const today = new Date()
+    const birth = new Date(dateOfBirth)
+    const age = today.getFullYear() - birth.getFullYear()
+    const monthDiff = today.getMonth() - birth.getMonth()
+    
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+      return age - 1
+    }
+    return age
+  }
+
+  const getGenderLabel = (gender: string) => {
+    switch (gender) {
+      case 'M': return 'Masculino'
+      case 'F': return 'Femenino'
+      default: return 'Otro'
+    }
+  }
+
+  const getCivilStatusLabel = (status?: string) => {
+    switch (status) {
+      case 'Single': return 'Soltero/a'
+      case 'Married': return 'Casado/a'
+      case 'Divorced': return 'Divorciado/a'
+      case 'Widowed': return 'Viudo/a'
+      default: return 'No especificado'
+    }
+  }
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -32,11 +63,11 @@ export function ViewPatientSheet({ open, onOpenChange, patient }: ViewPatientShe
               </div>
               <div>
                 <h3 className="text-lg font-semibold">
-                  {patient.firstName} {patient.lastName}
+                  {patient.name} {patient.lastName}
                 </h3>
-                <p className="text-sm text-muted-foreground">{patient.patientId}</p>
-                <Badge variant={patient.status === "Activo" ? "default" : "secondary"} className="mt-1">
-                  {patient.status}
+                <p className="text-sm text-muted-foreground">{patient.id}</p>
+                <Badge variant={patient.status === "active" ? "default" : "secondary"} className="mt-1">
+                  {patient.status === "active" ? "Activo" : "Inactivo"}
                 </Badge>
               </div>
             </div>
@@ -46,25 +77,45 @@ export function ViewPatientSheet({ open, onOpenChange, patient }: ViewPatientShe
                 <h4 className="font-medium text-foreground mb-2">Información Personal</h4>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                                          <span className="text-muted-foreground">DUI:</span>
-                    <span>{patient.dui}</span>
+                    <span className="text-muted-foreground">DUI:</span>
+                    <span>{patient.dui || 'No especificado'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Fecha de Nacimiento:</span>
-                    <span>{format(new Date(patient.dateOfBirth), "dd/MM/yyyy", { locale: es })}</span>
+                    <span>
+                      {(patient.birthDate || patient.dateOfBirth)
+                        ? format(new Date(patient.birthDate || patient.dateOfBirth), "dd/MM/yyyy", { locale: es })
+                        : 'No especificado'
+                      }
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Edad:</span>
-                    <span>{patient.age} años</span>
+                    <span>
+                      {(patient.birthDate || patient.dateOfBirth)
+                        ? `${calculateAge(patient.birthDate || patient.dateOfBirth)} años`
+                        : 'No especificado'
+                      }
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Género:</span>
-                    <span>{patient.gender}</span>
+                    <span>{getGenderLabel(patient.gender)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Tipo de Sangre:</span>
-                    <Badge variant="outline">{patient.bloodType}</Badge>
+                    <Badge variant="outline">{patient.bloodType || 'No especificado'}</Badge>
                   </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Estado Civil:</span>
+                    <span>{getCivilStatusLabel(patient.civilStatus)}</span>
+                  </div>
+                  {patient.profession && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Profesión:</span>
+                      <span>{patient.profession}</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -82,9 +133,9 @@ export function ViewPatientSheet({ open, onOpenChange, patient }: ViewPatientShe
                   <div className="flex items-start gap-2">
                     <MapPin className="w-4 h-4 text-muted-foreground mt-0.5" />
                     <div>
-                      <div>{patient.address}</div>
+                      <div>{patient.address || 'No especificado'}</div>
                       <div className="text-muted-foreground">
-                        {patient.city}, {patient.province}
+                        {patient.municipality || 'No especificado'}, {patient.province || 'No especificado'}
                       </div>
                     </div>
                   </div>
@@ -92,44 +143,50 @@ export function ViewPatientSheet({ open, onOpenChange, patient }: ViewPatientShe
               </div>
 
               <div>
-                <h4 className="font-medium text-foreground mb-2">Información Médica</h4>
+                <h4 className="font-medium text-foreground mb-2">Información del Sistema</h4>
                 <div className="space-y-2 text-sm">
-                  <div>
-                    <span className="text-muted-foreground">Alergias:</span>
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {patient.allergies.length > 0 ? (
-                        patient.allergies.map((allergy, index) => (
-                          <Badge key={index} variant="destructive" className="text-xs">
-                            {allergy.substance}
-                          </Badge>
-                        ))
-                      ) : (
-                        <span className="text-muted-foreground">Sin alergias conocidas</span>
-                      )}
-                    </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Fecha de Registro:</span>
+                    <span>
+                      {patient.createdAt 
+                        ? format(new Date(patient.createdAt), "dd/MM/yyyy", { locale: es })
+                        : 'No disponible'
+                      }
+                    </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Seguro:</span>
-                    <span>{patient.insurance.provider} - {patient.insurance.policyNumber}</span>
+                    <span className="text-muted-foreground">Última Actualización:</span>
+                    <span>
+                      {patient.updatedAt 
+                        ? format(new Date(patient.updatedAt), "dd/MM/yyyy", { locale: es })
+                        : 'No disponible'
+                      }
+                    </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Contacto de Emergencia:</span>
-                    <span className="text-right">{patient.emergencyContact.name} - {patient.emergencyContact.phone}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Última Visita:</span>
-                    <span>{format(new Date(patient.lastVisit), "dd/MM/yyyy", { locale: es })}</span>
+                    <span className="text-muted-foreground">Estado:</span>
+                    <span className="capitalize">{patient.status === 'active' ? 'Activo' : 'Inactivo'}</span>
                   </div>
                 </div>
               </div>
             </div>
-            <Button
-              onClick={() => (window.location.href = `/patients/ehr/${patient?.id}`)}
-              className="w-full"
-            >
-              <FileText className="w-4 h-4 mr-2" />
-              <span>Ver EHR Completo</span>
-            </Button>
+            <div className="space-y-2">
+              <Button
+                onClick={() => (window.location.href = `/patients/ehr/${patient?.id}`)}
+                className="w-full"
+              >
+                <FileText className="w-4 h-4 mr-2" />
+                <span>Ver Expediente Médico Completo</span>
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => (window.location.href = `/patients/ehr-legacy/${patient?.id}`)}
+                className="w-full"
+              >
+                <FileText className="w-4 h-4 mr-2" />
+                <span>Ver EHR Legacy (Datos de Prueba)</span>
+              </Button>
+            </div>
           </div>
         </ScrollArea>
       </SheetContent>

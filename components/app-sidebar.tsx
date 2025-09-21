@@ -18,7 +18,10 @@ import {
   Settings,
   Wrench,
   LogOut,
-  MoreVertical, Receipt, ScrollText,
+  MoreVertical, 
+  Receipt, 
+  ScrollText,
+  FileText,
 } from "lucide-react"
 import {
   Sidebar,

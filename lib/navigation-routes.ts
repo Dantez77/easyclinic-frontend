@@ -47,7 +47,7 @@ export const navigationRoutes: NavigationRoute[] = [
   {
     path: "/patients",
     labels: { en: "Patients", es: "Pacientes" },
-    aliases: { en: ["Patients", "Profiles", "Records", "Medical History"], es: ["Pacientes", "Gestión", "Perfiles", "Expediente", "Historial Médico"] },
+    aliases: { en: ["Patients", "Profiles", "Records", "Medical History", "Health Records", "Clinical Data"], es: ["Pacientes", "Gestión", "Perfiles", "Expediente", "Historial Médico", "Historia Clínica", "Registros Médicos"] },
     preload: true, // Preload patients as it's commonly accessed
   },
 ]
