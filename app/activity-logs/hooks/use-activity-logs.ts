@@ -25,9 +25,9 @@ export const useActivityLogs = ({ activityLogs, itemsPerPage = 15 }: UseActivity
   const [currentPage, setCurrentPage] = useState(1)
 
   // Get unique values for filters
-  const modules = [...new Set(activityLogs.map((log) => log.module))]
-  const users = [...new Set(activityLogs.map((log) => log.user))]
-  const categories = [...new Set(activityLogs.map((log) => log.category))]
+  const modules = Array.from(new Set(activityLogs.map((log) => log.module)))
+  const users = Array.from(new Set(activityLogs.map((log) => log.user)))
+  const categories = Array.from(new Set(activityLogs.map((log) => log.category)))
 
   // Filter activity logs
   const filteredLogs = useMemo(() => {

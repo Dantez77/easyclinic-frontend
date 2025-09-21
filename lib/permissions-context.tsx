@@ -23,7 +23,7 @@ interface PermissionsProviderProps {
 
 // Role-based permission mapping based on your backend
 const ROLE_PERMISSIONS: Record<number, string[]> = {
-  1: [ // Administrador - All 9 permissions
+  1: [ // Administrador - All 10 permissions
     'access_appointments',
     'access_billing', 
     'access_consultation',
@@ -32,16 +32,18 @@ const ROLE_PERMISSIONS: Record<number, string[]> = {
     'access_patients',
     'access_tools',
     'access_settings',
-    'access_profile'
+    'access_profile',
+    'access_activity_logs'
   ],
-  2: [ // Doctor - 7 permissions
+  2: [ // Doctor - 8 permissions
     'access_appointments',
     'access_consultation',
     'access_messages',
     'access_patients',
     'access_tools',
     'access_settings',
-    'access_profile'
+    'access_profile',
+    'access_activity_logs'
   ],
   3: [ // Secretary/Receptionist - 6 permissions
     'access_appointments',

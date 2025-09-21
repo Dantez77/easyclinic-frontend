@@ -1,5 +1,22 @@
 // Mock activity logs data - Updated for El Salvador
-import { type ActivityLog } from "../types"
+
+export interface ActivityLog {
+  id: string
+  timestamp: string
+  module: string
+  action: string
+  description: string
+  user: string
+  userRole?: string
+  patientId?: string | null
+  patientName?: string | null
+  severity: "Low" | "Medium" | "High" | "Critical"
+  category: string
+  ipAddress?: string
+  userAgent?: string
+  changes?: Array<{ field: string; before: string; after: string }>
+  details?: Record<string, any>
+}
 
 export const mockActivityLogs: ActivityLog[] = [
   {
@@ -14,7 +31,7 @@ export const mockActivityLogs: ActivityLog[] = [
     patientName: null,
     ipAddress: "192.168.1.45",
     userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-    severity: "info",
+    severity: "Low",
     category: "security",
     details: {
       loginMethod: "Credenciales",
@@ -35,7 +52,7 @@ export const mockActivityLogs: ActivityLog[] = [
     patientName: "Ana María López",
     ipAddress: "192.168.1.23",
     userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-    severity: "info",
+    severity: "Low",
     category: "administrative",
     details: {
       registrationMethod: "Manual",
@@ -59,7 +76,7 @@ export const mockActivityLogs: ActivityLog[] = [
     patientName: "María Elena González",
     ipAddress: "192.168.1.67",
     userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
-    severity: "info",
+    severity: "Low",
     category: "clinical",
     details: {
       section: "Alergias",
@@ -80,7 +97,7 @@ export const mockActivityLogs: ActivityLog[] = [
     patientName: "Juan Carlos Rodríguez",
     ipAddress: "192.168.1.89",
     userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-    severity: "info",
+    severity: "Low",
     category: "financial",
     details: {
       invoiceId: "FAC-2024-002",
@@ -106,7 +123,7 @@ export const mockActivityLogs: ActivityLog[] = [
     patientName: "María Elena González",
     ipAddress: "192.168.1.34",
     userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-    severity: "info",
+    severity: "Low",
     category: "inventory",
     details: {
       itemId: "INV-001",
@@ -129,7 +146,7 @@ export const mockActivityLogs: ActivityLog[] = [
     patientName: "Carmen Rosa Martínez",
     ipAddress: "192.168.1.23",
     userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-    severity: "info",
+    severity: "Low",
     category: "administrative",
     details: {
       updatedFields: ["Teléfono", "Email"],
@@ -151,7 +168,7 @@ export const mockActivityLogs: ActivityLog[] = [
     patientName: null,
     ipAddress: "192.168.1.45",
     userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-    severity: "info",
+    severity: "Low",
     category: "security",
     details: {
       loginMethod: "Credenciales",
@@ -172,7 +189,7 @@ export const mockActivityLogs: ActivityLog[] = [
     patientName: "María Elena González",
     ipAddress: "192.168.1.1",
     userAgent: "Sistema Automático",
-    severity: "info",
+    severity: "Low",
     category: "compliance",
     details: {
       dteUuid: "DTE-UUID-123456789",
@@ -195,7 +212,7 @@ export const mockActivityLogs: ActivityLog[] = [
     patientName: null,
     ipAddress: "192.168.1.1",
     userAgent: "Sistema Automático",
-    severity: "warning",
+    severity: "Medium",
     category: "inventory",
     details: {
       itemId: "INV-002",
@@ -218,7 +235,7 @@ export const mockActivityLogs: ActivityLog[] = [
     patientName: "María Elena González",
     ipAddress: "203.45.67.89",
     userAgent: "Mozilla/5.0 (Linux; Android 10; SM-G975F) AppleWebKit/537.36",
-    severity: "critical",
+    severity: "Critical",
     category: "security",
     details: {
       attemptedAction: "Ver EHR",
@@ -255,4 +272,4 @@ export const mockFailedLogins = [
   { ip: "10.0.0.45", attempts: 2, lastAttempt: "2024-11-15 12:30:00" },
 ]
 
-export type ActivityLog = (typeof mockActivityLogs)[0]
+// ActivityLog interface is defined above
